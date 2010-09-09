@@ -101,7 +101,7 @@ create_gp_knots_and_boundaries <- function(scores, grade, subject) {
 ### Commands for testing student.growth.data and extracting student.data
 ###
 
-if (!(class(student.growth.data) %in% c("matrix", "data.frame", "list") {stop("Incorrect class specification for object student.growth.data")}  
+if (!(class(student.growth.data))) %in% c("matrix", "data.frame", "list") {stop("Incorrect class specification for object student.growth.data")}  
 if (class(student.growth.data) == "list" & !(names(student.growth.data) %in% "student.data")) {stop("List object student.growth.data missing student.data")} 
 if (class(student.growth.data) == "matrix") {student.data <- as.data.frame(student.growth.data, stringsAsFactors=FALSE)}
 if (class(student.growth.data) == "data.frame") {student.data <- student.growth.data}
