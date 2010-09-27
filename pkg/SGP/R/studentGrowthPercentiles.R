@@ -105,7 +105,7 @@ if (!(class(student.growth.data) %in% c("matrix", "data.frame", "list"))) {stop(
 if (class(student.growth.data) == "list" & !(names(student.growth.data) %in% "student.data")) {stop("List object student.growth.data missing student.data")} 
 if (class(student.growth.data) == "matrix") {student.data <- as.data.frame(student.growth.data, stringsAsFactors=FALSE)}
 if (class(student.growth.data) == "data.frame") {student.data <- student.growth.data}
-if (class(student.growth.data) == "list" & names(student.growth.data) %in% "student.data") {student.data <- student.growth.data$student.data
+if (class(student.growth.data) == "list" & names(student.growth.data) %in% "student.data") {student.data <- student.growth.data$student.data}
 
 
 num.panels = (dim(student.data)[2]-1)/2
