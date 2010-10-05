@@ -370,9 +370,6 @@ trajectories.and.cuts <- .get.trajectories.and.cuts(percentile.trajectories,
 
 if (is.null(SGProjections[[tmp.path]])) SGProjections[[tmp.path]] <- .unget.data.table(as.data.table(trajectories.and.cuts), ss.data)
 else SGProjections[[tmp.path]] <- rbind.fill(SGProjections[[tmp.path]], .unget.data.table(as.data.table(trajectories.and.cuts), ss.data))
-print(head(SGProjections[[tmp.path]]))
-print(head(ss.data))
-#SGProjections[[tmp.path]] <- .unget.data.table(as.data.table(SGProjections[[tmp.path]]), ss.data)
 
 ### Return SGP Object
 
