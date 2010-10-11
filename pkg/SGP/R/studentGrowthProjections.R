@@ -151,7 +151,7 @@ function(panel.data,                                   ## REQUIRED  A List objec
 .get.trajectories.and.cuts <- function(percentile.trajectories, trajectories.tf, cuts.tf, projection.unit=projection.unit) {
 
     percentile.trajectories$ID <- as.integer(percentile.trajectories$ID) 
-    percentile.trajectories <- data.table(percentile.trajectories, key="ID")
+    key(percentile.trajectories) <- "ID"
 
     if (trajectories.tf) {
        traj.arg <- paste("percentile.trajectories[, as.list(round(c(",paste(colnames(percentile.trajectories)[-1], "[c(", 
