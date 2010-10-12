@@ -118,9 +118,10 @@ Dette, H. & Volgushev, S. (2008). Non-crossing non-parametric estimates of quant
 \dontrun{
 ## First calculate SGPs for 2010
 my.grade.sequences <- list(3:4, 3:5, 3:6, 3:7, 4:8)
+my.sgpData <- list(Panel_Data = sgpData)
 
 for (i in seq_along(my.grade.sequences)) {
-     my.sgpData <- studentGrowthPercentiles(panel.data=sgpData,
+     my.sgpData <- studentGrowthPercentiles(panel.data=my.sgpData,
                      sgp.labels=list(my.year=2010, my.subject="Reading"),
                      grade.progression=my.grade.sequences[[i]])
 }
@@ -134,7 +135,8 @@ for (i in seq_along(my.grade.progressions)) {
                       sgp.labels=list(my.year=2010, my.subject="Reading"),
                       projcuts.digits=0,
                       projection.unit="GRADE",
-                      percentile.trajectory.values=c(1,35,50,65,99),
+                      performance.level.cutscores="CO",
+                      percentile.trajectory.values=NULL,
                       grade.progression=my.grade.progressions[[i]])
 }
 
