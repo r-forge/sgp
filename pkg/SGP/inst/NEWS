@@ -1,4 +1,9 @@
 ==============================
+Changes in version: SGP_0.0-6.2
+
+  o Cleaned up documentation.
+  o Corrected data.table bug in studentGrowthProjections.
+
 Changes in version: SGP_0.0-6.1
 
   o Fixed scoping issue with data.table implementation in studentGrowthProjections.
