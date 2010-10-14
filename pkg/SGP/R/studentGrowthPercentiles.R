@@ -448,22 +448,9 @@ if (calculate.sgps) {
             tmp.percentile.cuts[[j]] <- .get.percentile.cuts(tmp.predictions, tmp.data)
          }
     }
-
     quantile.data <- merge.all(tmp.quantiles, all=TRUE)
-}
-
-
-### Merge in percentile cut (if requested)
-
-if (!missing(percentile.cuts)) {
-    cuts.data <- merge.all(tmp.percentile.cuts, all=TRUE)
-}
-
-
-### Calculate highest order growth quantile and percentile cuts (if requested)
-
-if (calculate.sgps) {
     tmp.best <- apply(quantile.data, 1, .return.best.sgp)
+
     if (missing(print.other.gp)) {
        quantile.data <- data.frame(ID=quantile.data$ID, SGP=tmp.best, stringsAsFactors=FALSE)
     } else {
@@ -471,6 +458,7 @@ if (calculate.sgps) {
     }
 
     if (!missing(percentile.cuts)){
+       cuts.data <- merge.all(tmp.percentile.cuts, all=TRUE)
        cuts.best <- t(apply(cuts.data[,-1], 1, .return.best.percuts, numpercentilecuts=length(percentile.cuts)))
        cuts.best <- round(cuts.best, digits=percuts.digits)
        colnames(cuts.best) <- paste("CUT_", percentile.cuts, sep="")
