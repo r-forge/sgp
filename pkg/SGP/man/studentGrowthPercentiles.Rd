@@ -76,8 +76,7 @@ studentGrowthPercentiles(panel.data,
   }
   \item{convert.0and100}{Boolean argument (defaults to TRUE) indicating whether conversion of growth percentiles of 0 and 100 to growth percentiles of 1 and 99, respectively, occurs. The default produces growth percentiles ranging from 1 to 99. 
   }
-  \item{sgp.quantiles}{Argument to specify quantiles for quantile regression estimation. Default is PERCENTILES. User can specify any combination of values between 0 and 1
-  as well as DECILES, QUINTILES, and QUARTILES. Goodness of fit output only available currently for PERCENTILES. 
+  \item{sgp.quantiles}{Argument to specify quantiles for quantile regression estimation. Default is Percentiles. User can additionally submit a vector of quantiles (between 0 and 1). Goodness of fit output only available currently for PERCENTILES. 
   }
   \item{percuts.digits}{Argument specifying how many digits (defaults to 2) to print percentile cuts (if asked for) with.
   }
