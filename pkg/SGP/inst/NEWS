@@ -1,4 +1,8 @@
 ==============================
+Changes in version: SGP_0.0-6.4
+
+  o Fixed bug associated with goodness-of-fit table production when no SGPs are requested.
+
 Changes in version: SGP_0.0-6.3
 
   o Fixed issue with argument calculate.sgps in studentGrowthPercentile function.
