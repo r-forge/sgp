@@ -1,6 +1,6 @@
 Package: SGP
-Version: 0.0-6.4
-Date: 2010-10-16
+Version: 0.0-6.5
+Date: 2010-11-25
 Title: Student Growth Percentile and Percentile Growth Projection/Trajectory Functions
 Depends: R (>= 2.7.0), splines, quantreg, grid, gtools, data.table, reshape
 Author: Damian W. Betebenner <dbetebenner@nciea.org>,
@@ -12,4 +12,4 @@ Description: Functions to calculate student growth percentiles and percentile gr
 	the quantile regression analyses and specify what percentile growth is required for students to reach future achievement targets.
 LazyLoad: Yes
 LazyData: Yes
-License: file LICENSE
+License: GPL-3 | file LICENSE
