@@ -12,6 +12,7 @@ function(panel.data,                                                    ## REQUI
          calculate.sgps=TRUE,                                           ## OPTIONAL
          rq.method="br",                                                ## OPTIONAL
          knot.cut.percentiles=c(0.2,0.4,0.6,0.8),                       ## OPTIONAL
+         exact.grade.progression.sequence=FALSE,                        ## OPTIONAL
          convert.0and100=TRUE,                                          ## OPTIONAL
          sgp.quantiles="Percentiles",                                   ## OPTIONAL
          percuts.digits=0,                                              ## OPTIONAL
@@ -448,11 +449,14 @@ if (calculate.sgps) {
                 message(paste("Maximum coefficient matrix order (max.order=", max.order, ") exceeds that of specified number of priors, 
                                (num.prior=", num.prior, "). Only matrices of order up to num.prior=", num.prior, " will be used."))
     }
-    tmp.quantiles <- tmp.percentile.cuts <- vector("list", max.order)
-
-    for (j in 1:max.order) {
-         tmp.data <- .get.panel.data(ss.data, j, by.grade)
-         tmp.predictions <- .get.percentile.predictions(tmp.data) 
+    if (!exact.grade.progression.sequence) {
+       tmp.quantiles <- tmp.percentile.cuts <- vector("list", max.order); orders <- 1:max.order
+    } else {
+       tmp.quantiles <- tmp.percentile.cuts <- vector("list", 1); orders <- max.order
+    }
+    for (j in seq_along(orders)) {
+         tmp.data <- .get.panel.data(ss.data, orders[j], by.grade)
+         tmp.predictions <- .get.percentile.predictions(tmp.data)
          tmp.quantiles[[j]] <- .get.quantiles(tmp.predictions, tmp.data)
          if (!missing(percentile.cuts)) {
             tmp.percentile.cuts[[j]] <- .get.percentile.cuts(tmp.predictions, tmp.data)
@@ -466,7 +470,6 @@ if (calculate.sgps) {
     } else {
        quantile.data <- data.frame(quantile.data, SGP=tmp.best, stringsAsFactors=FALSE)
     }
-
     if (!missing(percentile.cuts)){
        cuts.data <- merge.all(tmp.percentile.cuts, all=TRUE)
        cuts.best <- t(apply(cuts.data[,-1], 1, .return.best.percuts, numpercentilecuts=length(percentile.cuts)))
@@ -485,7 +488,7 @@ if (calculate.sgps) {
 
 ### Announce Completion & Return SGP Object
 
-print(paste("Finished SGP Analysis: Subject ", sgp.labels$my.subject, ", Year ", sgp.labels$my.year, ", Grade Progression ", paste(tmp.gp, collapse=", "), sep="")) 
+print(paste("Finished SGP Analysis ", date(), ": Subject ", sgp.labels$my.subject, ", Year ", sgp.labels$my.year, ", Grade Progression ", paste(tmp.gp, collapse=", "), sep="")) 
 
 list(Coefficient_Matrices=Coefficient_Matrices, 
      Goodness_of_Fit=Goodness_of_Fit, 
