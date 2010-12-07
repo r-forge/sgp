@@ -19,7 +19,8 @@ studentGrowthPercentiles(panel.data,
                          print.other.gp,                             
                          calculate.sgps=TRUE,                                       
                          rq.method="br",                                           
-                         knot.cut.percentiles=c(0.2,0.4,0.6,0.8),                 
+                         knot.cut.percentiles=c(0.2,0.4,0.6,0.8),
+                         exact.grade.progression.sequence=FALSE,                 
                          convert.0and100=TRUE,                                   
                          sgp.quantiles="Percentiles",                          
                          percuts.digits=0,                                  
@@ -75,6 +76,9 @@ studentGrowthPercentiles(panel.data,
   }
   \item{knot.cut.percentiles}{Argument that specifies the quantiles to be used for calculation of B-spline knots. Default is to place knots at the 0.2, 0.4, 0.6, and 0.8 quantiles. 
   }
+  \item{exact.grade.progression.sequence}{Boolean argument indicating whether the grade.progression supplied is used exactly (TRUE) as supplied or whether lower order analyses are run as part of the whole analysis (FALSE--the default). 
+  }
+  \item{convert.0and100}{Boolean argument (defaults to TRUE) indicating whether conversion of growth percentiles of 0 and 100 to growth percentiles of 1 and 99, respectively, occurs. The default produces growth percentiles ranging from 1 to 99. 
   \item{convert.0and100}{Boolean argument (defaults to TRUE) indicating whether conversion of growth percentiles of 0 and 100 to growth percentiles of 1 and 99, respectively, occurs. The default produces growth percentiles ranging from 1 to 99. 
   }
   \item{sgp.quantiles}{Argument to specify quantiles for quantile regression estimation. Default is Percentiles. User can additionally submit a vector of quantiles (between 0 and 1). Goodness of fit output only available currently for PERCENTILES. 
