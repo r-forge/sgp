@@ -1,14 +1,11 @@
-.onLoad <- function(lib,pkg) {
-    require(splines)
-    require(quantreg)
-    require(grid)
-    require(gtools)
-    require(data.table)
-    require(reshape)
-    load(SGP)
-}
+require(quantreg)
+importFrom(splines, bs)
+importFrom(gtools, quantcut)
+importFrom(plyr, rbind.fill)
+import(grid)
+import(data.table)
 
 export(
-    "studentGrowthPercentiles",
-    "studentGrowthProjections"
+    studentGrowthPercentiles,
+    studentGrowthProjections
 )
