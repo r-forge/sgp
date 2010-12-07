@@ -18,7 +18,7 @@ Package: \tab SGP\cr
 Type: \tab Package\cr
 Version: \tab 0.0-6.6\cr
 Date: \tab 2010-12-06\cr
-License: \tab Creative Commons Attribution + ShareAlike (by-sa)\cr
+License: \tab GPL-3 + LICENSE\cr
 LazyLoad: \tab yes\cr
 }
 Calculation of student growth percentiles is typically performed by grade and subject. Data for growth percentile calculation must be specifically formatted. 
