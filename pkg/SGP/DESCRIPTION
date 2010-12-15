@@ -1,8 +1,9 @@
 Package: SGP
 Version: 0.0-6.6
-Date: 2010-12-06
+Date: 2010-12-14
 Title: Student Growth Percentile and Percentile Growth Projection/Trajectory Functions
-Depends: R (>= 2.7.0), splines, quantreg, grid, gtools, data.table, reshape
+Depends: R (>= 2.7.0), quantreg
+Imports: data.table, grid, gtools, plyr, splines
 Author: Damian W. Betebenner <dbetebenner@nciea.org>,
         with contributions from Adam Van Iwaarden, Jonathan Weeks, Jinnie Choi, Marie Huchton, Xin Wei, and Hi Shin Shim
 Maintainer: Damian W. Betebenner <dbetebenner@nciea.org>
