@@ -27,7 +27,7 @@ function(panel.data,                                                    ## REQUI
 ###
 ##########################################################
 
-merge.all <- function(.list, ...){
+merge.all <- function(.list, ...) {
 	if(length(.list)==1) return(.list[[1]])
 	Recall(c(list(merge(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
 }
@@ -61,7 +61,7 @@ merge.all <- function(.list, ...){
                                                  SCORE=as.vector(sapply(data[,(2+num.panels):(2+2*num.panels-1)], as.numeric))) 
                         } else {
                          tmp.stack <- data.frame(GRADE=rep(tmp.gp, each=dim(data)[1]), 
-                                                 SCORE=as.vector(sapply(data[,(2+2*num.panels-1-length(tmp.gp)+1):(2+2*num.panels-1)], as.numeric)))
+                                                 SCORE=as.vector(sapply(data[,(2+num.panels):(2+2*num.panels-1)], as.numeric)))
                         }
  
                        for (i in seq_along(tmp.gp)) {
@@ -190,7 +190,7 @@ merge.all <- function(.list, ...){
    }
 
    .sgp.fit <- function (score, sgp) {
-                   gfittable <- prop.table(table(quantcut(round(score, digits=percuts.digits), q=0:10/10, right=FALSE),
+                   gfittable <- prop.table(table(quantcut(score, q=0:10/10, right=FALSE, dig.lab=3),
                                     cut(sgp, c(-1, 9.5, 19.5, 29.5, 39.5, 49.5, 59.5, 69.5, 79.5, 89.5, 100.5),
                                     labels=my.percentile.labels)), 1)*100
                    return(gfittable)
@@ -198,6 +198,7 @@ merge.all <- function(.list, ...){
 
    tmp.merge <- merge(ss.data, sgp.data, by.x=1, by.y=1)
    tmp.table <- .sgp.fit(tmp.merge[,2], tmp.merge[,3])
+save(tmp.table, file="tmp_table.Rdata")
    tmp.cuts <- quantcut(tmp.merge[,2], 0:10/10)
    tmp.colors <- .cell.color(as.vector(tmp.table))
    tmp.list <- vector("list", length(levels(tmp.cuts)))
@@ -228,7 +229,8 @@ merge.all <- function(.list, ...){
                       width=1, height=1, default.units="native",
                       gp=gpar(col="black", fill=tmp.colors),
                       vp="table"),
-                  textGrob(x=0.35, y=10:1, paste(c("1st", "2nd", "3rd", paste(4:10, "th", sep="")), dimnames(tmp.table)[[1]], sep="/"), just="right", gp=gpar(cex=0.7), default.units="native", vp="table"),
+                  textGrob(x=0.35, y=10:1, paste(c("1st", "2nd", "3rd", paste(4:10, "th", sep="")), 
+                                                 dimnames(tmp.table)[[1]], sep="/"), just="right", gp=gpar(cex=0.7), default.units="native", vp="table"),
                   textGrob(x=-2.5, y=5.5, "Prior Scale Score Decile/Range", gp=gpar(cex=0.8), default.units="native", rot=90, vp="table"),
                   textGrob(x=1:10, y=10.8, dimnames(tmp.table)[[2]], gp=gpar(cex=0.7), default.units="native", rot=45, just="left", vp="table"),
                   textGrob(x=5.75, y=12.5, "Student Growth Percentile Range", gp=gpar(cex=0.8), default.units="native", vp="table"),
@@ -266,8 +268,8 @@ if (class(panel.data) %in% c("list", "SGP") & !("Panel_Data" %in% names(panel.da
 if (class(panel.data) %in% c("list", "SGP")) {
      if (!is.data.frame(panel.data$Panel_Data)) {
         stop("Supplied panel.data$Panel_Data is not a data.frame")   
-     }
-}
+}}
+
 if (!missing(sgp.labels)) {
      if (!is.list(sgp.labels)) {
      stop("Please specify an appropriate list of SGP function labels (sgp.labels). See help page for details.")
@@ -276,22 +278,36 @@ if (!identical(names(sgp.labels), c("my.year", "my.subject")) &
     !identical(names(sgp.labels), c("my.year", "my.subject", "my.grade"))) {
      stop("Please specify an appropriate list for sgp.labels. See help page for details.")
 }
+sgp.labels <- lapply(sgp.labels, toupper)
+tmp.path <- .create.path(sgp.labels)
+
 if (!missing(use.my.knots.boundaries)) {
-     if (!(class(panel.data) %in% c("list", "SGP"))) {
-     stop("use.my.knots.boundaries is only appropriate when panel data is of class list or SGP. See help page for details.")
+     if (!is.list(use.my.knots.boundaries) & !is.character(use.my.knots.boundaries)) {
+	     stop("use.my.knots.boundaries must be supplied as a list or character abbreviation. See help page for details.")
      }
-     if (!is.list(use.my.knots.boundaries)) {
-          stop("Please specify an appropriate list for use.my.knots.boundaries. See help page for details.")
+     if (is.list(use.my.knots.boundaries)) {
+         if (!(class(panel.data) %in% c("list", "SGP"))) {
+             stop("use.my.knots.boundaries is only appropriate when panel data is of class list or SGP. See help page for details.")
+         }
+    	 if (!identical(names(use.my.knots.boundaries), c("my.year", "my.subject")) & 
+             !identical(names(use.my.knots.boundaries), c("my.year", "my.subject", "my.grade"))) {
+             stop("Please specify an appropriate list for use.my.knots.boundaries. See help page for details.")
+         }
+         tmp.path.knots.boundaries <- .create.path(use.my.knots.boundaries)
+         if (is.null(panel.data[["Knots_Boundaries"]]) | is.null(panel.data[["Knots_Boundaries"]][[tmp.path.knots.boundaries]])) {
+              stop("Knots and Boundaries indicated by use.my.knots.boundaries are not included.")
+         }
      }
-     if (!identical(names(use.my.knots.boundaries), c("my.year", "my.subject")) & 
-	 !identical(names(use.my.knots.boundaries), c("my.year", "my.subject", "my.grade"))) {
-          stop("Please specify an appropriate list for use.my.knots.boundaries. See help page for details.")
+     if (is.character(use.my.knots.boundaries)) {
+         if (!use.my.knots.boundaries %in% names(stateData)) {
+             stop("Knots and Boundaries are currently not implemented for the state indicated. Please contact the SGP package administrator to have your Knots and Boundaries included in the package")
+	 }
+     tmp.path.knots.boundaries <- tmp.path    
      }
-     tmp.path.knots.boundaries <- .create.path(use.my.knots.boundaries)
-     if (is.null(panel.data[["Knots_Boundaries"]]) | is.null(panel.data[["Knots_Boundaries"]][[tmp.path.knots.boundaries]])) {
-          stop("Knots and Boundaries indicated by use.my.knots.boundaries are not included.")
-     }
+} else {
+     tmp.path.knots.boundaries <- tmp.path
 }
+
 if (!missing(use.my.coefficient.matrices)) {
      if (!(class(panel.data) %in% c("list", "SGP"))) {
      stop("use.my.coefficient.matrices is only appropriate when panel data is of class list or SGP. See help page for details.")
@@ -307,7 +323,10 @@ if (!missing(use.my.coefficient.matrices)) {
      if (is.null(panel.data[["Coefficient_Matrices"]]) | is.null(panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]])) {
           stop("Coefficient matrices indicated by use.my.coefficient.matrices are not included.")
      }
+} else {
+     tmp.path.coefficient.matrices <- tmp.path
 }
+
 if (is.character(sgp.quantiles)) {
      sgp.quantiles <- toupper(sgp.quantiles)
      if (sgp.quantiles != "PERCENTILES") {
@@ -330,15 +349,7 @@ if (!calculate.sgps & goodness.of.fit) {
 
 ### Create object to store the studentGrowthPercentiles objects
 
-sgp.labels <- lapply(sgp.labels, toupper)
-tmp.path <- .create.path(sgp.labels)
-if (missing(use.my.knots.boundaries)) {
-   tmp.path.knots.boundaries <- tmp.path
-}
-if (missing(use.my.coefficient.matrices)) {
-   tmp.path.coefficient.matrices <- tmp.path
-}
-tmp.objects <- c("Coefficient_Matrices", "Goodness_of_Fit", "Knots_Boundaries", "Panel_Data", "SGPercentiles") 
+tmp.objects <- c("Coefficient_Matrices", "Goodness_of_Fit", "Knots_Boundaries", "Panel_Data", "SGPercentiles", "SGProjections") 
 
 for (i in tmp.objects) {
    assign(i, list())
@@ -419,8 +430,11 @@ names(ss.data)[c(1, (1+num.panels-num.prior):(1+num.panels), (1+2*num.panels-num
 if (missing(use.my.knots.boundaries)) {
      tmp.list <- .create.knots.boundaries(ss.data, by.grade)
      Knots_Boundaries[[tmp.path.knots.boundaries]][names(tmp.list)] <- tmp.list
+} else {
+     if (is.character(use.my.knots.boundaries)) {
+         Knots_Boundaries[[tmp.path.knots.boundaries]] <- stateData[[use.my.knots.boundaries]][["Achievement"]][["Knots_Boundaries"]][[sgp.labels$my.subject]]
+     }
 }
-
 knot.names <- names(Knots_Boundaries[[tmp.path.knots.boundaries]])
 
 
