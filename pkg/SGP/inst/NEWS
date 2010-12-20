@@ -1,6 +1,8 @@
 ==============================
 Changes in version: SGP_0.0-6.6
 
+  o For use.my.knots.and.boundaries user can now supply a two letter state acronym to access embedded, baseline knots and boudaries compiled from work with states.  
+  o Fixed goodness of fit printouts so that they show appropriate number of digits.  
   o Fixed DESCRIPTION and NAMESPACE.  
   o Fixed typos in stateData file.  
   o Added extensive documentation to stateData file.  
