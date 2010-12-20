@@ -1,6 +1,6 @@
 Package: SGP
 Version: 0.0-6.6
-Date: 2010-12-14
+Date: 2010-12-19
 Title: Student Growth Percentile and Percentile Growth Projection/Trajectory Functions
 Depends: R (>= 2.7.0), quantreg
 Imports: data.table, grid, gtools, plyr, splines
