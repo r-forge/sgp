@@ -428,11 +428,10 @@ names(ss.data)[c(1, (1+num.panels-num.prior):(1+num.panels), (1+2*num.panels-num
 ### Create Knots and Boundaries if requested (uses only grades in tmp.gp)
 
 if (missing(use.my.knots.boundaries)) {
-     tmp.list <- .create.knots.boundaries(ss.data, by.grade)
-     Knots_Boundaries[[tmp.path.knots.boundaries]][names(tmp.list)] <- tmp.list
+        Knots_Boundaries[[tmp.path.knots.boundaries]] <- .create.knots.boundaries(ss.data, by.grade)
 } else {
      if (is.character(use.my.knots.boundaries)) {
-         Knots_Boundaries[[tmp.path.knots.boundaries]] <- stateData[[use.my.knots.boundaries]][["Achievement"]][["Knots_Boundaries"]][[sgp.labels$my.subject]]
+        Knots_Boundaries[[tmp.path.knots.boundaries]] <- stateData[[use.my.knots.boundaries]][["Achievement"]][["Knots_Boundaries"]][[sgp.labels$my.subject]]
      }
 }
 knot.names <- names(Knots_Boundaries[[tmp.path.knots.boundaries]])
@@ -443,11 +442,9 @@ knot.names <- names(Knots_Boundaries[[tmp.path.knots.boundaries]])
 if (missing(use.my.coefficient.matrices)) {
       taus <- .create_taus(sgp.quantiles)
       for (k in seq(num.prior)) {
-             tmp.matrix <- .create.coefficient.matrices(ss.data, k, by.grade)
-             Coefficient_Matrices[[tmp.path.coefficient.matrices]][[paste("qrmatrix_", tmp.last, "_", k, sep="")]] <- tmp.matrix 
+             Coefficient_Matrices[[tmp.path.coefficient.matrices]][[paste("qrmatrix_", tmp.last, "_", k, sep="")]] <- .create.coefficient.matrices(ss.data, k, by.grade) 
       }
 }
-
 matrix.names <- names(Coefficient_Matrices[[tmp.path.coefficient.matrices]])
 
 
