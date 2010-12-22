@@ -188,7 +188,6 @@ function(panel.data,                                   ## REQUIRED  A List objec
        arg <- paste("list(", paste(cuts.arg, collapse=", "), ")", sep="")  
 
        tmp.cuts <- eval(parse(text=paste("percentile.trajectories[,", arg, ", by=ID]", sep="")))
-#stop(paste("percentile.trajectories[,", arg, ", by=ID]", sep=""))
        names(tmp.cuts) <- c("ID", names.arg)
        key(tmp.cuts) <- "ID"
        if (!trajectories.tf) {
