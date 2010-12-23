@@ -65,7 +65,7 @@ merge.all <- function(.list, ...) {
                         }
  
                        for (i in seq_along(tmp.gp)) {
-                         tmp.list[[3*i-2]] <- round(as.vector(quantile(subset(tmp.stack, tmp.stack$GRADE==tmp.gp[i])[,2], probs=knot.cut.percentiles, na.rm=T)), digits=3)
+                         tmp.list[[3*i-2]] <- round(as.vector(quantile(subset(tmp.stack, tmp.stack$GRADE==tmp.gp[i])[,2], probs=knot.cut.percentiles, na.rm=TRUE)), digits=3)
                          tmp.list[[3*i-1]] <- round(as.vector(extendrange(subset(tmp.stack, tmp.stack$GRADE==tmp.gp[i])[,2], f=0.1)), digits=3)  
                          tmp.list[[3*i]] <- round(as.vector(extendrange(subset(tmp.stack, tmp.stack$GRADE==tmp.gp[i])[,2], f=0.0)), digits=3)  
                         }
@@ -198,7 +198,6 @@ merge.all <- function(.list, ...) {
 
    tmp.merge <- merge(ss.data, sgp.data, by.x=1, by.y=1)
    tmp.table <- .sgp.fit(tmp.merge[,2], tmp.merge[,3])
-save(tmp.table, file="tmp_table.Rdata")
    tmp.cuts <- quantcut(tmp.merge[,2], 0:10/10)
    tmp.colors <- .cell.color(as.vector(tmp.table))
    tmp.list <- vector("list", length(levels(tmp.cuts)))
