@@ -123,7 +123,7 @@ Koenker, R. (2005). \emph{Quantile regression}. Cambridge: Cambridge University 
 
 \author{Damian W. Betebenner \email{dbetebenner@nciea.org} }
 
-\seealso{\code{\link{studentGrowthProjections}}, \code{\link{sgpData}}}
+\seealso{\code{\link{studentGrowthProjections}}, \code{\link{sgpData}}, \code{\link{stateData}}}
 
 
 \examples{
@@ -147,9 +147,9 @@ identical(sgp_g4$SGPercentiles, sgp_g4_v2$SGPercentiles)
 ## Established state Knots and Boundaries are available in the supplied stateData file and
 ## used by supplying the appropriate two letter state acronym
  
-sgp_g4_ZZ <- studentGrowthPercentiles(panel.data=sgpData,
+sgp_g4_CO <- studentGrowthPercentiles(panel.data=sgpData,
                    sgp.labels=list(my.year=2010, my.subject="Reading"),
-                   use.my.knots.boundaries="ZZ",
+                   use.my.knots.boundaries="CO",
                    grade.progression=c(3,4))
 
 \dontrun{
@@ -243,7 +243,8 @@ for (i in seq_along(my.grade.sequences)) {
                      sgp.labels=list(my.year=2009, my.subject="Reading"),
                      grade.progression=my.grade.sequences[[i]])
 }
-}}
+}
+}
 
 \keyword{ misc }
 \keyword{ models }
