@@ -1,4 +1,9 @@
 ==============================
+Changes in version: SGP_0.0-6.7
+
+  o Added data to stateData file.  
+
+==============================
 Changes in version: SGP_0.0-6.6
 
   o For use.my.knots.and.boundaries user can now supply a two letter state acronym to access embedded, baseline knots and boudaries compiled from work with states.  
