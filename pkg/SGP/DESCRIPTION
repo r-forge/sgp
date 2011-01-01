@@ -1,11 +1,15 @@
 Package: SGP
-Version: 0.0-6.6
-Date: 2010-12-23
+Version: 0.0-6.7
+Date: 2011-1-1
 Title: Student Growth Percentile and Percentile Growth Projection/Trajectory Functions
-Depends: R (>= 2.7.0), data.table, grid, gtools, quantreg, plyr, splines
+Author@R: c(person("Damian", "Betebenner",
+                   email="dbetebenner@nciea.org"),
+            person("Adam", "Van Iwaarden",
+                   email="Vaniwaarden@colorado.edu"))
 Author: Damian W. Betebenner <dbetebenner@nciea.org>,
         with contributions from Adam Van Iwaarden, Jonathan Weeks, Jinnie Choi, Marie Huchton, Xin Wei, and Hi Shin Shim
 Maintainer: Damian W. Betebenner <dbetebenner@nciea.org>
+Depends: R (>= 2.7.0), data.table, grid, gtools, quantreg, plyr, splines
 Description: Functions to calculate student growth percentiles and percentile growth projections/trajectories for students using large scale, 
         longitudinal assessment data.  Functions use quantile regression to estimate the conditional density associated 
         with each student's achievement history.  Percentile growth projections/trajectories are calculated using the coefficient matrices derived from 
