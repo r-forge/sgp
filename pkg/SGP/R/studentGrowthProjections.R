@@ -1,5 +1,5 @@
 `studentGrowthProjections` <-
-function(panel.data,								   ## REQUIRED	A List object containing data, coefficient matrices, knots/boundaries
+function(panel.data,							  ## REQUIRED  A List object containing data, coefficient matrices, knots/boundaries
 	sgp.labels,									  ## REQUIRED  Labels list(my.year, my.subject)
 	grade.progression,							  ## REQUIRED  Vector indicating observed score grades to use
 	max.forward.progression,					  ## OPTIONAL  Maximum number of years forward for progression
@@ -78,7 +78,7 @@ function(panel.data,								   ## REQUIRED	A List object containing data, coeffi
 
 	.unget.data.table <- function(my.data, my.lookup) {
 		key(my.data) <- "ID"; key(my.lookup) <- "ID"
-		my.data$ID <- my.lookup[my.data$ID]$ORIGINAL.ID
+		my.data$ID <- my.lookup[my.data$ID, ORIGINAL.ID]
 		return(as.data.frame(my.data))
 	}
 
@@ -248,51 +248,47 @@ function(panel.data,								   ## REQUIRED	A List object containing data, coeffi
 				stop("Knots and Boundaries indicated by argument use.my.knots.boundaries are not included.")
 		}} else {
 			tmp.path.knots.boundaries <- tmp.path
+		}
+
+	if (!missing(use.my.coefficient.matrices)) {
+		if (!is.list(use.my.coefficient.matrices)) {
+			stop("Please specify an appropriate list for use.my.coefficient.matrices. See help page for details.")
+		}
+		if (!identical(names(use.my.coefficient.matrices), c("my.year", "my.subject")) |
+			!identical(names(use.my.coefficient.matrices), c("my.year", "my.subject", "my.grade"))) {
+			stop("Please specify an appropriate list for use.my.coefficient.matrices. See help page for details.")
+			}
+			tmp.path.coefficient.matrices <- .create.path(use.my.coefficient.matrices)
+			if (is.null(panel.data$Coefficient_Matrices) | is.null(panel.data$Coefficient_Matrices[[tmp.path.coefficient.matrices]])) {
+				stop("Coefficient matrices indicated by argument use.my.coefficient.matrices are not included.")
+		}} else {
+			tmp.path.coefficient.matrices <- tmp.path
 		} 
 
-		if (!missing(use.my.coefficient.matrices)) {
-			if (!is.list(use.my.coefficient.matrices)) {
-				stop("Please specify an appropriate list for use.my.coefficient.matrices. See help page for details.")
+	if (!missing(performance.level.cutscores)) {
+		if (is.character(performance.level.cutscores)) {
+			if (!(performance.level.cutscores %in% names(stateData))) {
+				stop("\nTo use state cutscores, supply an appropriate two letter state abbreviation.  \nRequested state may not be included. See help page for details.\n\n")
 			}
-			if (!identical(names(use.my.coefficient.matrices), c("my.year", "my.subject")) |
-				!identical(names(use.my.coefficient.matrices), c("my.year", "my.subject", "my.grade"))) {
-				stop("Please specify an appropriate list for use.my.coefficient.matrices. See help page for details.")
-				}
-				tmp.path.coefficient.matrices <- .create.path(use.my.coefficient.matrices)
-				if (is.null(panel.data$Coefficient_Matrices) | is.null(panel.data$Coefficient_Matrices[[tmp.path.coefficient.matrices]])) {
-					stop("Coefficient matrices indicated by argument use.my.coefficient.matrices are not included.")
-			}} else {
-				tmp.path.coefficient.matrices <- tmp.path
-			} 
+			if (is.null(names(stateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]))) {
+				stop("\nCutscores are currently not implemented for the state indicated. \nPlease contact the SGP package administrator to have your cutscores included in the package.\n\n")
+			} else {
+				tmp.cutscores <- stateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]][[toupper(sgp.labels$my.subject)]]
+		}}
+		if (is.list(performance.level.cutscores)) {
+			if (any(names(performance.level.cutscores) %in% sgp.labels$my.subject)) {
+				tmp.cutscores <- performance.level.cutscores[[sgp.labels$my.subject]]
+			} else {
+				stop("\nList of cutscores provided in performance.level.cutscores must include a subject name that matches my.subject in sgp.labels (CASE SENSITIVE). See help page for details.\n\n")
+		}}}
 
-			if (!missing(performance.level.cutscores)) {
-				if (is.character(performance.level.cutscores)) {
-					if (!(performance.level.cutscores %in% names(stateData))) {
-						stop("\nTo use state cutscores, supply an appropriate two letter state abbreviation.  \nRequested state may not be included. See help page for details.\n\n")
-					}
-					if (is.null(names(stateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]))) {
-						stop("\nCutscores are currently not implemented for the state indicated. \nPlease contact the SGP package administrator to have your cutscores included in the package.\n\n")
-					} else {
-						tmp.cutscores <- stateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]][[toupper(sgp.labels$my.subject)]]
-				}}
-				if (is.list(performance.level.cutscores)) {
-					if (names(performance.level.cutscores) %in% "my.subject") {
-						tmp.path.cutscores <- toupper(performance.level.cutscores$my.subject)
-						if (is.null(panel.data$Cutscores[[tmp.path.cutscores]])) {
-							stop(paste("Cutscores in path panel.data$Cutscores$", tmp.path.cutscores, " not found. See help page for details.", sep=""))
-						}
-						tmp.cutscores <- panel.data$Cutscores[[tmp.path.cutscores]]
-					} else {
-						tmp.cutscores <- performance.level.cutscores
-			}}}
+	if (!(toupper(projection.unit)=="YEAR" | toupper(projection.unit)=="GRADE")) {
+		stop("Projection unit must be specified as either YEAR or GRADE. See help page for details.")
+	}
 
-			if (!(toupper(projection.unit)=="YEAR" | toupper(projection.unit)=="GRADE")) {
-				stop("Projection unit must be specified as either YEAR or GRADE. See help page for details.")
-			}
-
-			if (is.null(percentile.trajectory.values) & missing(performance.level.cutscores)) {
-				stop("Either percentile trajectories and/or performance level cutscores must be supplied for the analyses.")
-			}
+	if (is.null(percentile.trajectory.values) & missing(performance.level.cutscores)) {
+		stop("Either percentile trajectories and/or performance level cutscores must be supplied for the analyses.")
+	}
 
 
 			########################################################

@@ -74,7 +74,7 @@ studentGrowthPercentiles(panel.data,
   }
   \item{calculate.sgps}{Boolean argument (defaults to TRUE) indicating whether student growth percentiles should be calculated following coefficient matrix calculation. 
   }
-  \item{rq.method}{Argument to define the estimation method used in the quantile regression calculations. The default is the the \code{"br"} method referring to the Barrodale and Robert's l1 estimation detailed in Koenker (2005) and in the help for the quantile regression package.
+  \item{rq.method}{Argument to define the estimation method used in the quantile regression calculations. The default is the the \code{"br"} method referring to the Barrodale and Robert's L1 estimation detailed in Koenker (2005) and in the help for the quantile regression package.
   }
   \item{knot.cut.percentiles}{Argument that specifies the quantiles to be used for calculation of B-spline knots. Default is to place knots at the 0.2, 0.4, 0.6, and 0.8 quantiles. 
   }
@@ -144,8 +144,8 @@ sgp_g4_v2 <- studentGrowthPercentiles(panel.data=sgpData,
 
 identical(sgp_g4$SGPercentiles, sgp_g4_v2$SGPercentiles)
 
-## Established state Knots and Boundaries are available in the supplied stateData file and
-## used by supplying the appropriate two letter state acronym
+## Established state Knots and Boundaries are available in the supplied stateData
+## file and used by supplying the appropriate two letter state acronym.
  
 sgp_g4_CO <- studentGrowthPercentiles(panel.data=sgpData,
                    sgp.labels=list(my.year=2010, my.subject="Reading"),
@@ -184,9 +184,9 @@ sgp_g8 <- studentGrowthPercentiles(panel.data=sgpData,
                 percentile.cuts=c(1,35,65,99),
                 grade.progression=4:8)
 
-## All output of studentGrowthPercentiles (e.g., coefficient matrices) is contained in the object
-## See, for example, names(sgp_g8), for all included objects
-## Results are stored in the slot SGPercentiles
+## All output of studentGrowthPercentiles (e.g., coefficient matrices) is contained
+## in the object.  See, for example, names(sgp_g8), for all included objects.
+## Results are stored in the slot SGPercentiles.
 
 # Combine all results
 
@@ -202,7 +202,7 @@ write.csv(sgp_all, file="sgp_all.csv", row.names=FALSE, quote=FALSE, na="")
 
 
 ## NOTE: studentGrowthPercentiles ADDs results to the current SGP object.
-## This allows one to "recycle" the object for multiple grades and subjects as desired 
+## This allows one to "recycle" the object for multiple grades and subjects as desired. 
 
 # Loop to calculate all SGPs for all grades without percentile cuts
 
@@ -230,7 +230,7 @@ for (i in names(my.sgpData$Goodness_of_Fit$READING.2010)) {
 
 
 ## Loop to calculate all SGPs for all grades using 2006 to 2009 data 
-## Using pre-calculated SGP matrices. Embedding results in my.sgpData 
+## and pre-calculated SGP matrices. Embedding results in my.sgpData 
 ## from previous example.
 
 my.grade.sequences <- list(3:4, 3:5, 3:6, 4:7, 5:8)
