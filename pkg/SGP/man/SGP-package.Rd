@@ -17,7 +17,7 @@ are calculated using the coefficient matrices derived from the student growth pe
 Package: \tab SGP\cr
 Type: \tab Package\cr
 Version: \tab 0.0-6.7\cr
-Date: \tab 2011-1-1\cr
+Date: \tab 2011-2-6\cr
 License: \tab GPL-3 + LICENSE\cr
 LazyLoad: \tab yes\cr
 }
