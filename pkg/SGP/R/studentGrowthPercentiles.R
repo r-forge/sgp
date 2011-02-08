@@ -165,7 +165,7 @@ function(panel.data,           ## REQUIRED
 			tmp[tmp < bnd[1]] <- bnd[1]
 			tmp[tmp > bnd[2]] <- bnd[2]
 		}
-		colnames(tmp) <- paste("PERCUT_", percentile.cuts, sep="")
+		colnames(tmp) <- paste("PERCENTILE_CUT_", percentile.cuts, sep="")
 		return(tmp)
 } 
 
@@ -442,6 +442,7 @@ function(panel.data,           ## REQUIRED
 	SS <- paste("SS", tmp.gp, sep="")
 	names(ss.data) <- NA
 	names(ss.data)[c(1, (1+num.panels-num.prior):(1+num.panels), (1+2*num.panels-num.prior):(1+2*num.panels))] <- c("ID", GD, SS)
+        ss.data[,(2+num.panels):(1+2*num.panels)] <- sapply(ss.data[,(2+num.panels):(1+2*num.panels)], as.numeric)
 	ss.data <- .get.data.table(ss.data)
 
 
