@@ -39,9 +39,9 @@ studentGrowthPercentiles(panel.data,
   variables/columns. See \code{\link{sgpData}} for an exemplar data set. NOTE: The column position of the variables IS IMPORTANT, NOT the names of the variables. 
   }
   \item{sgp.labels}{REQUIRED. A list, \code{sgp.labels}, of the form  \code{list(my.year= ,} \cr 
-  \code{my.subject= )} or \code{list(my.year= , my.subject= , my.grade)}. The user-specified values are used to save the student growth percentiles, 
+  \code{my.subject= )} or \code{list(my.year= , my.subject= , my.extra.label)}. The user-specified values are used to save the student growth percentiles, 
   coefficient matrices, knots/boundaries, and goodness of fit results in an orderly fashion using an appropriate combination of year & 
-  subject & grade.
+  subject & grade. Except in special circumstances, supplying \code{my.year} and \code{my.subject} are sufficient to uniquely label derivative output.
   }
   \item{panel.data.vnames}{Vector of variables to use in student growth percentile calculations. If not specified, function attempts to use all available variables.
   }
@@ -161,7 +161,7 @@ sgp_g4_CO <- studentGrowthPercentiles(panel.data=sgpData,
 
 \dontrun{
 ## NOTE: Goodness of Fit results are stored as a graphical object in the
-## Goodness_of_Fit slot. To view or save (using any R ouput device) try:
+## Goodness_of_Fit slot. To view or save (using any R output device) try:
 
 grid.draw(sgp_g4$Goodness_of_Fit$READING.2010$GRADE_4)
 
@@ -197,11 +197,11 @@ sgp_g8 <- studentGrowthPercentiles(panel.data=sgpData,
 
 # Combine all results
 
-sgp_all <- rbind(sgp_g4$SGPercentiles,
-                 sgp_g5$SGPercentiles,
-                 sgp_g6$SGPercentiles,
-                 sgp_g7$SGPercentiles,
-                 sgp_g8$SGPercentiles)
+sgp_all <- rbind(sgp_g4$SGPercentiles$READING.2010,
+                 sgp_g5$SGPercentiles$READING.2010,
+                 sgp_g6$SGPercentiles$READING.2010,
+                 sgp_g7$SGPercentiles$READING.2010,
+                 sgp_g8$SGPercentiles$READING.2010)
 
 # Save SGP results to .csv file
 
@@ -249,14 +249,15 @@ for (i in seq_along(my.grade.sequences)) {
 		grade.progression=my.grade.sequences[[i]])
 }
 
-## Loop to calculate all SGPs for all grades WITH 90% confidence intervals 
+
+## Loop to calculate all SGPs for all grades WITH 80% confidence intervals 
 
 my.grade.sequences <- list(3:4, 3:5, 3:6, 4:7, 5:8)
 
 for (i in seq_along(my.grade.sequences)) {
 	my.sgpData <- studentGrowthPercentiles(panel.data=my.sgpData,
 		sgp.labels=list(my.year=2010, my.subject="Reading"),
-                calculate.confidence.intervals=list(state="CO", confidence.quantiles=c(0.05, 0.95), simulation.iterations=5, distribution="Normal", round=1),
+                calculate.confidence.intervals=list(state="CO", confidence.quantiles=c(0.1, 0.9), simulation.iterations=100, distribution="Normal", round=1),
 		grade.progression=my.grade.sequences[[i]])
 }
 }

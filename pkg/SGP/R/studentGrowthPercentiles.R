@@ -288,7 +288,7 @@ function(panel.data,           ## REQUIRED
 			stop("Please specify an appropriate list of SGP function labels (sgp.labels). See help page for details.")
 	}}
 	if (!identical(names(sgp.labels), c("my.year", "my.subject")) &
-		!identical(names(sgp.labels), c("my.year", "my.subject", "my.grade"))) {
+		!identical(names(sgp.labels), c("my.year", "my.subject", "my.extra.label"))) {
 		stop("Please specify an appropriate list for sgp.labels. See help page for details.")
 	}
 	sgp.labels <- lapply(sgp.labels, toupper)
@@ -303,7 +303,7 @@ function(panel.data,           ## REQUIRED
 				stop("use.my.knots.boundaries is only appropriate when panel data is of class list or SGP. See help page for details.")
 			}
 			if (!identical(names(use.my.knots.boundaries), c("my.year", "my.subject")) & 
-				!identical(names(use.my.knots.boundaries), c("my.year", "my.subject", "my.grade"))) {
+				!identical(names(use.my.knots.boundaries), c("my.year", "my.subject", "my.extra.label"))) {
 					stop("Please specify an appropriate list for use.my.knots.boundaries. See help page for details.")
 			}
 			tmp.path.knots.boundaries <- .create.path(use.my.knots.boundaries)
@@ -329,7 +329,7 @@ function(panel.data,           ## REQUIRED
 			stop("Please specify an appropriate list for use.my.coefficient.matrices. See help page for details.")
 		}
 		if (!identical(names(use.my.coefficient.matrices), c("my.year", "my.subject")) & 
-			!identical(names(use.my.coefficient.matrices), c("my.year", "my.subject", "my.grade"))) {
+			!identical(names(use.my.coefficient.matrices), c("my.year", "my.subject", "my.extra.label"))) {
 				stop("Please specify an appropriate list for use.my.coefficient.matrices. See help page for details.")
 		}
 		tmp.path.coefficient.matrices <- .create.path(use.my.coefficient.matrices)
@@ -498,11 +498,11 @@ function(panel.data,           ## REQUIRED
 					if (k==1) {
 						tmp.csem.quantiles[[j]] <- data.frame(ID=tmp.data$ID,
 						Sim_SGP_1=.get.quantiles(tmp.predictions, .csem.score.simulator(tmp.data[[tail(SS,1)]],
-								tmp.last,
-								sgp.labels$my.subject,
-								calculate.confidence.intervals$state,
-								calculate.confidence.intervals$distribution,
-								calculate.confidence.intervals$round)))
+							tmp.last,
+							sgp.labels$my.subject,
+							calculate.confidence.intervals$state,
+							calculate.confidence.intervals$distribution,
+							calculate.confidence.intervals$round)))
 					} else {
 						tmp.csem.quantiles[[j]] <- cbind(tmp.csem.quantiles[[j]], 
 							.get.quantiles(tmp.predictions, .csem.score.simulator(tmp.data[[tail(SS,1)]],

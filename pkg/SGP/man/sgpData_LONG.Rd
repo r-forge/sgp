@@ -25,7 +25,7 @@ across years with the results being used to produce a variety of high quality vi
     \item{\code{ETHNICITY}}{Student ethnicity}
     \item{\code{GENDER}}{Student gender}
     \item{\code{OCTOBER_ENROLLMENT_STATUS}}{Indicator student enrollment status as of October 1st of academic year}
-    \item{\code{SCHOOL_NUMBER}}{School number associated wth student record}
+    \item{\code{SCHOOL_NUMBER}}{School number associated with student record}
     \item{\code{SCHOOL_NAME}}{School name associated with school number and student record}
     \item{\code{EMH_LEVEL}}{Elementary, Middle, High school indicator for school attended}
   }
