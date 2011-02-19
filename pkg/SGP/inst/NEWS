@@ -1,6 +1,9 @@
 Changes in version: SGP_0.0-6.9
 
-  o Fixed bugs and uddated examples.
+  o Added additional argument to studentGrowthPercentiles, growth.levels, allowing user to get a variable indicating the level of growth based upon state or user specified cuts and labels.
+  o Changed my.grade argument in sgp.labels to my.extra.label to better reflect nature of argument. This argument is now available in use.my.knots.boundaries and use.my.coefficient.matrices in both the studentGrowthPercentiles and studentGrowthProjections functions.
+  o Changed compression on stateData file to xz.
+  o Fixed bugs and updated documentation/examples.
 
 Changes in version: SGP_0.0-6.8
 

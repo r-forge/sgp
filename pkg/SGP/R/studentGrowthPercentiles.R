@@ -1,26 +1,27 @@
 `studentGrowthPercentiles` <-
 function(panel.data,           ## REQUIRED
-        sgp.labels,            ## REQUIRED
-        panel.data.vnames,
-        grade.progression,
-        num.prior,
-        subset.grade,
-        percentile.cuts,
-        use.my.knots.boundaries,
-        use.my.coefficient.matrices,
-        calculate.confidence.intervals, 
-        print.other.gp=FALSE,
-        print.sgp.order=FALSE, 
-        calculate.sgps=TRUE, 
-        rq.method="br",
-        knot.cut.percentiles=c(0.2,0.4,0.6,0.8),
-        exact.grade.progression.sequence=FALSE,
-        convert.0and100=TRUE,
-        sgp.quantiles="Percentiles",
-        percuts.digits=0,
-        isotonize=TRUE,
-        convert.using.loss.hoss=TRUE,
-        goodness.of.fit=TRUE) {
+	sgp.labels,            ## REQUIRED
+	panel.data.vnames,
+	grade.progression,
+	num.prior,
+	subset.grade,
+	percentile.cuts,
+	growth.levels, 
+	use.my.knots.boundaries,
+	use.my.coefficient.matrices,
+	calculate.confidence.intervals,
+	print.other.gp=FALSE,
+	print.sgp.order=FALSE, 
+	calculate.sgps=TRUE, 
+	rq.method="br",
+	knot.cut.percentiles=c(0.2,0.4,0.6,0.8),
+	exact.grade.progression.sequence=FALSE,
+	convert.0and100=TRUE,
+	sgp.quantiles="Percentiles",
+	percuts.digits=0,
+	isotonize=TRUE,
+	convert.using.loss.hoss=TRUE,
+	goodness.of.fit=TRUE) {
 
 	##########################################################
 	###
@@ -294,6 +295,26 @@ function(panel.data,           ## REQUIRED
 	sgp.labels <- lapply(sgp.labels, toupper)
 	tmp.path <- .create.path(sgp.labels)
 
+	if (!missing(growth.levels)) {
+		tmp.growth.levels <- list()
+		if (!is.list(growth.levels) & !is.character(growth.levels)) {
+			stop("growth.levels must be supplied as a list or character abbreviation. See help page for details.")
+		}
+		if (is.list(growth.levels)) {
+			if (!identical(names(growth.levels), c("my.cuts", "my.levels"))) {
+				stop("Please specify an appropriate list for growth.levels. See help page for details.")
+			} else {
+				tmp.growth.levels <- growth.levels
+			} 
+		}
+		if (is.character(growth.levels)) {
+			if (!growth.levels %in% names(stateData)) {
+				stop("Growth Level are currently not specified for the state indicated. Please contact the SGP package administrator to have your state's data included in the package")
+		}
+			tmp.growth.levels$my.cuts <- stateData[[growth.levels]][["Growth"]][["Cutscores"]][["Cuts"]]
+			tmp.growth.levels$my.levels <- stateData[[growth.levels]][["Growth"]][["Levels"]]
+		}
+	}
 	if (!missing(use.my.knots.boundaries)) {
 		if (!is.list(use.my.knots.boundaries) & !is.character(use.my.knots.boundaries)) {
 			stop("use.my.knots.boundaries must be supplied as a list or character abbreviation. See help page for details.")
@@ -317,9 +338,9 @@ function(panel.data,           ## REQUIRED
 		}
      		tmp.path.knots.boundaries <- tmp.path    
 		}
-		} else {
-     			tmp.path.knots.boundaries <- tmp.path
-		}
+	} else {
+     		tmp.path.knots.boundaries <- tmp.path
+	}
 
 	if (!missing(use.my.coefficient.matrices)) {
 		if (!(class(panel.data) %in% c("list", "SGP"))) {
@@ -491,7 +512,7 @@ function(panel.data,           ## REQUIRED
 		for (j in seq_along(orders)) {
 			tmp.data <- .get.panel.data(ss.data, orders[j], by.grade)
 			tmp.predictions <- .get.percentile.predictions(tmp.data)
-			tmp.quantiles[[j]] <- data.table(ID=tmp.data$ID, ORDER=j, SGP=.get.quantiles(tmp.predictions, unlist(tmp.data[,tail(SS,1), with=FALSE])))
+			tmp.quantiles[[j]] <- data.table(ID=tmp.data$ID, ORDER=j, SGP=.get.quantiles(tmp.predictions, tmp.data[[tail(SS,1)]]))
 			if (!missing(calculate.confidence.intervals)) {
 				for (k in seq(calculate.confidence.intervals$simulation.iterations)) { 
 					set.seed(k)
@@ -531,8 +552,13 @@ function(panel.data,           ## REQUIRED
 			if (print.sgp.order) {
 				quantile.data <- quantile.data[c(which(!duplicated(quantile.data))[-1]-1, nrow(quantile.data))]
 			} else {
-				quantile.data <- quantile.data[c(which(!duplicated(quantile.data))[-1]-1, nrow(quantile.data)) ,c("ID", "SGP"), with=FALSE]
+				quantile.data <- quantile.data[c(which(!duplicated(quantile.data))[-1]-1, nrow(quantile.data)), c("ID", "SGP"), with=FALSE]
 			}
+		}
+
+		if (!missing(growth.levels)) {
+			quantile.data <- data.table(quantile.data, SGP_LEVEL=factor(findInterval(quantile.data$SGP, tmp.growth.levels$my.cuts), 
+				labels=tmp.growth.levels$my.levels))
 		}
 
 		if (!missing(calculate.confidence.intervals)) {
