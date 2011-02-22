@@ -17,10 +17,10 @@ studentGrowthProjections(panel.data,
                          performance.level.cutscores, 
                          chunk.size=5000,          
                          convert.0and100=TRUE,    
-                         projection.unit="YEAR",       
+                         projection.unit="GRADE",       
                          percentile.trajectory.values=1:99, 
                          isotonize=TRUE,     
-                         projcuts.digits=2)
+                         projcuts.digits=0)
 }
 
 \arguments{
@@ -76,8 +76,8 @@ studentGrowthProjections(panel.data,
   \item{convert.0and100}{Boolean argument (defaults to TRUE) indicating whether conversion of growth percentiles of 0 and 100 to growth percentiles
     of 1 and 99, respectively, occurs. The default produces growth percentiles ranging from 1 to 99.
   }
-  \item{projection.unit}{Argument specifying the units in which the projections/trajectories and cuts are reported. Either \code{"YEAR"}, the default, or 
-  \code{"GRADE"}.
+  \item{projection.unit}{Argument specifying the units in which the projections/trajectories and cuts are reported. Either \code{"GRADE"}, the default, or 
+  \code{"YEAR"}.
   }       
   \item{percentile.trajectory.values}{Returns a vector of percentile trajectories (defaults to 1 to 99) associated with percentile growth projections/trajectories
   produced, in addition to the percentiles sufficient to reach the performance thresholds. If no percentile trajectories are desired, set 
@@ -86,7 +86,7 @@ studentGrowthProjections(panel.data,
   \item{isotonize}{Boolean argument (defaults to TRUE) indicating whether quantile regression results are isotonized to prevent quantile crossing following 
   the methods derived by Dette & Volgushev (2008).
   }
-  \item{projcuts.digits}{The number of digits (defaults to 2) percentile trajectories (if requested) are formatted.
+  \item{projcuts.digits}{The number of digits (defaults to 0) percentile trajectories (if requested) are formatted.
   }
 }
 
@@ -130,7 +130,7 @@ for (i in seq_along(my.grade.sequences)) {
 
 ## Calculate Growth Projections
 
-my.grade.progressions <- list(3, 3:4, 3:5, 3:6, 3:7)
+my.grade.progressions <- list(3, 3:4, 3:5, 3:6, 4:7)
 
 for (i in seq_along(my.grade.progressions)) {
      my.sgpData <- studentGrowthProjections(panel.data=my.sgpData,

@@ -10,10 +10,10 @@ function(panel.data,	## REQUIRED
 	performance.level.cutscores,
 	chunk.size=5000,
 	convert.0and100=TRUE,
-	projection.unit="YEAR",
+	projection.unit="GRADE",
 	percentile.trajectory.values=1:99,
 	isotonize=TRUE,
-	projcuts.digits=2) {
+	projcuts.digits=0) {
 
 	##########################################################
 	###
@@ -158,9 +158,9 @@ function(panel.data,	## REQUIRED
 			tmp.traj <- reshape(data.table(tmp.traj, CUT=rep(percentile.trajectory.values, dim(tmp.traj)[1]/length(percentile.trajectory.values))), 
 				idvar="ID", timevar="CUT", direction="wide")
 			if (projection.unit=="GRADE") {
-				names(tmp.traj) <- c("ID", do.call(paste, c(expand.grid("P", percentile.trajectory.values, "_PROJ_SS", grade.projection.sequence), sep="")))
+				names(tmp.traj) <- c("ID", do.call(paste, c(expand.grid("P", percentile.trajectory.values, "_PROJ_GRADE_", grade.projection.sequence), sep="")))
 			} else {
-				names(tmp.traj) <- c("ID", do.call(paste, c(expand.grid("P", percentile.trajectory.values, "_PROJ_YEAR", seq_along(grade.projection.sequence)), sep="")))
+				names(tmp.traj) <- c("ID", do.call(paste, c(expand.grid("P", percentile.trajectory.values, "_PROJ_YEAR_", seq_along(grade.projection.sequence)), sep="")))
 			}
 			key(tmp.traj) <- "ID"
 			if (!cuts.tf) return(tmp.traj)
@@ -177,9 +177,9 @@ function(panel.data,	## REQUIRED
 					tmp <- tmp.cutscores[[paste("GRADE_", grade.projection.sequence[i], sep="")]][j]
 					cuts.arg[k] <- paste(".sgp.targets(SS", grade.projection.sequence[i], ", ", tmp, ", ", convert.0and100, ")", sep="")
 					if (projection.unit=="GRADE") {
-						names.arg[k] <- paste("LEVEL_", j, "_TARGET_SS", grade.projection.sequence[i], sep="")
+						names.arg[k] <- paste("LEVEL_", j, "SGP_TARGET_GRADE_", grade.projection.sequence[i], sep="")
 					} else {
-						names.arg[k] <- paste("LEVEL_", j, "_TARGET_YEAR", i, sep="")
+						names.arg[k] <- paste("LEVEL_", j, "SGP_TARGET_YEAR_", i, sep="")
 					}
 					k <- k+1
 				}
@@ -224,7 +224,7 @@ function(panel.data,	## REQUIRED
 			stop("Please specify an appropriate list of SGP function labels (sgp.labels). See help page for details.")
 		}
 		if (!identical(names(sgp.labels), c("my.year", "my.subject")) & 
-			!identical(names(sgp.labels), c("my.year", "my.subject", "my.grade"))) {
+			!identical(names(sgp.labels), c("my.year", "my.subject", "my.extra.label"))) {
 			stop("Please specify an appropriate list for sgp.labels. See help page for details.")
 			}
 			tmp.path <- .create.path(sgp.labels)
@@ -239,7 +239,7 @@ function(panel.data,	## REQUIRED
 			stop("Please specify an appropriate list for use.my.knots.boundaries. See help page for details.")
 		}
 		if (!identical(names(use.my.knots.boundaries), c("my.year", "my.subject")) &
-			!identical(names(use.my.knots.boundaries), c("my.year", "my.subject", "my.grade"))) {
+			!identical(names(use.my.knots.boundaries), c("my.year", "my.subject", "my.extra.label"))) {
 			stop("Please specify an appropriate list for use.my.knots.boundaries. See help page for details.")
 			}
 			tmp.path.knots.boundaries <- .create.path(use.my.knots.boundaries)
@@ -254,7 +254,7 @@ function(panel.data,	## REQUIRED
 			stop("Please specify an appropriate list for use.my.coefficient.matrices. See help page for details.")
 		}
 		if (!identical(names(use.my.coefficient.matrices), c("my.year", "my.subject")) |
-			!identical(names(use.my.coefficient.matrices), c("my.year", "my.subject", "my.grade"))) {
+			!identical(names(use.my.coefficient.matrices), c("my.year", "my.subject", "my.extra.label"))) {
 			stop("Please specify an appropriate list for use.my.coefficient.matrices. See help page for details.")
 			}
 			tmp.path.coefficient.matrices <- .create.path(use.my.coefficient.matrices)

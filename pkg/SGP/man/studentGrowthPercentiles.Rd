@@ -14,7 +14,8 @@ studentGrowthPercentiles(panel.data,
                          grade.progression,                               
                          num.prior,                                         
                          subset.grade,                                     
-                         percentile.cuts,                                
+                         percentile.cuts,
+			 growth.levels,
                          use.my.knots.boundaries,                       
                          use.my.coefficient.matrices,                 
                          calculate.confidence.intervals,
@@ -61,7 +62,11 @@ studentGrowthPercentiles(panel.data,
   \item{percentile.cuts}{Additional percentile cuts (supplied as a vector) between 1 and 99 associated with each student's conditional distribution. 
    Default is to provide NO growth percentile cuts (scale scores associated with those growth percentiles) for each student.
   }
-  \item{use.my.knots.boundaries}{A list of the form  \code{list(my.year= , my.subject= )} vector specifying a set of pre-calculated
+  \item{growth.levels}{A two letter state acronym or a list of the form \code{list(my.cuts= , my.levels= )} specifying a vector of cuts between 1 and 99 (e.g., 35, 65)
+   and the associated qualitative levels associated with the cuts (e.g., low, typical, and high). Note that the length of my.levels should be one more than the
+   length of my.cuts. To add your growth levels to the \code{stateData} data sest, please contact the package administrator.
+  }
+  \item{use.my.knots.boundaries}{A list of the form  \code{list(my.year= , my.subject= )} specifying a set of pre-calculated
    knots and boundaries for B-spline calculations. Most often used to utilize knots and boundaries calculated from a previous analysis. Knots and boundaries are stored
    (and must be made available) with  \code{panel.data} supplied as a list in \code{panel.data$Knots_Boundaries$my.year.my.subject}. As of SGP_0.0-6 user can also supply 
    a two letter state acronym to utilize knots and boundaries within the \code{stateData} data set supplied with the SGP package. To add your knots and boundaries to the
@@ -154,14 +159,14 @@ identical(sgp_g4$SGPercentiles, sgp_g4_v2$SGPercentiles)
 ## Established state Knots and Boundaries are available in the supplied stateData
 ## file and used by supplying the appropriate two letter state acronym.
  
-sgp_g4_CO <- studentGrowthPercentiles(panel.data=sgpData,
+sgp_g4_DEMO <- studentGrowthPercentiles(panel.data=sgpData,
                    sgp.labels=list(my.year=2010, my.subject="Reading"),
-                   use.my.knots.boundaries="CO",
+                   use.my.knots.boundaries="DEMO",
                    grade.progression=c(3,4))
 
 \dontrun{
 ## NOTE: Goodness of Fit results are stored as a graphical object in the
-## Goodness_of_Fit slot. To view or save (using any R output device) try:
+## Goodness_of_Fit slot. To view or save (using any R ouput device) try:
 
 grid.draw(sgp_g4$Goodness_of_Fit$READING.2010$GRADE_4)
 
@@ -211,7 +216,7 @@ write.csv(sgp_all, file="sgp_all.csv", row.names=FALSE, quote=FALSE, na="")
 ## NOTE: studentGrowthPercentiles ADDs results to the current SGP object.
 ## This allows one to "recycle" the object for multiple grades and subjects as desired. 
 
-# Loop to calculate all SGPs for all grades without percentile cuts
+# Loop to calculate all SGPs for all grades without percentile cuts but with growth levels
 
 my.grade.sequences <- list(3:4, 3:5, 3:6, 3:7, 4:8)
 my.sgpData <- list(Panel_Data=sgpData)   ### Put sgpData into Panel_Data slot
@@ -219,6 +224,7 @@ my.sgpData <- list(Panel_Data=sgpData)   ### Put sgpData into Panel_Data slot
 for (i in seq_along(my.grade.sequences)) {
      my.sgpData <- studentGrowthPercentiles(panel.data=my.sgpData,
                      sgp.labels=list(my.year=2010, my.subject="Reading"),
+                     growth.levels="DEMO",
                      grade.progression=my.grade.sequences[[i]])
 }
 
@@ -257,7 +263,7 @@ my.grade.sequences <- list(3:4, 3:5, 3:6, 4:7, 5:8)
 for (i in seq_along(my.grade.sequences)) {
 	my.sgpData <- studentGrowthPercentiles(panel.data=my.sgpData,
 		sgp.labels=list(my.year=2010, my.subject="Reading"),
-                calculate.confidence.intervals=list(state="CO", confidence.quantiles=c(0.1, 0.9), simulation.iterations=100, distribution="Normal", round=1),
+                calculate.confidence.intervals=list(state="DEMO", confidence.quantiles=c(0.1, 0.9), simulation.iterations=100, distribution="Normal", round=1),
 		grade.progression=my.grade.sequences[[i]])
 }
 }
