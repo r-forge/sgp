@@ -148,5 +148,5 @@ file= "2010_Reading_SGProjections.csv", row.names=FALSE, quote=FALSE)
 }  
 }
 
-\keyword{ misc }
-\keyword{ models }
+\keyword{misc}
+\keyword{models}

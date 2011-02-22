@@ -269,5 +269,5 @@ for (i in seq_along(my.grade.sequences)) {
 }
 }
 
-\keyword{ misc }
-\keyword{ models }
+\keyword{misc}
+\keyword{models}
