@@ -244,7 +244,7 @@ for (i in names(my.sgpData$Goodness_of_Fit$READING.2010)) {
 
 ## Loop to calculate all SGPs for all grades using 2006 to 2009 data 
 
-my.grade.sequences <- list(3:4, 3:5, 3:6, 4:7, 5:8)
+my.grade.sequences <- list(3:4, 3:5, 3:6, 3:7, 4:8)
 
 for (i in seq_along(my.grade.sequences)) {
 	my.sgpData_2009 <- studentGrowthPercentiles(panel.data=my.sgpData,
@@ -258,7 +258,7 @@ for (i in seq_along(my.grade.sequences)) {
 
 ## Loop to calculate all SGPs for all grades WITH 80% confidence intervals 
 
-my.grade.sequences <- list(3:4, 3:5, 3:6, 4:7, 5:8)
+my.grade.sequences <- list(3:4, 3:5, 3:6, 3:7, 4:8)
 
 for (i in seq_along(my.grade.sequences)) {
 	my.sgpData <- studentGrowthPercentiles(panel.data=my.sgpData,

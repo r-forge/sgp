@@ -6,6 +6,8 @@ Changes in version: SGP_0.0-6.9
   o Changed compression on stateData file to xz.
   o Changed default values of projection.unit and projcut.digits in studentGrowthProjections to GRADE and 0, respectively.
   o Added wrapper functions prepareSGP, analyzeSGP, combineSGP, and summarizeSGP to facilitate operational SGP analyses.
+  o use.my.knots.boundaries with studentGrowthProjections now allows state to be supplied.
+  o Added time elapsed to studentGrowthPercentiles and studentGrowthProjections print out.
   o Fixed bugs and updated documentation/examples.
 
 Changes in version: SGP_0.0-6.8

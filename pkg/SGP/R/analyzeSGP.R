@@ -9,12 +9,6 @@ function(sgp_object=sgpData_LONG,
 	sgp.projections.lagged=TRUE,
 	sgp.config) {
 
-	## Test for proper arguments (needs more)
-
-	if (missing(sgp_object)) {
-		stop("User must supply a list containing a Student slot with long data. See documentation for details.")
-	}
-
 	## Function to return sgp.config based upon a supplied year and content_area
 
 	.get.config <- function(content_area, year, grades) {
@@ -92,6 +86,8 @@ function(sgp_object=sgpData_LONG,
 				for (k in lapply(sgp.iter$sgp.grade.sequences, function(x) head(x, -1))) {
 					sgp_object[["SGP"]] <- studentGrowthProjections(panel.data=sgp_object[["SGP"]],
 						sgp.labels=list(my.year=tail(sgp.iter$sgp.panel.years, 1), my.subject=tail(sgp.iter$sgp.content.areas, 1)),
+						use.my.coefficient.matrices=list(my.year=tail(sgp.iter$sgp.panel.years, 1), my.subject=tail(sgp.iter$sgp.content.areas, 1)), 
+						use.my.knots.boundaries=list(my.year=tail(sgp.iter$sgp.panel.years, 1), my.subject=tail(sgp.iter$sgp.content.areas, 1)), 
 						performance.level.cutscores=state,
 						percentile.trajectory.values=c(35, 50, 65),
 						panel.data.vnames=sgp.vnames,
@@ -106,6 +102,8 @@ function(sgp_object=sgpData_LONG,
 					sgp_object[["SGP"]] <- studentGrowthProjections(panel.data=sgp_object[["SGP"]],
 						sgp.labels=list(my.year=tail(sgp.iter$sgp.panel.years, 1), my.subject=tail(sgp.iter$sgp.content.areas, 1), 
 							my.extra.label="LAGGED"),
+						use.my.coefficient.matrices=list(my.year=tail(sgp.iter$sgp.panel.years, 1), my.subject=tail(sgp.iter$sgp.content.areas, 1)), 
+						use.my.knots.boundaries=list(my.year=tail(sgp.iter$sgp.panel.years, 1), my.subject=tail(sgp.iter$sgp.content.areas, 1)), 
 						performance.level.cutscores=state,
 						percentile.trajectory.values=c(35, 50, 65),
 						panel.data.vnames=sgp.vnames,

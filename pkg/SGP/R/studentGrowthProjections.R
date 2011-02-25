@@ -15,6 +15,8 @@ function(panel.data,	## REQUIRED
 	isotonize=TRUE,
 	projcuts.digits=0) {
 
+	started.at=proc.time()
+
 	##########################################################
 	###
 	### Utility functions
@@ -235,25 +237,37 @@ function(panel.data,	## REQUIRED
 	}
 
 	if (!missing(use.my.knots.boundaries)) {
-		if (!is.list(use.my.knots.boundaries)) {
-			stop("Please specify an appropriate list for use.my.knots.boundaries. See help page for details.")
+		if (!is.list(use.my.knots.boundaries) & !is.character(use.my.knots.boundaries)) {
+			stop("use.my.knots.boundaries must be supplied as a list or character abbreviation. See help page for details.")
 		}
-		if (!identical(names(use.my.knots.boundaries), c("my.year", "my.subject")) &
-			!identical(names(use.my.knots.boundaries), c("my.year", "my.subject", "my.extra.label"))) {
-			stop("Please specify an appropriate list for use.my.knots.boundaries. See help page for details.")
+		if (is.list(use.my.knots.boundaries)) {
+			if (!(class(panel.data) %in% c("list", "SGP"))) {
+				stop("use.my.knots.boundaries is only appropriate when panel data is of class list or SGP. See help page for details.")
+			}
+			if (!identical(names(use.my.knots.boundaries), c("my.year", "my.subject")) & 
+				!identical(names(use.my.knots.boundaries), c("my.year", "my.subject", "my.extra.label"))) {
+					stop("Please specify an appropriate list for use.my.knots.boundaries. See help page for details.")
 			}
 			tmp.path.knots.boundaries <- .create.path(use.my.knots.boundaries)
-			if (is.null(panel.data$Knots_Boundaries) | is.null(panel.data$Knots_Boundaries[[tmp.path.knots.boundaries]])) {
-				stop("Knots and Boundaries indicated by argument use.my.knots.boundaries are not included.")
-		}} else {
-			tmp.path.knots.boundaries <- tmp.path
+			if (is.null(panel.data[["Knots_Boundaries"]]) | is.null(panel.data[["Knots_Boundaries"]][[tmp.path.knots.boundaries]])) {
+				stop("Knots and Boundaries indicated by use.my.knots.boundaries are not included.")
+			}
 		}
+			if (is.character(use.my.knots.boundaries)) {
+				if (!use.my.knots.boundaries %in% names(stateData)) {
+					stop("Knots and Boundaries are currently not implemented for the state indicated. Please contact the SGP package administrator to have your Knots and Boundaries included in the package")
+		}
+     		tmp.path.knots.boundaries <- tmp.path    
+		}
+	} else {
+     		tmp.path.knots.boundaries <- tmp.path
+	}
 
 	if (!missing(use.my.coefficient.matrices)) {
 		if (!is.list(use.my.coefficient.matrices)) {
 			stop("Please specify an appropriate list for use.my.coefficient.matrices. See help page for details.")
 		}
-		if (!identical(names(use.my.coefficient.matrices), c("my.year", "my.subject")) |
+		if (!identical(names(use.my.coefficient.matrices), c("my.year", "my.subject")) &
 			!identical(names(use.my.coefficient.matrices), c("my.year", "my.subject", "my.extra.label"))) {
 			stop("Please specify an appropriate list for use.my.coefficient.matrices. See help page for details.")
 			}
@@ -373,14 +387,15 @@ function(panel.data,	## REQUIRED
 
 	### Announce Completion & Return SGP Object
 
-	print(paste("Finished Growth Projection Analysis ", date(), ". Subject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), sep="")) 
+	message(paste("Finished SGP Student Growth Projection/Trajectory Analysis ", date(), " in ", timetaken(started.at), ".\nSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep="")) 
 
-	list(Coefficient_Matrices=panel.data$Coefficient_Matrices,
+	list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
 		Cutscores=Cutscores,
-		Goodness_of_Fit=panel.data$Goodness_of_Fit, 
-		Knots_Boundaries=panel.data$Knots_Boundaries, 
-		Panel_Data=panel.data$Panel_Data,
-		SGPercentiles=panel.data$SGPercentiles,
-		SGProjections=SGProjections)
+		Goodness_of_Fit=panel.data[["Goodness_of_Fit"]], 
+		Knots_Boundaries=panel.data[["Knots_Boundaries"]], 
+		Panel_Data=panel.data[["Panel_Data"]],
+		SGPercentiles=panel.data[["SGPercentiles"]],
+		SGProjections=SGProjections,
+		Simulated_SGPs=panel.data[["Simulated_SGPs"]])
 
 } ## END studentGrowthProjections Function

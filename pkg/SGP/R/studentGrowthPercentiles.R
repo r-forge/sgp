@@ -23,6 +23,8 @@ function(panel.data,           ## REQUIRED
 	convert.using.loss.hoss=TRUE,
 	goodness.of.fit=TRUE) {
 
+	started.at=proc.time()
+
 	##########################################################
 	###
 	### Internal utility functions
@@ -518,7 +520,7 @@ function(panel.data,           ## REQUIRED
 					set.seed(k)
 					if (k==1) {
 						tmp.csem.quantiles[[j]] <- data.frame(ID=tmp.data$ID,
-						Sim_SGP_1=.get.quantiles(tmp.predictions, .csem.score.simulator(tmp.data[[tail(SS,1)]],
+						SGP_SIM_1=.get.quantiles(tmp.predictions, .csem.score.simulator(tmp.data[[tail(SS,1)]],
 							tmp.last,
 							sgp.labels$my.subject,
 							calculate.confidence.intervals$state,
@@ -532,7 +534,7 @@ function(panel.data,           ## REQUIRED
 								calculate.confidence.intervals$state,
 								calculate.confidence.intervals$distribution,
 								calculate.confidence.intervals$round)))
-								names(tmp.csem.quantiles[[j]])[k+1]<-paste("Sim_SGP_", k, sep="")
+								names(tmp.csem.quantiles[[j]])[k+1]<-paste("SGP_SIM", k, sep="_")
 					}
 				} ## END k loop
 			} ## END CSEM analysis
@@ -588,13 +590,15 @@ function(panel.data,           ## REQUIRED
 
 	### Announce Completion & Return SGP Object
 
-	print(paste("Finished SGP Analysis ", date(), ". Subject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(tmp.gp, collapse=", "), sep="")) 
+	message(paste("Finished SGP Student Growth Percentile Analysis ", date(), " in ", timetaken(started.at), ".\nSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(tmp.gp, collapse=", "), " ", sgp.labels$my.extra.label, sep="")) 
 
-	list(Coefficient_Matrices=Coefficient_Matrices, 
+	list(Coefficient_Matrices=Coefficient_Matrices,
+		Cutscores=panel.data[["Cutscores"]], 
 		Goodness_of_Fit=Goodness_of_Fit, 
 		Knots_Boundaries=Knots_Boundaries,
 		Panel_Data=Panel_Data, 
 		SGPercentiles=SGPercentiles,
+		SGProjections=panel.data[["SGProjections"]],
 		Simulated_SGPs=Simulated_SGPs)
 
 } ## END studentGrowthPercentile Function

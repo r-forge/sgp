@@ -43,9 +43,10 @@ studentGrowthProjections(panel.data,
   If missing, the function utilizes the highest matrix order available. 
   }
   \item{use.my.knots.boundaries}{A list of the form  \code{list(my.year= , my.subject= )} specifying the set of pre-calculated
-   knots and boundaries for B-spline calculations. Knot and boundaries are stored (and must be made available) with \code{panel.data} supplied as a list in \code{panel.data$Knots_Boundaries$my.year.my.subject}. If missing, function tries to retrieve knots and boundaries from \cr
-   \code{panel.data$Knots_Boundaries$my.year.my.subject} where \cr
-   \code{my.year} and \code{my.subject} are provided by \code{sgp.labels}.  
+   knots and boundaries for B-spline calculations. Knot and boundaries are stored (and must be made available) with \code{panel.data} supplied as a 
+  list in \code{panel.data$Knots_Boundaries$my.year.my.subject}. As of SGP_0.0-6.9 user can also supply a two letter state acronym to utilize knots and boundaries 
+  within the \code{stateData} data set supplied with the SGP package. If missing, function tries to retrieve knots and boundaries from \cr
+   \code{panel.data$Knots_Boundaries$my.year.my.subject} where \cr \code{my.year} and \code{my.subject} are provided by \code{sgp.labels}.  
   }
   \item{use.my.coefficient.matrices}{A list of the form \code{list(my.year= , my.subject= )} specifying the set of pre-calculated
    coefficient matrices to use for percentile growth projection/trajectory calculations. Coefficient matrices are stores (and must be available) with \code{panel.data}
