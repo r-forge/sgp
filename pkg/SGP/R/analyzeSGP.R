@@ -1,14 +1,14 @@
 `analyzeSGP` <- 
 function(sgp_object=sgpData_LONG,
+	state="DEMO",
 	years,
 	content_areas,
 	grades,
-	state="DEMO",
+	sgp.config,
 	sgp.percentiles=TRUE, 
 	sgp.projections=TRUE,
 	sgp.projections.lagged=TRUE,
-	sgp.config) {
-
+	simulate.sgps=FALSE) {
 	## Function to return sgp.config based upon a supplied year and content_area
 
 	.get.config <- function(content_area, year, grades) {
@@ -54,7 +54,6 @@ function(sgp_object=sgpData_LONG,
 			}
 		}
 	}
-	
 
 	## studentGrowthPercentiles & studentGrowthProjections
 
@@ -70,15 +69,29 @@ function(sgp_object=sgpData_LONG,
 			if (sgp.percentiles) {
 				sgp.vnames <- c("ID", paste("GRADE", sgp.iter$sgp.panel.years, sep="."), 
 					paste("SCALE_SCORE", sgp.iter$sgp.panel.years, sep="."))
+				if (simulate.sgps) {
+					for (k in sgp.iter$sgp.grade.sequences) {
+						sgp_object[["SGP"]] <- studentGrowthPercentiles(panel.data=sgp_object[["SGP"]],
+							sgp.labels=list(my.year=tail(sgp.iter$sgp.panel.years, 1), my.subject=tail(sgp.iter$sgp.content.areas, 1)),
+							use.my.knots.boundaries=state,
+							panel.data.vnames=sgp.vnames,
+							grade.progression=k,
+							calculate.confidence.intervals=list(state=state,  
+								confidence.quantiles=NULL,
+								simulation.iterations=100, 
+								distribution="Normal", round=1))
+					} ## END k loop
+				} else {
+					for (k in sgp.iter$sgp.grade.sequences) {
+						sgp_object[["SGP"]] <- studentGrowthPercentiles(panel.data=sgp_object[["SGP"]],
+							sgp.labels=list(my.year=tail(sgp.iter$sgp.panel.years, 1), my.subject=tail(sgp.iter$sgp.content.areas, 1)),
+							use.my.knots.boundaries=state,
+							panel.data.vnames=sgp.vnames,
+							grade.progression=k)
+					} ## END k loop
+				} 
+			} ## END sgp.percentiles
 
-				for (k in sgp.iter$sgp.grade.sequences) {
-					sgp_object[["SGP"]] <- studentGrowthPercentiles(panel.data=sgp_object[["SGP"]],
-						sgp.labels=list(my.year=tail(sgp.iter$sgp.panel.years, 1), my.subject=tail(sgp.iter$sgp.content.areas, 1)),
-						use.my.knots.boundaries=state,
-						panel.data.vnames=sgp.vnames,
-						grade.progression=k)
-				}
-			}
 			if (sgp.projections) {
 				sgp.vnames <- c("ID", paste("GRADE", sgp.iter$sgp.panel.years, sep="."), 
 					paste("SCALE_SCORE", sgp.iter$sgp.panel.years, sep="."))
@@ -93,7 +106,7 @@ function(sgp_object=sgpData_LONG,
 						panel.data.vnames=sgp.vnames,
 						grade.progression=k)
 				}
-			}
+			} ## END sgp.projections
 			if (sgp.projections.lagged) {
 				sgp.vnames <- c("ID", paste("GRADE", head(sgp.iter$sgp.panel.years, -1), sep="."), 
 					paste("SCALE_SCORE", head(sgp.iter$sgp.panel.years, -1), sep="."))
@@ -109,7 +122,7 @@ function(sgp_object=sgpData_LONG,
 						panel.data.vnames=sgp.vnames,
 						grade.progression=k)
 				}
-			}
+			} ## END sgp.projections.lagged
 		} ## END sgp.iter loop
 	} ## END if
 return(sgp_object)

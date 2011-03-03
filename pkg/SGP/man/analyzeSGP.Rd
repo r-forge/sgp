@@ -7,18 +7,21 @@
 
 \usage{
 analyzeSGP(sgp_object=sgpData_LONG,
+           state="DEMO",
            years,
            content_areas,
            grades,
-           state="DEMO",
+           sgp.config,
            sgp.percentiles=TRUE,
            sgp.projections=TRUE,
            sgp.projections.lagged=TRUE,
-           sgp.config) 
+           simulate.sgps=FALSE)
 }
 
 \arguments{
-  \item{sgp_object}{A list containing long formatted data in the \code{Student} (from \code{prepareSGP}) slot. 
+  \item{sgp_object}{A list containing long formatted data in the \code{Student} (from \code{\link{prepareSGP}}) slot. 
+  }
+  \item{state}{Acronym indicating state associated with the data for access to embedded knot and boundaries and cutscores.
   }
   \item{years}{A vector indicating years in which to produce student growth percentiles and/or student growth projections/trajectories. If left missing the 
 function will use the data to infer the years based upon the assumption of having at least three years of panel data for analyses.
@@ -29,17 +32,17 @@ If left missing the function will use the data to infer the content areas availa
   \item{grades}{A vector indicating grades for which to calculate student growth percentiles and/or student growth projections/trajectories. 
 If left missing the function will use the data to infer all the grade progressions for student growth percentile and student growth projections/trajectories analyses.
   }
-  \item{state}{Acronym indicating state associated with the district for access to embedded knot and boundaries and cutscores.
-  }
-  \item{sgp.percentiles}{Boolean variable indicating whether to calculate student growth percentiles. Defaults to TRUE.
-  }
-  \item{sgp.projections}{Boolean variable indicating whether to calcualte student growth projections. Defaults to TRUE.
-  }
-  \item{sgp.projections.lagged}{Boolean variable indicating whether to calculate lagged student growth projections often used for growth to standard analyses. Defaults to TRUE.
-  }
   \item{sgp.config}{If \code{years}, \code{content_areas}, and \code{grades} are missing, user can directly specify a list containing three vectors: \code{sgp.content.areas}, 
 \code{sgp.panel.years}, and \code{sgp.grade.sequences}. This advanced option is helpful for analysis of non-traditional grade progressions and other special cases. 
 See examples for use cases.
+  }
+  \item{sgp.percentiles}{Boolean variable indicating whether to calculate student growth percentiles. Defaults to TRUE.
+  }
+  \item{sgp.projections}{Boolean variable indicating whether to calculate student growth projections. Defaults to TRUE.
+  }
+  \item{sgp.projections.lagged}{Boolean variable indicating whether to calculate lagged student growth projections often used for growth to standard analyses. Defaults to TRUE.
+  }
+  \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM).  Test CSEM data must be available for simulation and included in \code{\link{stateData}}.  This argument must be set to TRUE for confidence interval construction. Defaults to FALSE.
   }
 }
 
@@ -57,6 +60,7 @@ See examples for use cases.
 DEMO_Data <- prepareSGP(sgpData_LONG)
 DEMO_Data <- analyzeSGP(DEMO_Data)
 DEMO_Data <- combineSGP(DEMO_Data)
+DEMO_Data <- summarizeSGP(DEMO_Data)
 }  
 }
 
