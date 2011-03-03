@@ -26,11 +26,11 @@ function(sgp_object,
 
 	## If missing years and content_areas then determine year(s), and content_area(s) for summaries
 	if (missing(content_areas)) {
-			content_areas <- unique(tmp_Data[["Student"]]["VALID_CASE"]$CONTENT_AREA)
+			content_areas <- unique(sgp_object[["Student"]]["VALID_CASE"]$CONTENT_AREA)
 		}
 	if (missing(years)) {
 		for (i in content_areas) {
-			years <- sort(tail(unique(tmp_Data[["Student"]][J("VALID_CASE", content_areas)]$YEAR), -2), decreasing=TRUE)
+			years <- sort(tail(unique(sgp_object[["Student"]][J("VALID_CASE", content_areas)]$YEAR), -2), decreasing=TRUE)
 		}
 	}
 
@@ -63,6 +63,7 @@ function(sgp_object,
 	}
 
 	sgpSummary <- function(sgp.groups.to.summarize, confidence.interval.groups.to.summarize) {
+		SGP_SIM <- V1 <- NULL  ## To prevent R CMD check warnings
 		ListExpr <- parse(text=paste("quote(as.list(c(",paste(unlist(sgp.summaries), collapse=", "),")))",sep=""))
 		ByExpr <- parse(text=paste("quote(list(", paste(sgp.groups.to.summarize, collapse=", "), "))", sep=""))
 		tmp <- tmp.dt[, eval(eval(ListExpr)), by=eval(eval(ByExpr))]
@@ -129,10 +130,12 @@ function(sgp_object,
 	}
 
 	if (is.null(confidence.interval.groups)) {
+		j  <- NULL ## To prevent R CMD check warnings
 		sgp_object[["Summary"]][[i]] <- foreach(i=iter(sgp.groups), j=iter(rep(FALSE, length(sgp.groups))), 
 			.options.multicore = mc.options, .packages="data.table", .inorder=FALSE) %dopar% {return(sgpSummary(i, j))}
 		names(sgp_object[["Summary"]][[i]]) <- gsub(", ", ".", sgp.groups)
 	} else {
+		j  <- NULL ## To prevent R CMD check warnings
 		sgp_object[["Summary"]][[i]] <- foreach(i=iter(sgp.groups), j=iter(sgp.groups %in% ci.groups), 
 			.options.multicore = mc.options, .packages="data.table", .inorder=FALSE) %dopar% {return(sgpSummary(i, j))}
 		names(sgp_object[["Summary"]][[i]]) <- gsub(", ", ".", sgp.groups)
