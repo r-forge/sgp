@@ -10,8 +10,8 @@ function(panel.data,	## REQUIRED
 	performance.level.cutscores,
 	chunk.size=5000,
 	convert.0and100=TRUE,
-	projection.unit="GRADE",
-	percentile.trajectory.values=1:99,
+	projection.unit="YEAR",
+	percentile.trajectory.values=NULL,
 	isotonize=TRUE,
 	projcuts.digits=0) {
 
