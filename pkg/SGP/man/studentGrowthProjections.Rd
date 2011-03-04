@@ -17,8 +17,8 @@ studentGrowthProjections(panel.data,
                          performance.level.cutscores, 
                          chunk.size=5000,          
                          convert.0and100=TRUE,    
-                         projection.unit="GRADE",       
-                         percentile.trajectory.values=1:99, 
+                         projection.unit="YEAR",       
+                         percentile.trajectory.values=NULL, 
                          isotonize=TRUE,     
                          projcuts.digits=0)
 }
@@ -82,7 +82,7 @@ studentGrowthProjections(panel.data,
   }       
   \item{percentile.trajectory.values}{Returns a vector of percentile trajectories (defaults to 1 to 99) associated with percentile growth projections/trajectories
   produced, in addition to the percentiles sufficient to reach the performance thresholds. If no percentile trajectories are desired, set 
-  \code{percentile.trajectory.values=NULL}. 
+  \code{percentile.trajectory.values=NULL}. Default is set to NULL and no percentile.trajectory.values are returned.
   }
   \item{isotonize}{Boolean argument (defaults to TRUE) indicating whether quantile regression results are isotonized to prevent quantile crossing following 
   the methods derived by Dette & Volgushev (2008).
