@@ -21,7 +21,7 @@ abcSGP(sgp_object=sgpData_LONG,
     sgp.summaries=list(MEDIAN_SGP="median_na(SGP)",
        MEDIAN_SGP_COUNT="num_non_missing(SGP)",
        PERCENT_AT_ABOVE_PROFICIENT=
-           "percent_in_category(ACHIEVEMENT_LEVEL, list(c(1,4)), list(1:5))",
+           "percent_in_category(ACHIEVEMENT_LEVEL, list(c(3,4)), list(1:5))",
        PERCENT_AT_ABOVE_PROFICIENT_COUNT=
            "num_non_missing(ACHIEVEMENT_LEVEL)"),
     summary.groups=list(institution=c("STATE", "SCHOOL_NUMBER"),
@@ -67,7 +67,7 @@ See examples for use cases.
   }
   \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM).  Test CSEM data must be available for simulation.  Must be set to TRUE for confidence interval construction. Defaults to TRUE in \code{abcSGP} only.
   }
-  \item{sgp.summaries}{A list giving the summaries requested for each group analyzed based upon the \code{summary.group} argument.
+  \item{sgp.summaries}{A list giving the summaries requested for each group analyzed based upon the \code{summary.group} argument.  See \code{summarizeSGP} for more details.
   }
   \item{summary.groups}{A list consisting of 5 types of groups across which all summaries are taken: \code{institution}, \code{content}, \code{time}, \code{institution_level},
 \code{demographic}, and \code{institution_inclusion}. Summaries generated in summarizeSGP are for all possible combinations of the 5 types of group. See documentation for \code{\link{summarizeSGP}} and \code{\link{viewSummaryGroups}} for more detail. 

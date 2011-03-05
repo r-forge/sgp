@@ -11,7 +11,7 @@ function(sgp_object=sgpData_LONG,
 	simulate.sgps=TRUE,
 	sgp.summaries=list(MEDIAN_SGP="median_na(SGP)",
 		MEDIAN_SGP_COUNT="num_non_missing(SGP)",
-		PERCENT_AT_ABOVE_PROFICIENT="percent_in_category(ACHIEVEMENT_LEVEL, list(c(1,4)), list(1:5))",
+		PERCENT_AT_ABOVE_PROFICIENT="percent_in_category(ACHIEVEMENT_LEVEL, list(c(3,4)), list(1:5))",
 		PERCENT_AT_ABOVE_PROFICIENT_COUNT="num_non_missing(ACHIEVEMENT_LEVEL)"),
 	summary.groups=list(institution=c("STATE", "SCHOOL_NUMBER"),
 		content="CONTENT_AREA",
@@ -112,7 +112,12 @@ function(sgp_object=sgpData_LONG,
 		simulate.sgps=CALL$simulate.sgps)
 	cat("\nFinished with analyzeSGP\n\n")
 	
-	TMP_Data <- combineSGP(sgp_object=TMP_Data)
+	TMP_Data <- combineSGP(sgp_object=TMP_Data,
+		state=CALL$state,
+		years=years, 
+		content_areas=content_areas, 
+		sgp.percentiles=CALL$sgp.percentiles,
+		sgp.projections.lagged=CALL$sgp.projections.lagged)
 	cat("Finished with combineSGP\n\n")
 
 	TMP_Data <- summarizeSGP(sgp_object=TMP_Data,
