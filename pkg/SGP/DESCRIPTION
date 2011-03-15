@@ -1,6 +1,6 @@
 Package: SGP
-Version: 0.0-6.9
-Date: 2011-3-3
+Version: 0.0-7.0
+Date: 2011-3-15
 Title: Student Growth Percentile and Percentile Growth Projection/Trajectory Functions
 Author@R: c(person("Damian", "Betebenner",
                    email="dbetebenner@nciea.org"),
