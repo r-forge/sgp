@@ -7,7 +7,6 @@
 
 \usage{
 summarizeSGP(sgp_object,
-<<<<<<< .mine
 	years,
 	content_areas,
 	state="DEMO",
@@ -28,32 +27,6 @@ summarizeSGP(sgp_object,
 		institution_level= NULL,
 		demographic=NULL,
 		institution_inclusion=list(STATE=NULL, SCHOOL_NUMBER="OCTOBER_ENROLLMENT_STATUS")))
-=======
-    years,
-    content_areas,
-    state="DEMO",
-    sgp.summaries=list(MEDIAN_SGP="median_na(SGP)",
-        MEDIAN_SGP_COUNT="num_non_missing(SGP)",
-        PERCENT_AT_ABOVE_PROFICIENT=
-            "percent_in_category(ACHIEVEMENT_LEVEL, list(c(3,4)), list(1:5))",
-        PERCENT_AT_ABOVE_PROFICIENT_COUNT=
-            "num_non_missing(ACHIEVEMENT_LEVEL)"),
-    summary.groups=list(institution=c("STATE", "SCHOOL_NUMBER"),
-        content="CONTENT_AREA",
-        time="YEAR",
-        institution_level="GRADE",
-        demographic=c("GENDER", "ETHNICITY", "FREE_REDUCED_LUNCH_STATUS", 
-            "ELL_STATUS", "CATCH_KEEP_UP"),
-        institution_inclusion=list(STATE="OCTOBER_ENROLLMENT_STATUS", 
-            SCHOOL_NUMBER="OCTOBER_ENROLLMENT_STATUS")),
-    confidence.interval.groups=list(institution="SCHOOL_NUMBER",
-        content="CONTENT_AREA",
-        time="YEAR",
-        institution_level= NULL,
-        demographic=NULL,
-        institution_inclusion=list(STATE=NULL, 
-            SCHOOL_NUMBER="OCTOBER_ENROLLMENT_STATUS")))
->>>>>>> .r107
 }
 
 \arguments{
