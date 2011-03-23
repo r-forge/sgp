@@ -1,13 +1,16 @@
 Package: SGP
 Version: 0.0-7.0
-Date: 2011-3-15
+Date: 2011-3-22
 Title: Student Growth Percentile and Percentile Growth Projection/Trajectory Functions
 Author@R: c(person("Damian", "Betebenner",
                    email="dbetebenner@nciea.org"),
             person("Adam", "Van Iwaarden",
                    email="Vaniwaarden@colorado.edu"))
 Author: Damian W. Betebenner <dbetebenner@nciea.org>,
-        with contributions from Adam Van Iwaarden, Jonathan Weeks, John Stewart, Jinnie Choi, Marie Huchton, Xin Wei, and Hi Shin Shim
+        with contributions from Adam Van Iwaarden, Jonathan Weeks, John Stewart, Jinnie Choi, Xin Wei, Hi Shin Shim, and with special thanks to 
+        state Department of Education analysts: Rebecca Gau (Arizona), Marie Huchton (Colorado), Dr. Wes Bruce (Indiana), Robert Hochsegang (Indiana), 
+	Robert Lee (Massachusetts), Soo Yeon Cho (Missouri), Ana Karantonis (Rhode Island), Dr. Deborah Jonas (Virginia), Dr. Philip Olsen (Wisconsin), 
+	Nick Stroud (Wisconsin).  
 Maintainer: Damian W. Betebenner <dbetebenner@nciea.org>
 Depends: R (>= 2.10), data.table (>= 1.5.3), foreach, grid, gtools, plyr, quantreg, sn, splines
 Description: Functions to calculate student growth percentiles and percentile growth projections/trajectories for students using large scale, 

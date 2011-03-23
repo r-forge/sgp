@@ -1,6 +1,8 @@
 Changes in version: SGP_0.0-7.0
 
-  o Fixed bugs in analyzeSGP, combineSGP, and summarizeSGP 
+  o combineSGP now calculates SGP targets based upon catch-up/keep-up to proficient growth-to-standard recommendations. 
+  o Cleaned up documentation for analyzeSGP, combineSGP, and summarizeSGP 
+  o Fixed numerous bugs in analyzeSGP, combineSGP, and summarizeSGP 
   o Added Missouri, New York, Colorado, and Massachusetts CSEMs to stateData 
 
 Changes in version: SGP_0.0-6.9

@@ -24,6 +24,7 @@ function(panel.data,           ## REQUIRED
 	goodness.of.fit=TRUE) {
 
 	started.at=proc.time()
+        message(paste("\tStarted studentGrowthPercentiles", date()))
 
 	##########################################################
 	###
@@ -590,7 +591,8 @@ function(panel.data,           ## REQUIRED
 
 	### Announce Completion & Return SGP Object
 
-	message(paste("Finished SGP Student Growth Percentile Analysis ", date(), " in ", timetaken(started.at), ".\nSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(tmp.gp, collapse=", "), " ", sgp.labels$my.extra.label, sep="")) 
+	message(paste("\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(tmp.gp, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
+	message(paste("\tFinished SGP Student Growth Percentile Analysis", date(), "in", timetaken(started.at), "\n")) 
 
 	list(Coefficient_Matrices=Coefficient_Matrices,
 		Cutscores=panel.data[["Cutscores"]], 

@@ -1,5 +1,5 @@
-\name{ viewSummaryGroups}
-\alias{ viewSummaryGroups}
+\name{viewSummaryGroups}
+\alias{viewSummaryGroups}
 \title{View summary and confidence interval groups that will be used in \code{\link{summarizeSGP}}}
 \description{
  Utility function that produces a data.frame from the lists of user supplied summary and confidence interval group variables. Intended to complement \code{\link{summarizeSGP}} and promote proper group summary specification.
@@ -12,7 +12,7 @@
         time="YEAR",
         institution_level="GRADE",
         demographic=c("GENDER", "ETHNICITY", "FREE_REDUCED_LUNCH_STATUS", 
-             "ELL_STATUS", "CATCH_KEEP_UP"),
+             "ELL_STATUS", "CATCH_UP_KEEP_UP_STUDENT"),
         institution_inclusion=list(STATE="OCTOBER_ENROLLMENT_STATUS",
               SCHOOL_NUMBER="OCTOBER_ENROLLMENT_STATUS")),
     confidence.interval.groups=list(institution="SCHOOL_NUMBER",
@@ -40,9 +40,9 @@
 \value{Function returns data.frame containing the summary group permutations and a Boolean vector indicating whether or not the permutation will also have a 95\% confidence interval provided when the summary table is produced using \code{\link{summarizeSGP}}.
 }
 
-\author{Damian W. Betebenner \email{dbetebenner@nciea.org} }
+\author{Adam Van Iwaarden \email{Vaniwaarden@colorado.edu}}
 
-\seealso{\code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}}
+\seealso{\code{\link{summarizeSGP}}}
 
 \examples{
 \dontrun{

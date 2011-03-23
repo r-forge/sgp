@@ -34,10 +34,12 @@ across years with the results being used to produce a variety of high quality vi
 
 \note{All datasets used with \code{studentGrowthPercentiles} and \code{studentGrowthProjections} must be specifically formatted as \emph{wide} format files. The first 
 variable/column is the student ID variable. The next set of columns provide the grade of the student across all the years provided in the dataset (possibly missing). 
-The last set of columns provide the scales scores of the student in the respective grades.} 
+The last set of columns provide the scales scores of the student in the respective grades. Operational users of this package are advised to use data formated similar to the sgpData_LONG
+with the higher level functions \code{prepareSGP}, \code{analyzeSGP}, \code{combineSGP}, \code{summarizeSGP}} 
 
 
-\seealso{\code{\link{studentGrowthPercentiles}}, \code{\link{studentGrowthProjections}}, \code{\link{sgpData}}}
+\seealso{\code{\link{studentGrowthPercentiles}}, \code{\link{studentGrowthProjections}}, \code{\link{sgpData}}, \code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}},
+\code{\link{summarizeSGP}}}
 
 \source{Anonymized student level state assessment data in LONG format}
 \keyword{datasets}

@@ -4,7 +4,7 @@ function(
 		content="CONTENT_AREA",
 		time="YEAR",
 		institution_level="GRADE",
-		demographic=c("GENDER", "ETHNICITY", "FREE_REDUCED_LUNCH_STATUS", "ELL_STATUS", "CATCH_KEEP_UP"),
+		demographic=c("GENDER", "ETHNICITY", "FREE_REDUCED_LUNCH_STATUS", "ELL_STATUS", "CATCH_UP_KEEP_UP_STUDENT"),
 		institution_inclusion=list(STATE="OCTOBER_ENROLLMENT_STATUS", SCHOOL_NUMBER="OCTOBER_ENROLLMENT_STATUS")),
 	confidence.interval.groups=list(institution="SCHOOL_NUMBER",
 		content="CONTENT_AREA",

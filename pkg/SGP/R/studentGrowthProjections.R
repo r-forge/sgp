@@ -16,6 +16,7 @@ function(panel.data,	## REQUIRED
 	projcuts.digits=0) {
 
 	started.at=proc.time()
+        message(paste("\tStarted studentGrowthProjections", date()))
 
 	##########################################################
 	###
@@ -179,9 +180,9 @@ function(panel.data,	## REQUIRED
 					tmp <- tmp.cutscores[[paste("GRADE_", grade.projection.sequence[i], sep="")]][j]
 					cuts.arg[k] <- paste(".sgp.targets(SS", grade.projection.sequence[i], ", ", tmp, ", ", convert.0and100, ")", sep="")
 					if (projection.unit=="GRADE") {
-						names.arg[k] <- paste("LEVEL_", j, "SGP_TARGET_GRADE_", grade.projection.sequence[i], sep="")
+						names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_GRADE_", grade.projection.sequence[i], sep="")
 					} else {
-						names.arg[k] <- paste("LEVEL_", j, "SGP_TARGET_YEAR_", i, sep="")
+						names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_YEAR_", i, sep="")
 					}
 					k <- k+1
 				}
@@ -387,7 +388,8 @@ function(panel.data,	## REQUIRED
 
 	### Announce Completion & Return SGP Object
 
-	message(paste("Finished SGP Student Growth Projection/Trajectory Analysis ", date(), " in ", timetaken(started.at), ".\nSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep="")) 
+	message(paste("\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep="")) 
+	message(paste("\tFinished studentGrowthProjections", date(), "in", timetaken(started.at), "\n")) 
 
 	list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
 		Cutscores=Cutscores,

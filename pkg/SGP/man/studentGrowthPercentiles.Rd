@@ -135,9 +135,9 @@ Dette, H. & Volgushev, S. (2008). Non-crossing non-parametric estimates of quant
 Koenker, R. (2005). \emph{Quantile regression}. Cambridge: Cambridge University Press.
 }
 
-\author{Damian W. Betebenner \email{dbetebenner@nciea.org} }
+\author{Damian W. Betebenner \email{dbetebenner@nciea.org}}
 
-\seealso{\code{\link{studentGrowthProjections}}, \code{\link{sgpData}}, \code{\link{stateData}}}
+\seealso{\code{\link{studentGrowthProjections}}, \code{\link{sgpData}}, \code{\link{sgpData_LONG}}, \code{\link{stateData}}}
 
 
 \examples{
