@@ -5,4 +5,4 @@ function(long_data) {
 	sgp_object <- list(Student=data.table(long_data, key="VALID_CASE, CONTENT_AREA, YEAR, ID"))
         message(paste("Finished prepareSGP", date(), "in", timetaken(started.at), "\n"))
 	return(sgp_object)
-}
+} ## END prepareSGP Function

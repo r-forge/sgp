@@ -134,5 +134,5 @@ function(sgp_object,
 
         message(paste("Finished analyzeSGP", date(), "in", timetaken(started.at), "\n"))
 	return(sgp_object)
-} ## END analyzeSGP function
+} ## END analyzeSGP Function
 

@@ -18,6 +18,7 @@ abcSGP(sgp_object,
     sgp.projections=TRUE,
     sgp.projections.lagged=TRUE,
     simulate.sgps=TRUE,
+    save.intermediate.results=FALSE,
     sgp.summaries=list(MEDIAN_SGP="median_na(SGP)",
        MEDIAN_SGP_TARGET="median_na(SGP_TARGET)",
        PERCENT_AT_ABOVE_SGP_TARGET="percent_at_above_target(SGP, SGP_TARGET)",
@@ -26,22 +27,23 @@ abcSGP(sgp_object,
            "percent_in_category(ACHIEVEMENT_LEVEL, list(c('Proficient', 'Advanced')), list(c('Unsatisfactory', 'Partially Proficient', 'Proficient', 'Advanced')))",
        PERCENT_AT_ABOVE_PROFICIENT_COUNT=
            "num_non_missing(ACHIEVEMENT_LEVEL)"),
-    summary.groups=list(institution=c("STATE", "SCHOOL_NUMBER"),
+    summary.groups=list(institution=c("STATE", "DISTRICT_NUMBER", "SCHOOL_NUMBER"),
        content="CONTENT_AREA",
        time="YEAR",
        institution_level="GRADE",
        demographic=c("GENDER", "ETHNICITY", "FREE_REDUCED_LUNCH_STATUS",
-           "ELL_STATUS", "CATCH_UP_KEEP_UP_STUDENT"),
-       institution_inclusion=list(STATE="OCTOBER_ENROLLMENT_STATUS", 
-            SCHOOL_NUMBER="OCTOBER_ENROLLMENT_STATUS")),
+           "ELL_STATUS", "IEP_STATUS", "GIFTED_AND_TALENTED_PROGRAM_STATUS", "CATCH_UP_KEEP_UP_STATUS"),
+       institution_inclusion=list(STATE="STATE_ENROLLMENT_STATUS",
+            DISTRICT_NUMBER="DISTRICT_ENROLLMENT_STATUS", 
+            SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS")),
     confidence.interval.groups=list(institution="SCHOOL_NUMBER",
        content="CONTENT_AREA",
        time="YEAR",
        institution_level= NULL,
        demographic=NULL,
-       institution_inclusion=list(STATE=NULL, 
-            SCHOOL_NUMBER="OCTOBER_ENROLLMENT_STATUS")),
-	save.intermediate.results=FALSE)
+       institution_inclusion=list(STATE=NULL,
+            DISTRICT_NUMBER=NULL, 
+            SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS")))
 }
 
 \arguments{
@@ -68,15 +70,15 @@ If left missing the function will use the data to infer all the grade progressio
   }
   \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM).  Test CSEM data must be available for simulation.  Must be set to TRUE for confidence interval construction. Defaults to TRUE in \code{abcSGP} only.
   }
+  \item{save.intermediate.results}{Should intermediate results of \code{abcSGP} be saved after each of \code{\link{prepareSGP}}, \code{\link{analyzeSGP}},
+  \code{\link{combineSGP}}, and \code{\link{summarizeSGP}}. Default is FALSE.
+  }
   \item{sgp.summaries}{A list giving the summaries requested for each group analyzed based upon the \code{summary.group} argument.
   }
   \item{summary.groups}{A list consisting of 5 types of groups across which all summaries are taken: \code{institution}, \code{content}, \code{time}, \code{institution_level},
 \code{demographic}, and \code{institution_inclusion}. Summaries generated in summarizeSGP are for all possible combinations of the 5 types of group. See documentation for \code{\link{summarizeSGP}} and \code{\link{viewSummaryGroups}} for more detail. 
   }
   \item{confidence.interval.groups}{A subset of the groups provided in the \code{summary.groups} argument indicating which groups to provide confidence intervals for. See documentation for \code{\link{summarizeSGP}} and \code{\link{viewSummaryGroups}} for more detail.
-  }
-  \item{save.intermediate.results}{Should intermediate results of \code{abcSGP} be saved after each of \code{\link{prepareSGP}}, \code{\link{analyzeSGP}},
-  \code{\link{combineSGP}}, and \code{\link{summarizeSGP}}. Default is FALSE.
   }
 }
 

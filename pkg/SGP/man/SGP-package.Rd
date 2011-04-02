@@ -2,16 +2,17 @@
 \alias{SGP-package}
 \alias{SGP}
 \docType{package}
-\title{Functions to calculate student growth percentiles and percentile growth projections/trajectories following methodology found in Betebenner (2008, 2009)
-}
+\title{SGP: An R Package for the Calculation and Visualization of Student Growth Percentiles.}
 \description{
-SGP contains two primary functions, \code{studentGrowthPercentiles} and \code{studentGrowthProjections}, and numerous higher level functions
-that make use of them including: \code{prepareSGP}, \code{analyzeSGP}, \code{combineSGP}, \code{summarizeSGP}, and \code{reportSGP} used to calculate and report
-student growth percentiles and percentile growth projections/trajectories for students using large scale, longitudinal assessment data. 
+SGP contains functions to calculate student growth percentiles and percentile growth projections/trajectories following methodology found in Betebenner (2008, 2009).
+The package contains two primary functions, \code{\link{studentGrowthPercentiles}} and \code{\link{studentGrowthProjections}}, and numerous higher level functions
+that make use of them including: \code{prepareSGP}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, \code{\link{summarizeSGP}}, and \code{reportSGP} 
+used to calculate and report student growth percentiles and percentile growth projections/trajectories for students using large scale, longitudinal assessment data. 
 These norm referenced growth values are currently used in a number of state testing and accountability systems. The functions employ quantile 
 regression (using the \code{quantreg} package) to estimate the conditional density for current achievement using each student's achievement history. 
 Percentile growth projections/trajectories are calculated using the coefficient matrices derived from the student growth percentile analyses. These quantities
-are summarized in a variety of ways to describe student growth.
+are summarized in a variety of ways to describe student growth. As of the 0.0-7.0 release, the package also includes functions (e.g., 
+\code{\link{bubblePlot}} and \code{\link{studentGrowthPlot}}) to produce graphical representations associated with the student growth percentile analyses. 
 }
 
 \details{
@@ -19,14 +20,14 @@ are summarized in a variety of ways to describe student growth.
 Package: \tab SGP\cr
 Type: \tab Package\cr
 Version: \tab 0.0-7.0\cr
-Date: \tab 2011-3-22\cr
-License: \tab GPL-3 + LICENSE\cr
+Date: \tab 2011-4-2\cr
+License: \tab CC BY-SA 3.0 US | CC BY-NC-SA 3.0 + file LICENSE\cr
 LazyLoad: \tab yes\cr
 }
 Calculation of student growth percentiles and percentile growth porjections/trajectories is typically performed by grade and subject. Data for growth percentile 
-calculation must be specifically formatted.  See \code{sgpData} for an example data set. Batch R syntax for performing analyses across all grades and years is 
-provided in the examples of the \code{studentGrowthPercentiles} and \code{studentGrowthProjections} using the higher level functions \code{prepareSGP}, \code{analyzeSGP}, 
-\code{combineSGP}, \code{summarizeSGP}, and \code{reportSGP}.} 
+calculation must be specifically formatted.  See \code{\link{sgpData}} for an example data set. Batch R syntax for performing analyses across all grades and years is 
+provided in the examples of the \code{\link{studentGrowthPercentiles}} and \code{\link{studentGrowthProjections}} using the higher level functions 
+\code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, \code{\link{summarizeSGP}}, and \code{reportSGP}.} 
 
 \author{Damian W. Betebenner \email{DBetebenner@nciea.org}} 
 

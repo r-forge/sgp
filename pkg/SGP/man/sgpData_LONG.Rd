@@ -20,14 +20,20 @@ across years with the results being used to produce a variety of high quality vi
     \item{\code{GRADE}}{Grade level of student observation}
     \item{\code{SCALE_SCORE}}{Student Scale Score}
     \item{\code{ACHIEVEMENT_LEVEL}}{Achievement level associated with student scale score}
+    \item{\code{GENDER}}{Student gender}
+    \item{\code{ETHNICITY}}{Student ethnicity}
     \item{\code{FREE_REDUCED_LUNCH_STATUS}}{Student free/reduced lunch status}
     \item{\code{ELL_STATUS}}{Student English Language Learner status}
-    \item{\code{ETHNICITY}}{Student ethnicity}
-    \item{\code{GENDER}}{Student gender}
-    \item{\code{OCTOBER_ENROLLMENT_STATUS}}{Indicator of student enrollment status as of October 1st of academic year}
+    \item{\code{IEP_STATUS}}{Student Individual Education Plan status}
+    \item{\code{GIFTED_AND_TALENTED_PROGRAM_STATUS}}{Student Gifted and Talented Program status}
     \item{\code{SCHOOL_NUMBER}}{School number associated wth student record}
     \item{\code{SCHOOL_NAME}}{School name associated with school number and student record}
     \item{\code{EMH_LEVEL}}{Elementary, Middle, High school indicator for school attended}
+    \item{\code{DISTRICT_NUMBER}}{District number associated wth student record}
+    \item{\code{DISTRICT_NAME}}{District name associated with school number and student record}
+    \item{\code{SCHOOL_ENROLLMENT_STATUS}}{Indicator of full academic year student enrollment in school}
+    \item{\code{DISTRICT_ENROLLMENT_STATUS}}{Indicator of full academic year student enrollment in school}
+    \item{\code{STATE_ENROLLMENT_STATUS}}{Indicator of full academic year student enrollment in school}
     \item{\code{VALID_CASE}}{Indicator of whether the case is valid or invalid}
   }
 }
