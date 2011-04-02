@@ -249,18 +249,16 @@ function(panel.data,           ## REQUIRED
 					textGrob(x=-17, y=50, "Empirical SGP Distribution", default.units="native", gp=gpar(cex=0.7), rot=90, vp="qq")))))
 	} 
 
-	.csem.score.simulator <- function(scale_scores, grade, content_area, state, distribution="Normal", round=1) {
+	.csem.score.simulator <- function(scale_scores, grade, content_area, state, distribution="Skew-Normal", round=1) {
 		min.max <- stateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("loss.hoss_", grade, sep="")]]
 		CSEM_Data <- stateData[[state]][["Assessment_Program_Information"]][["CSEM"]][
 			stateData[[state]][["Assessment_Program_Information"]][["CSEM"]][["GRADE"]]==grade & 
 			stateData[[state]][["Assessment_Program_Information"]][["CSEM"]][["CONTENT_AREA"]]==content_area,]
 		CSEM_Function <- splinefun(CSEM_Data[["SCALE_SCORE"]], CSEM_Data[["SCALE_SCORE_CSEM"]])
 		tmp.scale <- CSEM_Function(scale_scores)
-		tmp.shape <- 0.01*((min.max[1]+min.max[2])/2 - scale_scores)/(pmin(abs(scale_scores - min.max[2]), 
-				abs(scale_scores - min.max[1]))/((min.max[2]-min.max[1])/2))
-		tmp.shape[scale_scores==min.max[2]] <- -Inf; tmp.shape[scale_scores==min.max[1]] <- Inf
-		if(distribution == "Skew-Normal") tmp.score<-round_any(as.numeric(rsn(length(scale_scores), location=scale_scores, scale=tmp.scale, shape=tmp.shape)), round)
-		if(distribution == "Normal") tmp.score<-round_any(as.numeric(rnorm(length(scale_scores), mean=scale_scores, sd=tmp.scale)), round)
+		tmp.shape <- tan((pi/2)*((min.max[1]+min.max[2]) - 2*scale_scores)/(min.max[2]-min.max[1]))
+		if(distribution=="Skew-Normal") tmp.score <- round_any(as.numeric(rsn(length(scale_scores), location=scale_scores, scale=tmp.scale, shape=tmp.shape)), round)
+		if(distribution=="Normal") tmp.score <- round_any(as.numeric(rnorm(length(scale_scores), mean=scale_scores, sd=tmp.scale)), round)
 		tmp.score[tmp.score < min.max[1]] <- min.max[1]
 		tmp.score[tmp.score > min.max[2]] <- min.max[2]
 		return(tmp.score)
