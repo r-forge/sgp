@@ -113,6 +113,7 @@ function(sgp_object,
 						grade.progression=k)
 				}
 			} ## END sgp.projections
+
 			if (sgp.projections.lagged) {
 				sgp.vnames <- c("ID", paste("GRADE", head(sgp.iter$sgp.panel.years, -1), sep="."), 
 					paste("SCALE_SCORE", head(sgp.iter$sgp.panel.years, -1), sep="."))
