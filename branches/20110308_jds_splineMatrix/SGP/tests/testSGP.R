@@ -1,9 +1,9 @@
 testEnv <- new.env()
 setPackageName('SGP', testEnv)
-load(file.path(getwd(),'pkg/SGP/data/sgpData.rda'), envir=testEnv)
+load(file.path(getwd(),'data/sgpData.rda'), envir=testEnv)
 
 .setUp <- function() {
-  sys.source(file.path(getwd(), 'pkg/SGP/R/splineMatrix.R'), envir=testEnv)
+  sys.source(file.path(getwd(), 'R/splineMatrix.R'), envir=testEnv)
   attach(testEnv)
 }
 
