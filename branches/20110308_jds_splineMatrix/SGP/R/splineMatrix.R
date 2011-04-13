@@ -7,9 +7,9 @@
 setClass(
 	'splineMatrix',
 	representation = representation(
-    knots = "numeric",
-    boundaries = "numeric",
-    loss.hoss = "numeric",
+    knots = "matrix",
+    boundaries = "matrix",
+    loss.hoss = "matrix",
     qrmatrix = "matrix"),
 	prototype = NULL
 )
@@ -18,9 +18,9 @@ setMethod(
 	'initialize',
 	'splineMatrix',
 	function(.Object) {
-    .Object@knots = numeric(0)
-    .Object@boundaries = numeric(0)
-    .Object@loss.hoss = numeric(0)
+    .Object@knots = matrix()
+    .Object@boundaries = matrix()
+    .Object@loss.hoss = matrix()
     .Object@qrmatrix = matrix()
     
     .Object
@@ -100,9 +100,15 @@ setMethod(
   'create.knots.boundaries',
 	'splineMatrix',
 	function(.Object, data, knot.cut.percentiles=c(0.2,0.4,0.6,0.8)) {
-		.Object@knots = round(as.vector(quantile(data, probs=knot.cut.percentiles, na.rm=TRUE)), digits=3)
-    .Object@boundaries <- round(as.vector(extendrange(data, f=0.1)), digits=3)  
-    .Object@loss.hoss <- round(as.vector(extendrange(data, f=0.0)), digits=3)  
+		.Object@knots = matrix(unlist(
+      Map(function(d) round(as.vector(quantile(d, probs=c(0.2,0.4,0.6,0.8), na.rm=TRUE)), digits=3), data)),
+      nrow=length(knot.cut.percentiles))
+    .Object@boundaries = matrix(unlist(
+      Map(function(d) round(as.vector(extendrange(d, f=0.1)), digits=3), data)),
+      nrow=2)
+    .Object@loss.hoss = matrix(unlist(
+      Map(function(d) round(as.vector(extendrange(d, f=0.0)), digits=3), data)),
+      nrow=2)  
     
     .Object
 	}
