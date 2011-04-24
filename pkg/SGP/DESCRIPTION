@@ -1,7 +1,7 @@
 Package: SGP
-Version: 0.0-7.0
-Date: 2011-4-2
-Title: SGP: An R Package for the Calculation and Visualization of Student Growth Percentiles.
+Version: 0.0-8.0
+Date: 2011-4-28
+Title: An R Package for the Calculation and Visualization of Student Growth Percentiles.
 Author@R: c(person("Damian", "Betebenner",
                    email="dbetebenner@nciea.org"),
             person("Adam", "Van Iwaarden",

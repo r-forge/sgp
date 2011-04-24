@@ -47,20 +47,21 @@ abcSGP(sgp_object,
 }
 
 \arguments{
-  \item{sgp_object}{A list containing long formatted data. 
+  \item{sgp_object}{A list containing LONG formatted data. See \code{\link{sgpData_LONG}} for an exemplar.
   }
-  \item{state}{Acronym indicating state associated with the data for access to embedded knot and boundaries and cutscores.
+  \item{state}{Acronym indicating state associated with the data for access to embedded knot and boundaries,  cutscores, CSEMs, and other relevant state level data.
   }
-  \item{steps}{Vector containing all or some subset of \code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, \code{\link{summarizeSGP}}, \code{reportSGP}.
+  \item{steps}{Vector containing all or some subset of \code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, \code{\link{summarizeSGP}}, \code{reportSGP} 
+indicating what steps the user wants accomplished. Default is to perform all steps.
   }
-  \item{years}{A vector indicating years in which to produce student growth percentiles and/or student growth projections/trajectories. If left missing the 
-function will use the data to infer the years based upon the assumption of having at least three years of panel data for analyses.
+  \item{years}{A vector indicating year(s) in which to produce student growth percentiles and/or student growth projections/trajectories. If missing the 
+function will use the data to infer the year(s) in which to perform growth percentile analyses  based upon the assumption of having at least three years of panel data for analyses.
   }
-  \item{content_areas}{A vector indicating content areas in which to produce student growth percentiles and/or student growth projections/trajectories. 
-If left missing the function will use the data to infer the content areas available for analyses.
+  \item{content_areas}{A vector indicating content area(s) in which to produce student growth percentiles and/or student growth projections/trajectories. 
+If missing the function will use the data to infer the content area(s) available for analyses.
   }
   \item{grades}{A vector indicating grades for which to calculate student growth percentiles and/or student growth projections/trajectories. 
-If left missing the function will use the data to infer all the grade progressions for student growth percentile and student growth projections/trajectories analyses.
+If missing the function will use the data to infer all the grade progressions for student growth percentile and student growth projections/trajectories analyses.
   }
   \item{sgp.percentiles}{Boolean variable indicating whether to calculate student growth percentiles. Defaults to TRUE.
   }
