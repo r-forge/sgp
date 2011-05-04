@@ -68,12 +68,6 @@ function(sgp_object,
 	return(unlist(tmp.result))
 	}
 
-	percent_at_above_target <- function(sgp, target, result.digits=1) {
-		tmp.logical <- sgp >= target
-		tmp.pct <- round(sum(tmp.logical, na.rm=TRUE)/sum(!is.na(tmp.logical))*100, digits=result.digits)
-		return(tmp.pct)
-	}
-
 	sgpSummary <- function(sgp.groups.to.summarize, confidence.interval.groups.to.summarize) {
   		SGP_SIM <- V1 <- .SD <- NULL  ## To prevent R CMD check warning
 		ListExpr <- parse(text=paste("quote(as.list(c(", paste(unlist(sgp.summaries), collapse=", "),")))",sep=""))

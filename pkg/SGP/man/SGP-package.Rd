@@ -20,7 +20,7 @@ are summarized in a variety of ways to describe student growth. As of the 0.0-7.
 Package: \tab SGP\cr
 Type: \tab Package\cr
 Version: \tab 0.0-8.0\cr
-Date: \tab 2011-4-28\cr
+Date: \tab 2011-5-3\cr
 License: \tab CC BY-SA 3.0 US | CC BY-NC-SA 3.0 + file LICENSE\cr
 LazyLoad: \tab yes\cr
 }

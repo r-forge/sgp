@@ -1,5 +1,8 @@
 Changes in version: SGP_0.0-8.0
 
+  o Implemented more intelligent error handling for missing arguments in studentGrowthPercentiles and studentGrowthProjections passed from analyzeSGP. 
+  o Added Nevada to stateData. 
+  o combineSGP now creates a MET_CATCH_UP_KEEP_UP_TARGET variables if requesting lagged projections. 
   o Parallelized analyzeSGP using foreach. 
   o Changed default from Normal to Skew-Normal for confidence interval simulation work. 
   o Fixed incorrect naming of percentile cuts in studentGrowthProjections function. 

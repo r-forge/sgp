@@ -43,7 +43,8 @@ function(sgp_object,
 					paste("SCALE_SCORE", sgp.iter[["sgp.panel.years"]], sep="."))
 				if (simulate.sgps) {
 					for (k in sgp.iter[["sgp.grade.sequences"]]) {
-						tmp_sgp_object <- studentGrowthPercentiles(panel.data=tmp_sgp_object,
+						tmp_sgp_object <- studentGrowthPercentiles(
+							panel.data=tmp_sgp_object,
 							sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 							use.my.knots.boundaries=state,
 							growth.levels=state,
@@ -56,7 +57,8 @@ function(sgp_object,
 					} ## END k loop
 				} else {
 					for (k in sgp.iter[["sgp.grade.sequences"]]) {
-						tmp_sgp_object <- studentGrowthPercentiles(panel.data=tmp_sgp_object,
+						tmp_sgp_object <- studentGrowthPercentiles(
+							panel.data=tmp_sgp_object,
 							sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 							use.my.knots.boundaries=state,
 							growth.levels=state,
@@ -71,7 +73,8 @@ function(sgp_object,
 					paste("SCALE_SCORE", sgp.iter[["sgp.panel.years"]], sep="."))
 
 				for (k in lapply(sgp.iter[["sgp.grade.sequences"]], function(x) head(x, -1))) {
-					tmp_sgp_object <- studentGrowthProjections(panel.data=tmp_sgp_object,
+					tmp_sgp_object <- studentGrowthProjections(
+						panel.data=tmp_sgp_object,
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.coefficient.matrices=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
@@ -87,7 +90,8 @@ function(sgp_object,
 					paste("SCALE_SCORE", head(sgp.iter[["sgp.panel.years"]], -1), sep="."))
 
 				for (k in lapply(sgp.iter[["sgp.grade.sequences"]], function(x) head(x, -1))) {
-					tmp_sgp_object <- studentGrowthProjections(panel.data=tmp_sgp_object,
+					tmp_sgp_object <- studentGrowthProjections(
+						panel.data=tmp_sgp_object,
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 							my.extra.label="LAGGED"),
 						use.my.coefficient.matrices=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
@@ -152,7 +156,7 @@ function(sgp_object,
 
 	if (sgp.percentiles | sgp.projections | sgp.projections.lagged) {
 		sgp.iter <- NULL ## To prevent R CMD check warning
-		sgp_object[["SGP"]] <- foreach(sgp.iter=iter(sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE) %do%{
+		sgp_object[["SGP"]] <- foreach(sgp.iter=iter(sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE) %dopar%{
 			return(.analyzeSGP_Internal(sgp.iter))
 		}
 	} ## END if

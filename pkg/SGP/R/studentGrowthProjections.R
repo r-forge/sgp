@@ -285,25 +285,32 @@ function(panel.data,	## REQUIRED
 	if (!missing(performance.level.cutscores)) {
 		if (is.character(performance.level.cutscores)) {
 			if (!(performance.level.cutscores %in% names(stateData))) {
-				stop("\nTo use state cutscores, supply an appropriate two letter state abbreviation.  \nRequested state may not be included. See help page for details.\n\n")
+				message("\nTo use state cutscores, supply an appropriate two letter state abbreviation. \nRequested state may not be included. See help page for details.\n\n")
+				tf.cutscores <- FALSE
 			}
 			if (is.null(names(stateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]))) {
-				stop("\nCutscores are currently not implemented for the state indicated. \nPlease contact the SGP package administrator to have your cutscores included in the package.\n\n")
+				message("\nCutscores are currently not implemented for the state indicated. \nPlease contact the SGP package administrator to have your cutscores included in the package.\n\n")
+				tf.cutscores <- FALSE
 			} else {
 				tmp.cutscores <- stateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]][[toupper(sgp.labels$my.subject)]]
+				tf.cutscores <- TRUE
 		}}
 		if (is.list(performance.level.cutscores)) {
 			if (any(names(performance.level.cutscores) %in% sgp.labels$my.subject)) {
 				tmp.cutscores <- performance.level.cutscores[[sgp.labels$my.subject]]
+				tf.cutscores <- TRUE
 			} else {
 				stop("\nList of cutscores provided in performance.level.cutscores must include a subject name that matches my.subject in sgp.labels (CASE SENSITIVE). See help page for details.\n\n")
-		}}}
+				tf.cutscores <- FALSE
+	}}} else {
+		tf.cutscores <- FALSE
+	}
 
 	if (!(toupper(projection.unit)=="YEAR" | toupper(projection.unit)=="GRADE")) {
 		stop("Projection unit must be specified as either YEAR or GRADE. See help page for details.")
 	}
 
-	if (is.null(percentile.trajectory.values) & missing(performance.level.cutscores)) {
+	if (is.null(percentile.trajectory.values) & !tf.cutscores) {
 		stop("Either percentile trajectories and/or performance level cutscores must be supplied for the analyses.")
 	}
 
@@ -324,7 +331,7 @@ function(panel.data,	## REQUIRED
 		}
 	} 
 
-	if (!missing(performance.level.cutscores)) {
+	if (tf.cutscores) {
 		Cutscores[[sgp.labels$my.subject]] <- tmp.cutscores
 	}
 
@@ -378,13 +385,13 @@ function(panel.data,	## REQUIRED
 
 	### Select specific percentile trajectories and calculate cutscores
 
-	if (!missing(performance.level.cutscores)) {
+	if (tf.cutscores) {
 		tmp.cutscore.grades <- as.numeric(unlist(strsplit(names(tmp.cutscores), "_"))[seq(2,length(unlist(strsplit(names(tmp.cutscores), "_"))),by=2)])
 		if (!all(grade.projection.sequence %in% tmp.cutscore.grades)) {
 			stop("Cutscores provided do not include cutscores for grades in projection.")
 	}} 
 
-	trajectories.and.cuts <- .get.trajectories.and.cuts(percentile.trajectories, !is.null(percentile.trajectory.values), !missing(performance.level.cutscores), toupper(projection.unit))
+	trajectories.and.cuts <- .get.trajectories.and.cuts(percentile.trajectories, !is.null(percentile.trajectory.values), tf.cutscores, toupper(projection.unit))
 
 	if (is.null(SGProjections[[tmp.path]])) SGProjections[[tmp.path]] <- .unget.data.table(as.data.table(trajectories.and.cuts), ss.data)
 	else SGProjections[[tmp.path]] <- rbind.fill(SGProjections[[tmp.path]], .unget.data.table(as.data.table(trajectories.and.cuts), ss.data))
