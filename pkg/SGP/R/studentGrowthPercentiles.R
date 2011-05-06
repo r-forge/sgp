@@ -249,7 +249,7 @@ function(panel.data,           ## REQUIRED
 					textGrob(x=-17, y=50, "Empirical SGP Distribution", default.units="native", gp=gpar(cex=0.7), rot=90, vp="qq")))))
 	} 
 
-	.csem.score.simulator <- function(scale_scores, grade, content_area, state, distribution="Skew-Normal", round=1) {
+	.csem.score.simulator <- function(scale_scores, grade, content_area, state, distribution="Normal", round=1) {
 		min.max <- stateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("loss.hoss_", grade, sep="")]]
 		CSEM_Data <- stateData[[state]][["Assessment_Program_Information"]][["CSEM"]][
 			stateData[[state]][["Assessment_Program_Information"]][["CSEM"]][["GRADE"]]==grade & 
@@ -385,11 +385,11 @@ function(panel.data,           ## REQUIRED
 	if (!missing(calculate.confidence.intervals)) {
 		csem.tf <- TRUE
 		if (!is.list(calculate.confidence.intervals)) {
-			message("Please specify an appropriate list for calculate.confidence.intervals. See help page for details. Student growth percentiles will be calculated without confidence intervals.")
+			message("Please specify an appropriate list for calculate.confidence.intervals. See help page for details. SGPs will be calculated without confidence intervals.")
 			csem.tf <- FALSE
 		}
 		if (!identical(names(calculate.confidence.intervals), c("state", "confidence.quantiles", "simulation.iterations", "distribution", "round"))) {
-			message("Please specify an appropriate list for calculate.confidence.intervals including state, confidence.quantiles, simulation.iterations, distribution and round. See help page for details. Student growth percentiles will be calculated without confidence intervals.")
+			message("Please specify an appropriate list for calculate.confidence.intervals including state, confidence.quantiles, simulation.iterations, distribution and round. See help page for details. SGPs will be calculated without confidence intervals.")
 			csem.tf <- FALSE
 		}
 	} else {
@@ -481,12 +481,13 @@ function(panel.data,           ## REQUIRED
 		tmp.knots <- c(Knots_Boundaries[[tmp.path.knots.boundaries]], .create.knots.boundaries(ss.data, by.grade))
 		Knots_Boundaries[[tmp.path.knots.boundaries]] <- tmp.knots[!duplicated(names(tmp.knots))]
 	} else {
-		if (is.character(use.my.knots.boundaries) & use.my.knots.boundaries %in% names(stateData)) {
-			Knots_Boundaries[[tmp.path.knots.boundaries]] <- stateData[[use.my.knots.boundaries]][["Achievement"]][["Knots_Boundaries"]][[sgp.labels$my.subject]]
-		}
-		if (is.character(use.my.knots.boundaries) & !use.my.knots.boundaries %in% names(stateData)) {
-			tmp.knots <- c(Knots_Boundaries[[tmp.path.knots.boundaries]], .create.knots.boundaries(ss.data, by.grade))
-			Knots_Boundaries[[tmp.path.knots.boundaries]] <- tmp.knots[!duplicated(names(tmp.knots))]
+		if (is.character(use.my.knots.boundaries)) {
+			if (!is.null(stateData[[use.my.knots.boundaries]][["Achievement"]][["Knots_Boundaries"]])) {
+				Knots_Boundaries[[tmp.path.knots.boundaries]] <- stateData[[use.my.knots.boundaries]][["Achievement"]][["Knots_Boundaries"]][[sgp.labels$my.subject]]
+			} else {
+				tmp.knots <- c(Knots_Boundaries[[tmp.path.knots.boundaries]], .create.knots.boundaries(ss.data, by.grade))
+					Knots_Boundaries[[tmp.path.knots.boundaries]] <- tmp.knots[!duplicated(names(tmp.knots))]
+			}
 		}
 	}
 	knot.names <- names(Knots_Boundaries[[tmp.path.knots.boundaries]])

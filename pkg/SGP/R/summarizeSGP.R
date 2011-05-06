@@ -68,6 +68,12 @@ function(sgp_object,
 	return(unlist(tmp.result))
 	}
 
+	percent_at_above_target <- function(sgp, target, result.digits=1) {
+		tmp.logical <- sgp >= target
+		tmp.pct <- round(sum(tmp.logical, na.rm=TRUE)/sum(!is.na(tmp.logical))*100, digits=result.digits)
+		return(tmp.pct)
+	}
+
 	sgpSummary <- function(sgp.groups.to.summarize, confidence.interval.groups.to.summarize) {
   		SGP_SIM <- V1 <- .SD <- NULL  ## To prevent R CMD check warning
 		ListExpr <- parse(text=paste("quote(as.list(c(", paste(unlist(sgp.summaries), collapse=", "),")))",sep=""))
@@ -120,7 +126,7 @@ function(sgp_object,
 			group.format(summary.groups[["institution_inclusion"]][[i]]),
 			group.format(summary.groups[["demographic"]])), sep=""))
 
-		if (!is.null(confidence.interval.groups)) {
+  	if (!is.null(confidence.interval.groups) & i %in% confidence.interval.groups$institution) {
 			ci.groups <- do.call(paste, c(expand.grid(i,
 				group.format(confidence.interval.groups[["content"]]),
 				group.format(confidence.interval.groups[["time"]]),
@@ -129,14 +135,14 @@ function(sgp_object,
 				group.format(confidence.interval.groups[["demographic"]])), sep=""))
 		}
 
-		if (is.null(confidence.interval.groups)) {
+		if (!is.null(confidence.interval.groups) & i %in% confidence.interval.groups$institution) {
 			j <- k <- NULL ## To prevent R CMD check warnings
-			sgp_object[["Summary"]][[i]] <- foreach(j=iter(sgp.groups), k=iter(rep(FALSE, length(sgp.groups))), 
+  		sgp_object[["Summary"]][[i]] <- foreach(j=iter(sgp.groups), k=iter(sgp.groups %in% ci.groups), 
 				.options.multicore=list(preschedule = FALSE, set.seed = FALSE), .packages="data.table", .inorder=FALSE) %dopar% {return(sgpSummary(j, k))}
 			names(sgp_object[["Summary"]][[i]]) <- gsub(", ", "__", sgp.groups)
 		} else {
 			j <- k <- NULL ## To prevent R CMD check warnings
-			sgp_object[["Summary"]][[i]] <- foreach(j=iter(sgp.groups), k=iter(sgp.groups %in% ci.groups), 
+    	sgp_object[["Summary"]][[i]] <- foreach(j=iter(sgp.groups), k=iter(rep(FALSE, length(sgp.groups))), 
 				.options.multicore=list(preschedule = FALSE, set.seed = FALSE), .packages="data.table", .inorder=FALSE) %dopar% {return(sgpSummary(j, k))}
 			names(sgp_object[["Summary"]][[i]]) <- gsub(", ", "__", sgp.groups)
 		}

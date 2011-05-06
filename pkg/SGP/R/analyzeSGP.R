@@ -8,7 +8,8 @@ function(sgp_object,
 	sgp.percentiles=TRUE, 
 	sgp.projections=TRUE,
 	sgp.projections.lagged=TRUE,
-	simulate.sgps=FALSE) {
+	simulate.sgps=TRUE,
+	goodness.of.fit.print=TRUE) {
 
         started.at <- proc.time()
         message(paste("Started analyzeSGP", date()))
@@ -105,15 +106,30 @@ function(sgp_object,
 	return(tmp_sgp_object)
 	} ## END .analyzeSGP_Internal
 
-	.mergeSGP <- function (list_1, list_2) {
+	.mergeSGP <- function(list_1, list_2) {
 		for (j in c("Coefficient_Matrices", "Cutscores", "Goodness_of_Fit", "Knots_Boundaries", "SGPercentiles", "SGProjections", "Simulated_SGPs")) {
 
-			i = match(names(list_2[[j]]), names(list_1[[j]]))
-			i = is.na(i)
+			i <- match(names(list_2[[j]]), names(list_1[[j]]))
+			i <- is.na(i)
 			if (any(i)) 
-				list_1[[j]][names(list_2[[j]])[which(i)]] = list_2[[j]][which(i)]
+				list_1[[j]][names(list_2[[j]])[which(i)]] <- list_2[[j]][which(i)]
 		}
 		list_1
+	}
+
+	gof.print <- function(sgp_object) {
+		if (length(sgp_object[["SGP"]][["Goodness_of_Fit"]]) > 0) {
+			for (i in names(sgp_object[["SGP"]][["Goodness_of_Fit"]])) {
+				dir.create(paste("Goodness_of_Fit/", i, sep=""), recursive=TRUE)
+				for (j in names(sgp_object[["SGP"]][["Goodness_of_Fit"]][[i]])) {
+					pdf(file=paste("Goodness_of_Fit/", i, "/", j, ".pdf", sep=""), width=8.5, height=4.5)
+						grid.draw(sgp_object[["SGP"]][["Goodness_of_Fit"]][[i]][[j]])
+				dev.off()
+				}
+			}
+		} else {
+			message("Mo Goodness of Fit tables available to print. No tables will be produced.")
+		}
 	}
 
         ## If missing sgp.config then determine year(s), content_area(s), and grade(s) if not explicitely provided
@@ -156,10 +172,12 @@ function(sgp_object,
 
 	if (sgp.percentiles | sgp.projections | sgp.projections.lagged) {
 		sgp.iter <- NULL ## To prevent R CMD check warning
-		sgp_object[["SGP"]] <- foreach(sgp.iter=iter(sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE) %dopar%{
+		sgp_object[["SGP"]] <- foreach(sgp.iter=iter(sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE) %dopar% {
 			return(.analyzeSGP_Internal(sgp.iter))
 		}
 	} ## END if
+
+	if (goodness.of.fit.print) gof.print(sgp_object)
 
 	message(paste("Finished analyzeSGP", date(), "in", timetaken(started.at), "\n"))
 	return(sgp_object)

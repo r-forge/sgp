@@ -15,7 +15,8 @@ analyzeSGP(sgp_object,
            sgp.percentiles=TRUE,
            sgp.projections=TRUE,
            sgp.projections.lagged=TRUE,
-           simulate.sgps=FALSE)
+           simulate.sgps=TRUE,
+           goodness.of.fit.print=TRUE)
 }
 
 \arguments{
@@ -42,7 +43,9 @@ See examples for use cases.
   }
   \item{sgp.projections.lagged}{Boolean variable indicating whether to calculate lagged student growth projections often used for growth to standard analyses. Defaults to TRUE.
   }
-  \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM).  Test CSEM data must be available for simulation and included in \code{\link{stateData}}.  This argument must be set to TRUE for confidence interval construction. Defaults to FALSE.
+  \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM).  Test CSEM data must be available for simulation and included in \code{\link{stateData}}.  This argument must be set to TRUE for confidence interval construction. Defaults to TRUE.
+  }
+  \item{goodness.of.fit.print}{Boolean variable indicating whether to print out Goodness of Fit figures as pdf into a directory labeled Goodness of Fit. Defaults to TRUE.
   }
 }
 
