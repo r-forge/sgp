@@ -19,8 +19,8 @@ are summarized in a variety of ways to describe student growth. As of the 0.0-7.
 \tabular{ll}{
 Package: \tab SGP\cr
 Type: \tab Package\cr
-Version: \tab 0.1-0.0\cr
-Date: \tab 2011-6-15\cr
+Version: \tab 0.2-0.0\cr
+Date: \tab 2011-7-1\cr
 License: \tab CC BY-SA 3.0 US | CC BY-NC-SA 3.0 + file LICENSE\cr
 LazyLoad: \tab yes\cr
 }

@@ -13,7 +13,8 @@ function(panel.data,	## REQUIRED
 	projection.unit="YEAR",
 	percentile.trajectory.values=NULL,
 	isotonize=TRUE,
-	projcuts.digits=0) {
+	projcuts.digits=0,
+	print.time.taken=TRUE) {
 
 	started.at=proc.time()
 	started.date <- date()
@@ -398,9 +399,11 @@ function(panel.data,	## REQUIRED
 
 	### Announce Completion & Return SGP Object
 
-        message(paste("\tStarted studentGrowthProjections", started.date))
-	message(paste("\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep="")) 
-	message(paste("\tFinished studentGrowthProjections", date(), "in", timetaken(started.at), "\n")) 
+	if (print.time.taken) {
+	        message(paste("\tStarted studentGrowthProjections", started.date))
+		message(paste("\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep="")) 
+		message(paste("\tFinished studentGrowthProjections", date(), "in", timetaken(started.at), "\n"))
+	} 
 
 	list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
 		Cutscores=Cutscores,

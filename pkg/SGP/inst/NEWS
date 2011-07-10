@@ -1,6 +1,21 @@
+Changes in version: SGP_0.2-0.0
+
+  o prepareSGP returns object of class SGP unaltered and prepares data.frames as before. 
+  o abcSGP now passes supplied years and content_areas arguments to combineSGP to allow for year/content area specific merges. This functionality will assist in updating results from year to year. 
+  o combineSGP now accepts arguments for years and content_areas allowing for year/content area specific merges. This functionality will assist in updating results from year to year. 
+  o Improvement of bubblePlot to better represent situations with hundreds/thousands of bubbles. 
+  o Inclusion of growthAchievementPlot that provides plots like that on Betebenner (2009) Educational Measurement: Issues and Practice Article.
+  o Modification of visualizeSGP to allow for automatic use of growthAchievementPlot.
+  o Added arguments to studentGrowthPercentiles and studentGrowthProjections (print.time.taken) to allow user to turn off time.taken message. Defaults to TRUE.
+  o Changed splinefun method for CSEM based confidence interval construction to "natural" due to highly non-monotonic behavior with Wisconsin CSEMs. 
+  o Added argument to bubblePlot "bubble_plot_configs.BUBBLE_COLOR_GRADIENT_REVERSE" allowing user to reverse color gradient. Defaults to FALSE.
+  o Changed default summaries in abcSGP to include summary calculations involving ACHIEVEMENT_LEVEL_PRIOR (such as prior percent at/above proficient).
+  o Implemented bug fix associated with data.table in combineSGP function that simplifies data.table implementation of catch-up/keep-up targets.
+  o Supplying a non-traditional/sequential grade.progression argument to studentGrowthPercentiles now removes (unless setting argument drop.nonsequential.grade.progression.variables=FALSE) supplied panel.data columns from "holes" in the supplied grade.progression.
+
 Changes in version: SGP_0.1-0.0
 
-  o Iplementation of SGP class. 
+  o Implementation of SGP class. 
   o Specified state specific percentile trajectories for student growth projections and stipulated max.forward.progression of 3 years for these trajectories. 
   o Fixed bugs related to bootstrap calculating confidence intervals for all groups instead of those specified. 
   o Completed reportSGP. 

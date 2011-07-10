@@ -122,14 +122,34 @@ function(sgp_object,
 
 	.mergeSGP <- function(list_1, list_2) {
 		for (j in c("Coefficient_Matrices", "Cutscores", "Goodness_of_Fit", "Knots_Boundaries", "SGPercentiles", "SGProjections", "Simulated_SGPs")) {
-
-		i <- match(names(list_2[[j]]), names(list_1[[j]]))
-		i <- is.na(i)
-		if (any(i))
-			list_1[[j]][names(list_2[[j]])[which(i)]] <- list_2[[j]][which(i)]
+			list_1[[j]] <- c(list_1[[j]], list_2[[j]])[!duplicated(names(c(list_1[[j]], list_2[[j]])))]
 		}
-		list_1
+		for (j in c("SGPercentiles", "SGProjections", "Simulated_SGPs")) {
+			if (all(names(list_2[[j]]) %in% names(list_1[[j]])) & !identical(list_1[[j]], list_2[[j]])) { #all(), not identical
+				for (k in names(list_1[[j]])) {
+					list_1[[j]][[k]] <- rbind.fill(list_1[[j]][[k]], list_2[[j]][[k]][!list_2[[j]][[k]][["ID"]] %in% list_1[[j]][[k]][["ID"]],]);gc()
+				}
+			}
+		}
+		for (j in c("Coefficient_Matrices", "Goodness_of_Fit", "Knots_Boundaries")) {
+			for (k in names(list_1[[j]])) { # names(list_1[[j]]) = c("MATHEMATICS.2011", "MATHEMATICS.2010", ...,  "READING.2009", "READING.2008")
+				list_1[[j]][[k]] <- c(list_1[[j]][[k]], list_2[[j]][[k]])[!duplicated(names(c(list_1[[j]][[k]], list_2[[j]][[k]])))]
+			}
+		}
+	list_1
 	}
+
+
+#	.mergeSGP <- function(list_1, list_2) {
+#		for (j in c("Coefficient_Matrices", "Cutscores", "Goodness_of_Fit", "Knots_Boundaries", "SGPercentiles", "SGProjections", "Simulated_SGPs")) {
+#
+#		i <- match(names(list_2[[j]]), names(list_1[[j]]))
+#		i <- is.na(i)
+#		if (any(i))
+#			list_1[[j]][names(list_2[[j]])[which(i)]] <- list_2[[j]][which(i)]
+#		}
+#		list_1
+#	}
 
 	gof.print <- function(sgp_object) {
 		if (length(sgp_object@SGP[["Goodness_of_Fit"]]) > 0) {

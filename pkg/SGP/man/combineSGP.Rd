@@ -9,6 +9,8 @@
 \usage{
 combineSGP(sgp_object,
 	state,
+	years,
+	content_areas,
 	sgp.percentiles=TRUE,
 	sgp.projections.lagged=TRUE,
 	max.lagged.sgp.target.years.forward=4)
@@ -18,6 +20,11 @@ combineSGP(sgp_object,
   \item{sgp_object}{A list containing both \code{Student} (from \code{prepareSGP}) and \code{SGP} (from \code{analyzeSGP}) slots. 
   }
   \item{state}{Acronym for which state is to be used for the lagged projections and growth to standard analyses.
+  }
+  \item{years}{A vector of years indicating years of data to merge with \code{@Data}. If missing, merge will use all available years of student growth percentile results.
+  }
+  \item{content_areas}{A vector of content areas indicating content areas of student growth percentile data to merge with \code{@Data}. If missing, merge will use all available content areas of
+student growth percentile results.
   }
   \item{sgp.percentiles}{A boolean variable indicating whether to combine student growth percentiles.
   }

@@ -41,6 +41,7 @@ bubblePlot(
 	bubble_plot_configs.BUBBLE_SUBSET_INCREASE=0,
 	bubble_plot_configs.BUBBLE_SUBSET_ALPHA=list(Transparent=0.3, Opaque=0.95),
 	bubble_plot_configs.BUBBLE_COLOR="deeppink2",
+        bubble_plot_configs.BUBBLE_COLOR_GRADIENT_REVERSE=FALSE,
 	bubble_plot_configs.BUBBLE_TIPS=TRUE,
 	bubble_plot_configs.BUBBLE_PLOT_DEVICE="PDF",
 	bubble_plot_configs.BUBBLE_PLOT_FORMAT="print",
@@ -151,6 +152,9 @@ bubblePlot(
 	}
 	\item{bubble_plot_configs.BUBBLE_COLOR}{
 	Default value is \code{bubble_plot_configs.BUBBLE_COLOR="deeppink2"}.
+	}
+	\item{bubble_plot_configs.BUBBLE_COLOR_GRADIENT_REVERSE}{
+	Boolean arugment (defaults to FALSE) indicating whether to reverse color gradient associated with bubbles.
 	}
 	\item{bubble_plot_configs.BUBBLE_TIPS}{
 	Default value is \code{bubble_plot_configs.BUBBLE_TIPS=TRUE}.

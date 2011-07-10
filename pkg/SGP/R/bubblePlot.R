@@ -27,6 +27,7 @@
 	bubble_plot_configs.BUBBLE_SUBSET_INCREASE=0,
 	bubble_plot_configs.BUBBLE_SUBSET_ALPHA=list(Transparent=0.3, Opaque=0.95),
 	bubble_plot_configs.BUBBLE_COLOR="deeppink2",
+        bubble_plot_configs.BUBBLE_COLOR_GRADIENT_REVERSE=FALSE,
 	bubble_plot_configs.BUBBLE_TIPS=TRUE,
 	bubble_plot_configs.BUBBLE_PLOT_DEVICE="PDF",
 	bubble_plot_configs.BUBBLE_PLOT_FORMAT="print",
@@ -44,7 +45,7 @@
 require(gridBase)
 
 
-# Test for installation of pdf2 package and deal with pdf2 crashing with more than 1150 bubbles
+# Test for installation of pdf2 package 
 
 if (bubble_plot_configs.BUBBLE_TIPS) {
 	if (!"pdf2" %in% installed.packages()) {
@@ -52,10 +53,6 @@ if (bubble_plot_configs.BUBBLE_TIPS) {
 		message("Implentation of BUBBLE_TIPS requires the installation of the package pdf2 from R-Forge: install.packages('pdf2',repos='http://R-Forge.R-project.org')")
 	} else { 
 		require(pdf2)
-		if ((!is.null(bubble_plot_data.SUBSET) & length(bubble_plot_data.X[bubble_plot_data.SUBSET]) > 1150) |
-			 (is.null(bubble_plot_data.SUBSET) & length(bubble_plot_data.X) > 1150)) {
-				bubble_plot_configs.BUBBLE_TIPS <- FALSE
-		}
 	}
 }
 
@@ -84,8 +81,10 @@ if (is.null(bubble_plot_data.LEVELS)) {
 if (!is.null(bubble_plot_configs.BUBBLE_COLOR)) {
     temp.colors <- rgb2hsv(col2rgb(bubble_plot_configs.BUBBLE_COLOR))
     my.colors <- hsv(h=temp.colors[1], s=1:num.levels/(num.levels+1), v=temp.colors[3])
+    if (bubble_plot_configs.BUBBLE_COLOR_GRADIENT_REVERSE) my.colors <- rev(my.colors)
 } else {
-     my.colors <- rainbow_hcl(num.levels)
+     require(colorspace)
+     my.colors <- rev(rainbow_hcl(num.levels))
 }
 
 if (bubble_plot_configs.BUBBLE_PLOT_FORMAT=="print") {
@@ -125,12 +124,11 @@ bubblesize <- function(schoolsize, numstud.range){
 # Custom Bubble Alpha Function
 
 bubblealpha <- function(numbubbles) {
-      if (numbubbles > 0 & numbubbles <= 50) return(0.8)
-      if (numbubbles > 50 & numbubbles <= 100) return(0.7)
-      if (numbubbles > 100 & numbubbles <= 250) return(0.6)
-      if (numbubbles > 250 & numbubbles <= 500) return(0.5)
-      if (numbubbles > 500 & numbubbles <= 1000) return(0.4)
-      if (numbubbles > 1000) return(0.3)
+      if (numbubbles > 0 & numbubbles <= 100) return(0.8)
+      if (numbubbles > 100 & numbubbles <= 250) return(0.75)
+      if (numbubbles > 250 & numbubbles <= 500) return(0.7)
+      if (numbubbles > 500 & numbubbles <= 1000) return(0.65)
+      if (numbubbles > 1000) return(0.6)
 }
 
 
@@ -593,12 +591,14 @@ y.coors <- (0.85+c(0, -0.0375, -0.075, -0.12, -0.175))[1:num.sizes]
 grid.text(x=0.5, y=y.coors[1]+0.05, bubble_plot_titles.LEGEND1, gp=gpar(col=format.colors.font[1], fontface=2, cex=1.2))
 if(!is.null(bubble_plot_data.SUBSET)) {
   bubble.legend.alpha <- 0.9
+  bubble.legend.color <- rep(bubblecolor(unclass(tmp.LEVELS[bubble_plot_data.SUBSET]))[1], length=num.sizes)
 } else {
   bubble.legend.alpha <- bubblealpha(length(bubble_plot_data.X))
+  bubble.legend.color <- rep(sort(my.colors)[1], length=num.sizes)
 }
 for (i in 1:num.sizes){
 grid.circle(x=0.25, y=y.coors[i], r=unit(bubblesize(bubble_plot_labels.SIZE[i], c(10,1000)), "inches"), 
-            gp=gpar(col="grey14", lwd=0.7, fill=bubble_plot_configs.BUBBLE_COLOR, alpha=bubble.legend.alpha))
+            gp=gpar(col="grey14", lwd=0.7, fill=bubble.legend.color[i], alpha=bubble.legend.alpha))
 grid.text(x=0.35, y=y.coors[i], paste(bubble_plot_labels.SIZE[i], "Students"), gp=gpar(col=format.colors.font[1], cex=0.9), just="left")
 }
 
