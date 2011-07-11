@@ -12,7 +12,7 @@
 
 		message(paste("Finished prepareSGP", date(), "in", timetaken(started.at), "\n"))
 
-		return(sgp_object)
+		return(data)
 	} else {
 	
 	## Required variables

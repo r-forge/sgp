@@ -131,6 +131,8 @@
       
     } ## END sgp.projections.lagged=TRUE
 
+    key(sgp_object@Data) <- c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID")
+
     message(paste("Finished combineSGP", date(), "in", timetaken(started.at), "\n"))
     return(sgp_object)
 

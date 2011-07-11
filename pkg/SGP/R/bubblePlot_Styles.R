@@ -18,7 +18,7 @@
         ### Define relevant quantities
 
 	if (missing(bPlot.years)) bPlot.years <- NULL
-	if (missing(bPlot.content_areas)) bPlot.content_areas <- NULL	
+	if (missing(bPlot.content_areas)) bPlot.content_areas <- NULL
 
         # State stuff
 
@@ -59,10 +59,12 @@
 			y.year <- paste(as.numeric(unlist(strsplit(year.iter, "_")))-1, collapse="-")
 			my.labels$y.year.label <- paste(y.year, "Percent at/above Proficient")
 			my.labels$main.title <- "Growth and Prior Achievement"
+			my.labels$pdf.title <- "Bubble_Plot_(Prior Achievement)"
 		} else {
 			y.year <- pretty_year(year.iter)
 			my.labels$y.year.label <- paste(y.year, "Percent at/above Proficient")
 			my.labels$main.title <- "Growth and Achievement"
+			my.labels$pdf.title <- "Bubble_Plot_(Current Achievement)"
 		}
 		return(my.labels)
 	}
@@ -95,7 +97,7 @@
 	        # Year Stuff
 
 		if (is.null(bPlot.years)) {
-			my.iters$tmp.years <- unique(bPlot.data$YEAR)
+			my.iters$tmp.years <- tail(sort(unique(bPlot.data$YEAR)), 1)
 		} else {
 			my.iters$tmp.years <- bPlot.years
 		}
@@ -196,8 +198,8 @@ if (1 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_LEGEND="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
-			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(gsub(" ", "_", bPlot.labels$main.title), year.iter, capwords(content_area.iter), ".pdf", sep="_"),
-			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, "State"),
+			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(state.name.label, "State", bPlot.labels$pdf.title, year.iter, capwords(content_area.iter), ".pdf", sep="_"),
+			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "State"),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
 		} ## END loop over y.variable.iter

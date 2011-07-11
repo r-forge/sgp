@@ -15,6 +15,9 @@
 	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- NULL ## To prevent R CMD check warnings
 	content_area <- toupper(content_area)
 
+        if (state %in% state.abb)  state.name.label <- state.name[state.abb==state]
+        if (state=="DEMO") state.name.label <- "Demonstration"
+
 	## Create folder for plots
 
 	dir.create(pdf.folder, recursive=TRUE, showWarnings=FALSE)
@@ -232,7 +235,7 @@
 	for (j in unique(tmp1.df$ID)) {
 		tmp2.df <- subset(tmp1.df, ID==j)
 		tmp.df <- data.frame(matrix(c(as.numeric(as.character(tmp2.df$ID[1])), tmp2.df$GRADE, tmp2.df$SCALE_SCORE), nrow=1))
-		pdf(file=paste(pdf.folder, "/growth_achievement_plot_", content_area, "_", year, "_SS_", j, ".pdf", sep=""), 
+		pdf(file=paste(pdf.folder, "/", state.name.label, "_State_Growth_and_Achievement_Plot_", capwords(content_area), "_", year, "_Level_", j, ".pdf", sep=""), 
 			width=8.5, height=11, bg=format.colors.background)
 
 
@@ -439,11 +442,11 @@ popViewport() ## pop bottom.axis.vp
 
 pushViewport(title.vp)
 
-grid.text(x=0.5, y=0.75, stateData[[state]][["Assessment_Program_Information"]][["Assessment_Name"]], 
+grid.text(x=0.5, y=0.25, stateData[[state]][["Assessment_Program_Information"]][["Assessment_Name"]], 
 	gp=gpar(col=format.colors.font, fontface=2, fontfamily="Helvetica-Narrow", cex=2.0), default.units="native")
 grid.text(x=0.5, y=0.50, paste(pretty_year(year), assessment.name, capwords(content_area)), 
 	gp=gpar(col=format.colors.font, fontface=2, fontfamily="Helvetica-Narrow", cex=2.0), default.units="native")
-grid.text(x=0.5, y=0.25, "Growth and Achievement Chart", gp=gpar(col=format.colors.font, fontface=2, fontfamily="Helvetica-Narrow", cex=2.0), default.units="native")
+grid.text(x=0.5, y=0.75, "Growth and Achievement Chart", gp=gpar(col=format.colors.font, fontface=2, fontfamily="Helvetica-Narrow", cex=2.0), default.units="native")
 
 popViewport() ## pop title.vp
 

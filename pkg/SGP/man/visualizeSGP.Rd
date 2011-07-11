@@ -26,7 +26,6 @@ visualizeSGP(
            sgPlot.years,
            sgPlot.districts,
            sgPlot.schools,
-           sgPlot.grades,
            sgPlot.students,
            sgPlot.header.footer.color="goldenrod3",
            sgPlot.front.page,
@@ -35,6 +34,7 @@ visualizeSGP(
            sgPlot.fan=TRUE,  
            sgPlot.anonymize=FALSE,
            sgPlot.cleanup=TRUE,
+           sgPlot.demo.report=TRUE,
            gaPlot.years,
            gaPlot.content_areas,
            gaPlot.students,
@@ -87,9 +87,6 @@ districts in the data to produce \code{\link{studentGrowthPlot}}s.
 schools in the data to produce \code{\link{studentGrowthPlot}}s. If both \code{sgPlot.districts} and \code{sgPlot.schools} are provided the function produces 
 \code{\link{studentGrowthPlot}}s for ALL students in the districts and schools provided. 
   }
-  \item{sgPlot.grades}{A vector indicating which grades to produce \code{\link{studentGrowthPlot}}s for. If missing the function will use \emph{all} available
-grades in the data to produce \code{\link{studentGrowthPlot}}s. 
-  }
   \item{sgPlot.students}{A vector of student \code{ID}s indicating which students to produce \code{\link{studentGrowthPlot}}s for. If missing the function will 
 use \emph{all} available students in the data to produce \code{\link{studentGrowthPlot}}s. 
   }
@@ -112,6 +109,10 @@ For student level anonymization, the function utilizes the \code{randomNames} pa
 codes available in \code{sgp_object@Data}.
   }
   \item{sgPlot.cleanup}{A boolean argument (defaults to TRUE) indicating whether to remove files produced by pdfLaTeX to produce \code{\link{studentGrowthPlot}} catalogs.  
+  }
+  \item{sgPlot.demo.report}{A boolean argument (defaults to TRUE) indicating whether to just produce a sample \code{\link{studentGrowthPlot}} catalogs. Note: When producing
+\code{\link{studentGrowthPlot}}s for an entire state, considerable resources are required to produce this many reports. We are actively working on parallelizing this functionality
+to reduce report production time by two orders of magnitude.  
   }
   \item{gaPlot.years}{A vector indicating year for which to produce \code{\link{growthAchievementPlot}}s. If missing the function will use the last year available 
 in the data to produce \code{\link{growthAchievementPlot}}s.

@@ -154,7 +154,7 @@ function(sgp_object,
 	gof.print <- function(sgp_object) {
 		if (length(sgp_object@SGP[["Goodness_of_Fit"]]) > 0) {
 			for (i in names(sgp_object@SGP[["Goodness_of_Fit"]])) {
-				dir.create(paste("Goodness_of_Fit/", i, sep=""), recursive=TRUE)
+				dir.create(paste("Goodness_of_Fit/", i, sep=""), recursive=TRUE, showWarnings=FALSE)
 					for (j in names(sgp_object@SGP[["Goodness_of_Fit"]][[i]])) {
 						pdf(file=paste("Goodness_of_Fit/", i, "/", j, ".pdf", sep=""), width=8.5, height=4.5)
 						grid.draw(sgp_object@SGP[["Goodness_of_Fit"]][[i]][[j]])

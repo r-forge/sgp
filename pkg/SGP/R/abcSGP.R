@@ -32,7 +32,8 @@ function(sgp_object,
                 time="YEAR",
                 institution_level= NULL,
                 demographic=NULL,
-                institution_inclusion=list(STATE=NULL, DISTRICT_NUMBER=NULL, SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS")))) {
+                institution_inclusion=list(STATE=NULL, DISTRICT_NUMBER=NULL, SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS"))),
+	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot")) {
 
         started.at <- proc.time()
 	message(paste("Started abcSGP", date()), "\n")
@@ -119,16 +120,13 @@ function(sgp_object,
 
 		visualizeSGP(
 			sgp_object=sgp_object,
-			plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
+			plot.types=plot.types,
 			state=state,
 			bPlot.years=years,
 			sgPlot.years=years,
 			gaPlot.years=years,
 			bPlot.content_areas=content_areas,
-			gaPlot.content_areas=content_areas,
-			bPlot.folder="../Visualizations/bubblePlots",
-			sgPlot.folder="../Visualizations/studentGrowthPlots",
-			gaPlot.folder="../Visualizations/growthAchievementPlots")
+			gaPlot.content_areas=content_areas)
 	}
 
         message(paste("Finished abcSGP", date(), "in", timetaken(started.at), "\n"))

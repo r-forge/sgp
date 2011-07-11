@@ -40,7 +40,8 @@ abcSGP(sgp_object,
                 time="YEAR",
 		institution_level= NULL,
                 demographic=NULL,
-                institution_inclusion=list(STATE=NULL, DISTRICT_NUMBER=NULL, SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS")))) 
+                institution_inclusion=list(STATE=NULL, DISTRICT_NUMBER=NULL, SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS"))),
+	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot")) 
 }
 
 \arguments{
@@ -77,6 +78,9 @@ If missing the function will use the data to infer all the grade progressions fo
 \code{demographic}, and \code{institution_inclusion}. Summaries generated in summarizeSGP are for all possible combinations of the 5 types of group. See documentation for \code{\link{summarizeSGP}} and \code{\link{viewSummaryGroups}} for more detail. 
   }
   \item{confidence.interval.groups}{A subset of the groups provided in the \code{summary.groups} argument indicating which groups to provide confidence intervals for. See documentation for \code{\link{summarizeSGP}} and \code{\link{viewSummaryGroups}} for more detail.
+  }
+  \item{plot.types}{A character vector passed to \code{\link{visualizeSGP}} indicating the types of plots to produce. Currently supported plots include \code{\link{bubblePlot}}s, 
+\code{\link{studentGrowthPlot}}s, and \code{\link{growthAchievementPlot}}s. 
   }
 }
 
