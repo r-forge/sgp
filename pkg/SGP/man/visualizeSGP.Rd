@@ -146,13 +146,17 @@ Educational Measurement: Issues and Practice, 28(4):42-51.
 \examples{
 \dontrun{
 ## visualizeSGP is Step 5 of 5 of abcSGP
-visualizeSGP(DEMO_Data)
-
+Demonstration_Data <- sgpData_LONG
+Demonstration_Data <- prepareSGP(Demonstration_Data)
+Demonstration_Data <- analyzeSGP(Demonstration_Data)
+Demonstration_Data <- combineSGP(Demonstration_Data)
+Demonstration_Data <- summarizeSGP(Demonstration_Data)
+visualizeSGP(Demonstration_Data)
 
 ## Production of sample student growth and achievement plots
 
 visualizeSGP(
-	sgp_object=Demo_Data, 
+	sgp_object=Demonstration_Data, 
 	plot.types="studentGrowthPlot",
 	state="DEMO",
 	sgPlot.districts=470,

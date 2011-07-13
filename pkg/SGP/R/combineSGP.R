@@ -11,6 +11,15 @@
     started.at <- proc.time()
     message(paste("Started combineSGP", date()))
 
+    ### Create state (if missing) from sgp_object (if possible)
+
+        if (missing(state)) {
+                if (length(grep(paste(head(unlist(strsplit(deparse(substitute(sgp_object)), "_")), -1), collapse=" "), c(toupper(state.name), "Demonstration"), ignore.case=TRUE)) > 0) {
+                        state <- c(state.abb, "DEMO")[grep(paste(head(unlist(strsplit(deparse(substitute(sgp_object)), "_")), -1), collapse=" "), c(toupper(state.name), "Demonstration"), ignore.case=TRUE)]
+                } 
+        }
+
+
     ## Utility functions
 
     "%w/o%" <- function(x,y) x[!x %in% y]
@@ -27,7 +36,7 @@
        content_areas <- unique(sapply(strsplit(names(sgp_object@SGP[["SGPercentiles"]]), "[.]"), function(x) x[1]))
     } 
     if (missing(years)) {
-       years <- unique(sapply(strsplit(names(sgp_object@SGP[["SGPercentiles"]]), "[.]"), function(x) x[2]))
+       years <- type.convert(unique(sapply(strsplit(names(sgp_object@SGP[["SGPercentiles"]]), "[.]"), function(x) x[2])))
     } 
 
 

@@ -32,6 +32,15 @@
       stop("User must supply a list containing a Student slot with long data. See documentation for details.")
     }
 
+    ### Create state (if missing) from sgp_object (if possible)
+
+        if (missing(state)) {
+                if (length(grep(paste(head(unlist(strsplit(deparse(substitute(sgp_object)), "_")), -1), collapse=" "), c(toupper(state.name), "Demonstration"), ignore.case=TRUE)) > 0) {
+                        state <- c(state.abb, "DEMO")[grep(paste(head(unlist(strsplit(deparse(substitute(sgp_object)), "_")), -1), collapse=" "), c(toupper(state.name), "Demonstration"), ignore.case=TRUE)]
+                } 
+        }
+
+
     ## If missing years and content_areas then determine year(s), and content_area(s) for summaries
 
     if (missing(content_areas)) {
@@ -109,15 +118,15 @@
             tmp.list[[paste("MEDIAN_", i, "_QUANTILES", sep="")]] <- paste("boot.sgp(", i, ", ", tmp.quantiles, ")", sep="")
           }
           tmp.sgp.summaries <- c(sgp.summaries, tmp.list)
-          sgp.summaries.names <- c(names(sgp.summaries), paste("MEDIAN_SGP_", confidence.interval.groups$QUANTILES, "_CONFIDENCE_BOUND", sep="")) 
+          sgp.summaries.names <- c(unlist(strsplit(names(sgp.summaries), "[.]")), paste("MEDIAN_SGP_", confidence.interval.groups$QUANTILES, "_CONFIDENCE_BOUND", sep="")) 
         } 
         if ("CSEM" %in% confidence.interval.groups$TYPE) {
           tmp.sgp.summaries <- sgp.summaries
-          sgp.summaries.names <- c(names(sgp.summaries), paste("MEDIAN_SGP_", confidence.interval.groups$QUANTILES, "_CONFIDENCE_BOUND", sep=""))
+          sgp.summaries.names <- c(unlist(strsplit(names(sgp.summaries), "[.]")), paste("MEDIAN_SGP_", confidence.interval.groups$QUANTILES, "_CONFIDENCE_BOUND", sep=""))
         }
       } else {
         tmp.sgp.summaries <- sgp.summaries
-        sgp.summaries.names <- names(sgp.summaries)
+        sgp.summaries.names <- unlist(strsplit(names(sgp.summaries), "[.]"))
       } 
       ListExpr <- parse(text=paste("quote(as.list(c(", paste(unlist(tmp.sgp.summaries), collapse=", "),")))",sep="")) 
       ByExpr <- parse(text=paste("quote(list(", paste(sgp.groups.to.summarize, collapse=", "), "))", sep=""))

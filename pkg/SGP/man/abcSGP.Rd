@@ -96,7 +96,15 @@ Summary slot.
 
 \examples{
 \dontrun{
-DEMO_Data <- abcSGP(sgp_object=sgpData_LONG, state="DEMO")
+
+## Runs all 5 steps
+Demonstration_Data <- abcSGP(sgp_object=sgpData_LONG, state="DEMO")
+
+
+## Or letting the function detect the state
+
+Demonstration_Data <- sgpData_LONG
+Demonstration_Data <- abcSGP(Demonstration_Data)
 }
 }
 

@@ -60,7 +60,14 @@ See examples for use cases.
 \examples{
 \dontrun{
 ## analyzeSGP is Step 2 of 5 of abcSGP
-DEMO_Data <- analyzeSGP(DEMO_Data, state="DEMO")
+Demonstration_Data <- sgpData_LONG
+Demonstration_Data <- prepareSGP(Demonstration_Data)
+Demonstration_Data <- analyzeSGP(Demonstration_Data)
+
+## Or (explictely pass state argument)
+
+Demo_Data <- prepareSGP(sgpData_LONG)
+Demo_Data <- analyzeSGP(Deo_Data, state="DEMO")
 }  
 }
 

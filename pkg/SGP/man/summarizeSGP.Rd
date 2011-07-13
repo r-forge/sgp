@@ -96,7 +96,11 @@ For \code{CSEM} analysis this argument requires that simulated SGPs have been pr
 \examples{
 \dontrun{
 ## summarizeSGP is Step 4 of 5 of abcSGP
-DEMO_Data <- summarizeSGP(DEMO_Data, state="DEMO")
+Demonstration_Data <- sgpData_LONG
+Demonstration_Data <- prepareSGP(Demonstration_Data)
+Demonstration_Data <- analyzeSGP(Demonstration_Data)
+Demonstration_Data <- combineSGP(Demonstration_Data)
+Demonstration_Data <- summarizeSGP(Demonstration_Data)
 }  
 }
 

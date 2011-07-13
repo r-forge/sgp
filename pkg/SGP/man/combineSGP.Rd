@@ -19,7 +19,7 @@ combineSGP(sgp_object,
 \arguments{
   \item{sgp_object}{A list containing both \code{Student} (from \code{prepareSGP}) and \code{SGP} (from \code{analyzeSGP}) slots. 
   }
-  \item{state}{Acronym for which state is to be used for the lagged projections and growth to standard analyses.
+  \item{state}{Acronym for which state is to be used for the lagged projections and growth to standard analyses. Function will try to guess state name from passed \code{sgp_object} is missing.
   }
   \item{years}{A vector of years indicating years of data to merge with \code{@Data}. If missing, merge will use all available years of student growth percentile results.
   }
@@ -45,7 +45,10 @@ student growth percentile results.
 \examples{
 \dontrun{
 ## combineSGP is Step 3 of 5 of abcSGP
-DEMO_Data <- combineSGP(DEMO_Data, state="DEMO")
+Demonstration_Data <- sgpData_LONG
+Demonstration_Data <- prepareSGP(Demonstration_Data)
+Demonstration_Data <- analyzeSGP(Demonstration_Data)
+Demonstration_Data <- combineSGP(Demonstration_Data)
 }  
 }
 

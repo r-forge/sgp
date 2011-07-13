@@ -1,3 +1,8 @@
+Changes in version: SGP_0.2-1.0
+
+  o Added functionality to auto-detect state names based upon SGP object name convention: State_Data (e.g. ,Colorado_Data) 
+  o Fixed bug allowing users to specify multiple sgp.summaries in summarizeSGP. 
+
 Changes in version: SGP_0.2-0.0
 
   o prepareSGP returns object of class SGP unaltered and prepares data.frames as before. 

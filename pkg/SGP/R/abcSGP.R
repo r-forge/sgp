@@ -38,6 +38,14 @@ function(sgp_object,
         started.at <- proc.time()
 	message(paste("Started abcSGP", date()), "\n")
 
+	### Create state (if missing) from sgp_object (if possible)
+
+	if (missing(state)) {
+		if (length(grep(paste(head(unlist(strsplit(deparse(substitute(sgp_object)), "_")), -1), collapse=" "), c(toupper(state.name), "Demonstration"), ignore.case=TRUE)) > 0) {
+			state <- c(state.abb, "DEMO")[grep(paste(head(unlist(strsplit(deparse(substitute(sgp_object)), "_")), -1), collapse=" "), c(toupper(state.name), "Demonstration"), ignore.case=TRUE)]
+		}
+	}
+
         ### Check for consistency between simulate.sgps and confidence.interval.groups ###
 
 	if (!is.null(confidence.interval.groups) & !simulate.sgps) {

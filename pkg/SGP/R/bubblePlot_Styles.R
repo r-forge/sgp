@@ -131,7 +131,7 @@ if (1 %in% bPlot.styles) {
 
 		if (bPlot.full.academic.year) {
 			bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__YEAR__SCHOOL_ENROLLMENT_STATUS"]][
-				SCHOOL_ENROLLMENT_STATUS=="Enrolled Full Academic Year in School"]
+				SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes"]
 		} else {
 			bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__YEAR"]]
 		}
