@@ -287,6 +287,44 @@ for (i in seq_along(my.grade.sequences)) {
          distribution="Normal", round=1),
       grade.progression=my.grade.sequences[[i]])
 }
+
+### Example showing how to use pre-calcualted coefficient
+### matrices to calculate student growth percentiles
+
+my.grade.sequences <- list(3:4, 3:5, 3:6, 3:7, 4:8)
+my.sgpData <- list(Panel_Data=sgpData)   ### Put sgpData into Panel_Data slot
+
+for (i in seq_along(my.grade.sequences)) {
+     my.sgpData <- studentGrowthPercentiles(panel.data=my.sgpData,
+                     sgp.labels=list(my.year=2011, my.subject="Reading"),
+                     growth.levels="DEMO",
+                     grade.progression=my.grade.sequences[[i]])
+}
+
+percentiles.1st.run <- my.sgpData$SGPercentiles$READING.2011 
+
+### my.sgpData has as full set of coefficient matrices for Reading, 2011. To view these
+
+names(my.sgpData$Coefficient_Matrices$READING.2011)
+
+## Let's NULL out the SGPercentiles slot and recreate the percentiles 
+## using the embedded coefficient matrices
+
+my.sgpData$SGPercentiles$READING.2011 <- NULL
+
+for (i in seq_along(my.grade.sequences)) {
+     my.sgpData <- studentGrowthPercentiles(panel.data=my.sgpData,
+                     sgp.labels=list(my.year=2011, my.subject="Reading"),
+			   use.my.knots.boundaries=list(my.year=2011, my.subject="Reading"),
+                     use.my.coefficient.matrices=list(my.year=2011, my.subject="Reading"),
+                     growth.levels="DEMO",
+                     grade.progression=my.grade.sequences[[i]])
+}
+
+percentiles.2nd.run <- my.sgpData$SGPercentiles$READING.2011 
+
+identical(percentiles.1st.run, percentiles.2nd.run)
+
 }
 }
 

@@ -41,8 +41,9 @@ function(sgp_object,
 	### Create state (if missing) from sgp_object (if possible)
 
 	if (missing(state)) {
-		if (length(grep(paste(head(unlist(strsplit(deparse(substitute(sgp_object)), "_")), -1), collapse=" "), c(toupper(state.name), "Demonstration"), ignore.case=TRUE)) > 0) {
-			state <- c(state.abb, "DEMO")[grep(paste(head(unlist(strsplit(deparse(substitute(sgp_object)), "_")), -1), collapse=" "), c(toupper(state.name), "Demonstration"), ignore.case=TRUE)]
+		tmp.name <- gsub("_", " ", deparse(substitute(sgp_object)))
+		if (any(sapply(c(state.name, "Demonstration"), function(x) regexpr(x, tmp.name)))==1) {
+			state <- c(state.abb, "DEMO")[which(sapply(c(state.name, "Demonstration"), function(x) regexpr(x, tmp.name))==1)]
 		}
 	}
 

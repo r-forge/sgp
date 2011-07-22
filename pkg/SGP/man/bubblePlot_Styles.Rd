@@ -10,9 +10,11 @@ at/above proficient).
 \usage{
 bubblePlot_Styles(
                 sgp_object,
-		state=state,
-		bPlot.years,
-		bPlot.content_areas,
+		state,
+		bPlot.years=NULL,
+		bPlot.content_areas=NULL,
+		bPlot.districts=NULL,
+		bPlot.schools=NULL,
 		bPlot.styles=c(1), 
 		bPlot.full.academic.year=TRUE,
 		bPlot.minimum.n=10,
@@ -34,6 +36,12 @@ function will use the last year available in the data to produce \code{\link{bub
   }
   \item{bPlot.content_areas}{A vector indicating content area(s) to produce \code{\link{bubblePlot}}s using data available in \code{sgp_object}. If missing the 
 function will produce plots for all available content areas provided in the data. 
+  }
+  \item{bPlot.districts}{A vector indicating districts to produce \code{\link{bubblePlot}}s using data available in \code{sgp_object}. If missing the 
+function will produce plots for all available districts provided in the data where districts represent a relevant unit to be represented by the specific \code{bubblePlot} style.
+  }
+  \item{bPlot.schools}{A vector indicating schools to produce \code{\link{bubblePlot}}s using data available in \code{sgp_object}. If missing the 
+function will produce plots for all available schools provided in the data where districts represent a relevant unit to be represented by the specific \code{bubblePlot} style. 
   }
   \item{bPlot.styles}{A vector of positive integers indicating the types of \code{\link{bubblePlot}}s to produce using data available in \code{sgp_object}. See 
 associated documentation for example plots.  
@@ -57,6 +65,15 @@ achievement as the vertical dimension of the \code{\link{bubblePlot}}.
   }
 }
 
+\details{\code{bubblePlot_Styles} is an omnibus function containing a number of applications of the \code{bubblePlot} function with data output from \code{SGP} analyses. As added stytles are 
+constructed they will be added to the function allowing user to construct plots of their liking. User wishing to participate and provide or suggest specific styles of their own should
+contact the package maintainer. Styles representing summary level data (e.g., growth and achievement for schools) are currently assigned numbers from 1 to 99 and styles representing
+individual level data (e.g., growth and achievement for students within a single grade) are currently assigned numbers from 100 to 199. 
+\tabular{ll}{
+\code{1}: \tab Growth and achievement \code{\link{bubblePlot}}s for the entire state with bubbles representing schools.\cr 
+\code{100}: \tab Growth and achievement \code{\link{bubblePlot}}s by grade for students in selected schools and districts.\cr 
+}
+}
 \value{Function produces \emph{numerous} PDF bubble charts in the styles specified by the function. 
 }
 

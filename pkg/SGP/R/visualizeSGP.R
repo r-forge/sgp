@@ -2,8 +2,10 @@
   function(sgp_object,
            plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
            state,
-           bPlot.years,
-           bPlot.content_areas,
+           bPlot.years=NULL,
+           bPlot.content_areas=NULL,
+           bPlot.districts=NULL,
+           bPlot.schools=NULL,
            bPlot.styles=c(1), 
            bPlot.full.academic.year=TRUE,
            bPlot.minimum.n=10,
@@ -12,21 +14,21 @@
            bPlot.draft=FALSE,
            bPlot.format="print",
            bPlot.folder="Visualizations/bubblePlots",
-           sgPlot.years,
-           sgPlot.districts,
-           sgPlot.schools,
-           sgPlot.students,
-           sgPlot.header.footer.color="goldenrod3",
-           sgPlot.front.page,
+           sgPlot.years=NULL,
+           sgPlot.districts=NULL,
+           sgPlot.schools=NULL,
+           sgPlot.students=NULL,
+           sgPlot.header.footer.color="#4CB9CC",
+           sgPlot.front.page=NULL,
            sgPlot.folder="Visualizations/studentGrowthPlots",
            sgPlot.folder.names="number",
            sgPlot.fan=TRUE, 
            sgPlot.anonymize=FALSE,
            sgPlot.cleanup=TRUE,
            sgPlot.demo.report=TRUE,
-           gaPlot.years,
-           gaPlot.content_areas, 
-           gaPlot.students,
+           gaPlot.years=NULL,
+           gaPlot.content_areas=NULL, 
+           gaPlot.students=NULL,
            gaPlot.format="print",
            gaPlot.folder="Visualizations/growthAchievementPlots") {
 
@@ -40,14 +42,14 @@
     MEDIAN_SGP <- MEDIAN_SGP_COUNT <- VALID_CASE <- NULL ## To prevent R CMD check warnings
 
 
-   ### Create state (if missing) from sgo_object (if possible)
+   ### Create state (if missing) from sgp_object (if possible)
 
         if (missing(state)) {
-                if (length(grep(paste(head(unlist(strsplit(deparse(substitute(sgp_object)), "_")), -1), collapse=" "), c(toupper(state.name), "Demonstration"), ignore.case=TRUE)) > 0) {
-                        state <- c(state.abb, "DEMO")[grep(paste(head(unlist(strsplit(deparse(substitute(sgp_object)), "_")), -1), collapse=" "), c(toupper(state.name), "Demonstration"), ignore.case=TRUE)]
-                } 
+                tmp.name <- gsub("_", " ", deparse(substitute(sgp_object)))
+                if (any(sapply(c(state.name, "Demonstration"), function(x) regexpr(x, tmp.name)))==1) {
+                        state <- c(state.abb, "DEMO")[which(sapply(c(state.name, "Demonstration"), function(x) regexpr(x, tmp.name))==1)]
+                }
         }
-
 
     ### Utility functions	
 
@@ -74,8 +76,10 @@
 
 	bubblePlot_Styles(sgp_object=sgp_object,
 		state=state,
-		bPlot.years,
-		bPlot.content_areas,
+		bPlot.years=bPlot.years,
+		bPlot.content_areas=bPlot.content_areas,
+		bPlot.districts=bPlot.districts,
+		bPlot.schools=bPlot.schools,
 		bPlot.styles=bPlot.styles, 
 		bPlot.full.academic.year=bPlot.full.academic.year,
 		bPlot.minimum.n=bPlot.minimum.n,
@@ -97,7 +101,7 @@
 
        # Year stuff
         
-       if (missing(sgPlot.years)) {
+       if (is.null(sgPlot.years)) {
          tmp.years <- tail(sort(unique(sgp_object@Data$YEAR)), 5)
          tmp.last.year <- tail(tmp.years, 1)
        } else {
@@ -116,17 +120,22 @@
 	if (sgPlot.demo.report) {
 		sgPlot.anonymize <- TRUE
 		tmp.ids <- list()
+		key(sgp_object@Data) <- c("VALID_CASE", "YEAR", "GRADE")
 		for (i in stateData[[state]][["Student_Report_Information"]]$Grades_Reported) {
-			tmp.ids[[i]] <- sample(unique(sgp_object@Data[VALID_CASE=="VALID_CASE" & YEAR==tmp.last.year, ID]), 10)
+			tmp.ids[[i]] <- as.character(sample(unique(sgp_object@Data[J("VALID_CASE", tmp.last.year, i)]$ID), 10))
 		}
-		sgPlot.students <- do.call(c, tmp.ids)
+		if (is.factor(sgp_object@Data$ID)) {
+			sgPlot.students <- as.factor(unlist(tmp.ids)) 
+		} else {
+			sgPlot.students <- as.integer(unlist(tmp.ids))
+		}
 	}
 
-       if (missing(sgPlot.students)) {
+       if (is.null(sgPlot.students)) {
 
 	# District stuff
 
-	if (missing(sgPlot.districts)) {
+	if (is.null(sgPlot.districts)) {
 		tmp.districts <- sort(unique(sgp_object@Data[YEAR==tmp.last.year]$DISTRICT_NUMBER))
 	} else {
 		tmp.districts <- sgPlot.districts
@@ -135,7 +144,7 @@
         
 	# School stuff
 
-	if (missing(sgPlot.schools)) {
+	if (is.null(sgPlot.schools)) {
 		tmp.schools <- sort(unique(sgp_object@Data[YEAR==tmp.last.year]$SCHOOL_NUMBER))
 	} else {
 		tmp.schools <- sgPlot.schools
@@ -144,24 +153,24 @@
 
 	# Reconcile choice of District and Schools
 
-	if (missing(sgPlot.schools) & missing(sgPlot.districts)) {
+	if (is.null(sgPlot.schools) & is.null(sgPlot.districts)) {
 		tmp.districts <- sort(unique(sgp_object@Data[YEAR==tmp.last.year]$DISTRICT_NUMBER)) %w/o% NA
 		tmp.schools <- sort(unique(sgp_object@Data[YEAR==tmp.last.year]$SCHOOL_NUMBER)) %w/o% NA
 	}
 
-	if (missing(sgPlot.schools) & !missing(sgPlot.districts)) {
+	if (is.null(sgPlot.schools) & !is.null(sgPlot.districts)) {
          	tmp.districts <- sgPlot.districts
          	if (is.factor(sgp_object@Data$DISTRICT_NUMBER)) tmp.districts <- as.factor(tmp.districts)
 		tmp.schools <- unique(sgp_object@Data$SCHOOL_NUMBER[sgp_object@Data$DISTRICT_NUMBER %in% tmp.districts]) %w/o% NA
 	}
 
-	if (!missing(sgPlot.schools) & missing(sgPlot.districts)) {
+	if (!is.null(sgPlot.schools) & is.null(sgPlot.districts)) {
          	tmp.schools <- sgPlot.schools 
 		if (is.factor(sgp_object@Data$SCHOOL_NUMBER)) tmp.schools <- as.factor(tmp.schools)
 		tmp.districts <- unique(sgp_object@Data$DISTRICT_NUMBER[sgp_object@Data$SCHOOL_NUMBER %in% tmp.schools]) %w/o% NA
 	}
 
-	if (!missing(sgPlot.schools) & !missing(sgPlot.districts)) {
+	if (!is.null(sgPlot.schools) & !is.null(sgPlot.districts)) {
          	tmp.districts <- sgPlot.districts
          	tmp.schools <- sgPlot.schools 
 		tmp.schools <- unique(c(tmp.schools, sgp_object@Data$SCHOOL_NUMBER[sgp_object@Data$DISTRICT_NUMBER %in% tmp.districts])) %w/o% NA
@@ -169,7 +178,7 @@
          	if (is.factor(sgp_object@Data$DISTRICT_NUMBER)) tmp.districts <- as.factor(tmp.districts)
 		if (is.factor(sgp_object@Data$SCHOOL_NUMBER)) tmp.schools <- as.factor(tmp.schools)
 	}
-     } ## END if(missing(sgPlot.students | sgPlot.demo.report))
+     } ## END if(is.null(sgPlot.students | sgPlot.demo.report))
  
 
       ### Utility functions
@@ -179,17 +188,27 @@
         Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
       }
 
-      piecewise.transform <- function(scale_score, state, content_area, grade, output.digits=1) {
+      piecewise.transform <- function(scale_score, state, content_area, year, grade, output.digits=1) {
         if (is.null(stateData[[state]][["Student_Report_Information"]][["Modulo_Score_Transformation"]])) {
           tmp.loss.hoss <- stateData[[state]][["Achievement"]][["Knots_Boundaries"]][[as.character(content_area)]][[paste("loss.hoss_", grade, sep="")]]
-          tmp.old.cuts <- c(tmp.loss.hoss[1], stateData[[state]][["Achievement"]][["Cutscores"]][[as.character(content_area)]][[paste("GRADE_", grade, sep="")]],
-                            tmp.loss.hoss[2])
+          if (year %in% unlist(strsplit(names(stateData[[state]][["Achievement"]][["Cutscores"]])[grep(content_area, names(stateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"))) {
+               tmp.old.cuts <- c(tmp.loss.hoss[1], stateData[[state]][["Achievement"]][["Cutscores"]][[paste(content_area, year, ".")]][[paste("GRADE_", grade, sep="")]],
+                      tmp.loss.hoss[2])
+          } else {
+               tmp.old.cuts <- c(tmp.loss.hoss[1], stateData[[state]][["Achievement"]][["Cutscores"]][[as.character(content_area)]][[paste("GRADE_", grade, sep="")]],
+                      tmp.loss.hoss[2])
+          }
         } else {
           tmp.modulo <- stateData[[state]][["Student_Report_Information"]][["Modulo_Score_Transformation"]]
           tmp.loss.hoss <- stateData[[state]][["Achievement"]][["Knots_Boundaries"]][[as.character(content_area)]][[paste("loss.hoss_", grade, sep="")]]
           scale_score <- scale_score %% tmp.modulo
-          tmp.old.cuts <- c(tmp.loss.hoss[1], stateData[[state]][["Achievement"]][["Cutscores"]][[as.character(content_area)]][[paste("GRADE_", grade, sep="")]],
-                            tmp.loss.hoss[2]) %% tmp.modulo
+          if (year %in% unlist(strsplit(names(stateData[[state]][["Achievement"]][["Cutscores"]])[grep(content_area, names(stateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"))) {
+               tmp.old.cuts <- c(tmp.loss.hoss[1], stateData[[state]][["Achievement"]][["Cutscores"]][[paste(content_area, year, ".")]][[paste("GRADE_", grade, sep="")]],
+                       tmp.loss.hoss[2]) %% tmp.modulo
+          } else {
+               tmp.old.cuts <- c(tmp.loss.hoss[1], stateData[[state]][["Achievement"]][["Cutscores"]][[as.character(content_area)]][[paste("GRADE_", grade, sep="")]],
+                       tmp.loss.hoss[2]) %% tmp.modulo
+          }
         }
         tmp.new.cuts <- stateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]
         tmp.index <- findInterval(scale_score, tmp.old.cuts, rightmost.closed=TRUE)
@@ -250,26 +269,27 @@
       if (is.null(stateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
         sgp_object@Data$TRANSFORMED_SCALE_SCORE <- sgp_object@Data$SCALE_SCORE
       } else {
-        key(sgp_object@Data) <- c("CONTENT_AREA", "GRADE")
-        sgp_object@Data$TRANSFORMED_SCALE_SCORE <- sgp_object@Data[,piecewise.transform(SCALE_SCORE, state, CONTENT_AREA[1], GRADE[1]), by=list(CONTENT_AREA, GRADE)]$V1
+        key(sgp_object@Data) <- c("CONTENT_AREA", "YEAR", "GRADE")
+        sgp_object@Data$TRANSFORMED_SCALE_SCORE <- sgp_object@Data[,piecewise.transform(SCALE_SCORE, state, CONTENT_AREA[1], YEAR[1], GRADE[1]), by=list(CONTENT_AREA, YEAR, GRADE)]$V1
       }
 
 
       ### Subset data
 
-	if (missing(sgPlot.students)) {
+	if (is.null(sgPlot.students)) {
 		key(sgp_object@Data) <- c("VALID_CASE", "CONTENT_AREA", "YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER")
 		report.ids <- unique(sgp_object@Data[CJ("VALID_CASE", tmp.content_areas, tmp.last.year, tmp.districts, tmp.schools), mult="all", nomatch=0]$ID)
 	} else {
 		report.ids <- sgPlot.students
+		if (is.factor(sgp_object@Data$ID)) report.ids <- as.factor(report.ids)
 	}
 	key(sgp_object@Data) <- c("ID", "CONTENT_AREA", "YEAR")
 	tmp.table <- CJ(report.ids, tmp.content_areas, tmp.years) 
 	key(tmp.table) <- key(sgp_object@Data) <- names(tmp.table) <- c("ID", "CONTENT_AREA", "YEAR")
 	tmp.table <- sgp_object@Data[tmp.table]
 	if (sgPlot.demo.report) {
-		tmp.table$SCHOOL_NUMBER <- tmp.schools <- min(as.numeric(as.character(unique(tmp.table$SCHOOL_NUMBER))), na.rm=TRUE)
-		tmp.table$DISTRICT_NUMBER <- tmp.districts <- min(as.numeric(as.character(unique(tmp.table$DISTRICT_NUMBER))), na.rm=TRUE)
+		tmp.table$SCHOOL_NUMBER <- tmp.schools <- -99
+		tmp.table$DISTRICT_NUMBER <- tmp.districts <- -999
 	}
 
       ### Anonymize (if requested)
@@ -288,6 +308,10 @@
 
         key(tmp.table) <- "ID"
         tmp.table <- names.dt[tmp.table]
+	if (sgPlot.demo.report) {
+		tmp.table$DISTRICT_NAME <- as.factor("Sample District")
+		tmp.table$SCHOOL_NAME <- as.factor("Sample School")
+	} else {
 	key(tmp.table) <- "DISTRICT_NUMBER"
 	tmp.district.number <- J(DISTRICT_NUMBER=unique(tmp.table$DISTRICT_NUMBER) %w/o% NA, seq_along(unique(tmp.table$DISTRICT_NUMBER) %w/o% NA), key="DISTRICT_NUMBER")[tmp.table]$V2
 	tmp.table$DISTRICT_NAME <- as.character(tmp.table$DISTRICT_NAME)
@@ -299,6 +323,7 @@
 	tmp.table$SCHOOL_NAME <- as.character(tmp.table$SCHOOL_NAME)
 	tmp.table$SCHOOL_NAME[!is.na(tmp.table$SCHOOL_NUMBER)] <- paste("Sample School", tmp.school.number[!is.na(tmp.table$SCHOOL_NUMBER)])
 	tmp.table$SCHOOL_NAME <- as.factor(tmp.table$SCHOOL_NAME)
+	}
 
       } ## END create.random.names
 
@@ -320,8 +345,7 @@
                              paste("SCHOOL_NAME", tmp.last.year, sep="."), paste("SCHOOL_NUMBER", tmp.last.year, sep="."), 
                              paste("DISTRICT_NAME", tmp.last.year, sep="."), paste("DISTRICT_NUMBER", tmp.last.year, sep="."))  
 
-      isr_data <- isr_data[, variables.to.keep, with=FALSE]
-
+      isr_data <<- isr_data[, variables.to.keep, with=FALSE]
       
       ### Merge in 1 year projections (if requested & available)
 
@@ -362,6 +386,9 @@
           } else {
             district_folder <- as.character(i)
           }
+          if (sgPlot.demo.report) {
+            district_folder <- "Sample_District"
+          }
 
         tmp_district_ids <- unique(isr_data[J(i)]$ID)
         tmp_district_data <- subset(isr_data, ID %in% tmp_district_ids)
@@ -382,6 +409,11 @@
             } else {
               school_folder <- as.character(j)
             }
+            if (sgPlot.demo.report) {
+              school_folder <- "Sample_School"
+            }
+
+
 
           tmp_school_ids <- unique(tmp_district_data[J(j)]$ID)
           tmp_school_data <- subset(tmp_district_data, ID %in% tmp_school_ids)
@@ -445,7 +477,7 @@
 
 
               ################################ SCHOOL Report Catalog LaTeX Code ###########################
-              if (missing(sgPlot.front.page)) {
+              if (is.null(sgPlot.front.page)) {
                 cat(paste("\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", student_number, ")", sep=""), "}{", n , "}
 \\includepdf[fitpaper=true]{", path.to.pdfs, "/", FIRST_NAME, "_", LAST_NAME, "_", student_number, "_", year_folder, ".pdf}\n", sep=""), 
                     file=paste("school_catalog_", j, ".tex", sep=""), append=TRUE)
@@ -470,7 +502,7 @@
 \\pdfcompresslevel=9
 \\pdfmapfile{}
 \\begin{document}\n", file=paste("student_report_", j, ".tex", sep=""), append=TRUE)
-              if (!missing(sgPlot.front.page)) {
+              if (!is.null(sgPlot.front.page)) {
                 cat("\\includepdf[fitpaper=true]{", sgPlot.front.page, "}\n", file=paste("student_report_", j, ".tex", sep=""), append=TRUE)
               }
               cat(paste("\\includepdf[fitpaper=true]{", path.to.pdfs, "/", FIRST_NAME, "_", LAST_NAME, "_", student_number, "_", year_folder, ".pdf}\n", sep=""), 
@@ -675,7 +707,7 @@
 
        # Year stuff 
 
-       if (missing(gaPlot.years)) {
+       if (is.null(gaPlot.years)) {
          tmp.years <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
        } else {
          tmp.years <- gaPlot.years
@@ -685,7 +717,7 @@
 
        for (year.iter in tmp.years) {
 
-       if (!missing(gaPlot.content_areas)) {
+       if (!is.null(gaPlot.content_areas)) {
           tmp.content_areas <- gaPlot.content_areas
           if (is.factor(sgp_object@Data$CONTENT_AREA)) tmp.content_areas <- as.factor(tmp.content_areas) ## Factor joins to Factor
        } else {
@@ -694,7 +726,7 @@
 
        for (content_area.iter in tmp.content_areas) {
       
-          if (missing(gaPlot.students)) {
+          if (is.null(gaPlot.students)) {
               tmp.students <- NULL
           } else {
               tmp.students <- gaPlot.students
@@ -711,8 +743,8 @@
              format=gaPlot.format,
              pdf.folder=file.path(gaPlot.folder, year.iter))
 
-        } ## END for loop year.iter
-     } ## END for loop content_area.iter
+        } ## END for loop content_area.iter
+     } ## END for loop year.iter
    } ## END if (growthAchievementPlot %in% plot.types)
 
 } ## END visualizeSGP Function

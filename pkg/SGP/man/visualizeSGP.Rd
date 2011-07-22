@@ -13,8 +13,10 @@ visualizeSGP(
            sgp_object,
            plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
            state,
-           bPlot.years,
-           bPlot.content_areas,
+           bPlot.years=NULL,
+           bPlot.content_areas=NULL,
+           bPlot.districts=NULL,
+           bPlot.schools=NULL,
            bPlot.styles=c(1),
            bPlot.full.academic.year=TRUE,
            bPlot.minimum.n=10,
@@ -23,21 +25,21 @@ visualizeSGP(
            bPlot.draft=FALSE,
            bPlot.format="print",
            bPlot.folder="Visualizations/bubblePlots",
-           sgPlot.years,
-           sgPlot.districts,
-           sgPlot.schools,
-           sgPlot.students,
-           sgPlot.header.footer.color="goldenrod3",
-           sgPlot.front.page,
+           sgPlot.years=NULL,
+           sgPlot.districts=NULL,
+           sgPlot.schools=NULL,
+           sgPlot.students=NULL,
+           sgPlot.header.footer.color="#4CB9CC",
+           sgPlot.front.page=NULL,
            sgPlot.folder="Visualizations/studentGrowthPlots",
            sgPlot.folder.names="number",
            sgPlot.fan=TRUE,  
            sgPlot.anonymize=FALSE,
            sgPlot.cleanup=TRUE,
            sgPlot.demo.report=TRUE,
-           gaPlot.years,
-           gaPlot.content_areas,
-           gaPlot.students,
+           gaPlot.years=NULL,
+           gaPlot.content_areas=NULL,
+           gaPlot.students=NULL,
            gaPlot.format="print",
            gaPlot.folder="Visualizations/growthAchievementPlots") 
 }
@@ -56,6 +58,12 @@ function will use the last year available in the data to produce \code{\link{bub
   }
   \item{bPlot.content_areas}{A vector indicating content area(s) to produce \code{\link{bubblePlot}}s using data available in \code{sgp_object}. If missing the 
 function will produce plots for all available content areas provided in the data. 
+  }
+  \item{bPlot.districts}{A vector indicating districts to produce \code{\link{bubblePlot}}s using data available in \code{sgp_object}. Consult \code{\link{bubblePlot}} 
+styles to determine which \code{\link{bubblePlot}}s styles accept specification for districts. Default is to produce plots for all available districts in the data. 
+  }
+  \item{bPlot.schools}{A vector indicating schools to produce \code{\link{bubblePlot}}s using data available in \code{sgp_object}. Consult \code{\link{bubblePlot}} 
+styles to determine which \code{\link{bubblePlot}} styles accept specification for schools. Default is to produce plots for all available schools in the data. 
   }
   \item{bPlot.styles}{A vector of positive integers indicating the types of \code{\link{bubblePlot}}s to produce using data available in \code{sgp_object}. See 
 associated documentation for example plots.  
@@ -90,8 +98,8 @@ schools in the data to produce \code{\link{studentGrowthPlot}}s. If both \code{s
   \item{sgPlot.students}{A vector of student \code{ID}s indicating which students to produce \code{\link{studentGrowthPlot}}s for. If missing the function will 
 use \emph{all} available students in the data to produce \code{\link{studentGrowthPlot}}s. 
   }
-  \item{sgPlot.header.footer.color}{Character vector (defaults to "goldenrod3") indicating the color of the header/footer associated with the 
-\code{\link{studentGrowthPlot}}. 
+  \item{sgPlot.header.footer.color}{Character vector (defaults to a blue) indicating the color of the header/footer associated with the 
+\code{\link{studentGrowthPlot}}. Another good color is \code{goldenrod2}.
   }
   \item{sgPlot.front.page}{A path to a PDF to be used as the front page to the \code{\link{studentGrowthPlot}}. The default is missing so that no front page is
 attached to the \code{\link{studentGrowthPlot}}. 

@@ -1,7 +1,17 @@
+Changes in version: SGP_0.3-0.0
+
+  o Added an example to studentGrowthPercentiles showing how embedded coefficient matrices can be used to calculate student growth percentiles. 
+  o Lots of little bug fixes in visualizeSGP, studentGrowthPlt, bubblePlot, and growthAchievmentPlot, particularly when scale is transformed. 
+  o In analyzeSGP, the automatic configuration has been improved to better select grade progressions associated with the provided data. 
+  o Began adding functionality to use parallel backends from using different parallelization implementations (SNOW, FOREACH, MULTICORE). 
+  o studentGrowthProjections now accomodates year dependent cutscores (in situations where states change cutscores). 
+  o piecewise.transform function accomodates year dependent cutscores. This impact both studentGrowthPlots and growthAchievementPlots when scale score transformations are employed to view SGP results.
+
 Changes in version: SGP_0.2-1.0
 
   o Added functionality to auto-detect state names based upon SGP object name convention: State_Data (e.g. ,Colorado_Data) 
   o Fixed bug allowing users to specify multiple sgp.summaries in summarizeSGP. 
+  o Corrected error in achievement level labels in Nevada state data. 
 
 Changes in version: SGP_0.2-0.0
 

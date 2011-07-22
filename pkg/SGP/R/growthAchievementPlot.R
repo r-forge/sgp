@@ -1,4 +1,5 @@
-`growthAchievementPlot` <- function(
+`growthAchievementPlot` <- 
+   function(
 	gaPlot.sgp_object,
         gaPlot.students,
 	gaPlot.percentile_trajectories,
@@ -36,7 +37,7 @@
 	}
 
 	growthAchievementPlot.data <- gaPlot.sgp_object@Data[J("VALID_CASE", content_area), list(ID, YEAR, GRADE, SCALE_SCORE)][
-		!is.na(gaPlot.sgp_object@Data$GRADE) & !is.na(gaPlot.sgp_object@Data$SCALE_SCORE)]
+		!is.na(GRADE) & !is.na(SCALE_SCORE)]
 	tmp.smooth.grades <- seq(gaPlot.grade_range[1], gaPlot.grade_range[2], by=0.01)
 	tmp.unique.grades <- gaPlot.grade_range[1]:gaPlot.grade_range[2]
 
@@ -97,7 +98,7 @@
                                           ncol=2, byrow=TRUE)[,2])
           tmp.list <- list()
           for (i in seq(number.achievement.level.regions-1)) {
-            tmp.list[[i]] <- data.frame(GRADE=c(min(tmp.grades,na.rm=TRUE)-1, tmp.grades, max(tmp.grades,na.rm=TRUE)+1),
+            tmp.list[[i]] <- data.frame(GRADE=c(min(tmp.grades, na.rm=TRUE)-1, tmp.grades, max(tmp.grades, na.rm=TRUE)+1),
                                         CUTLEVEL=rep(i, length(tmp.grades)+2),
                                         CUTSCORES=rep(stateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][i+1],
                                           length(tmp.grades)+2))
@@ -107,25 +108,34 @@
       } ## END create.long.cutscores
 
 
-      piecewise.transform <- function(scale_score, state, content_area, grade, output.digits=1) {
+      piecewise.transform <- function(scale_score, state, content_area, year, grade, output.digits=1) {
         if (is.null(stateData[[state]][["Student_Report_Information"]][["Modulo_Score_Transformation"]])) {
           tmp.loss.hoss <- stateData[[state]][["Achievement"]][["Knots_Boundaries"]][[as.character(content_area)]][[paste("loss.hoss_", grade, sep="")]]
-          tmp.old.cuts <- c(tmp.loss.hoss[1], stateData[[state]][["Achievement"]][["Cutscores"]][[as.character(content_area)]][[paste("GRADE_", grade, sep="")]], 
-                            tmp.loss.hoss[2])
+          if (year %in% unlist(strsplit(names(stateData[[state]][["Achievement"]][["Cutscores"]])[grep(content_area, names(stateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"))) {
+               tmp.old.cuts <- c(tmp.loss.hoss[1], stateData[[state]][["Achievement"]][["Cutscores"]][[paste(content_area, year, sep=".")]][[paste("GRADE_", grade, sep="")]],
+                      tmp.loss.hoss[2])
+          } else {
+               tmp.old.cuts <- c(tmp.loss.hoss[1], stateData[[state]][["Achievement"]][["Cutscores"]][[as.character(content_area)]][[paste("GRADE_", grade, sep="")]],
+                      tmp.loss.hoss[2])
+          }
         } else {
           tmp.modulo <- stateData[[state]][["Student_Report_Information"]][["Modulo_Score_Transformation"]]
+          tmp.loss.hoss <- stateData[[state]][["Achievement"]][["Knots_Boundaries"]][[as.character(content_area)]][[paste("loss.hoss_", grade, sep="")]]
           scale_score <- scale_score %% tmp.modulo
-          tmp.old.cuts <- stateData[[state]][["Achievement"]][["Cutscores"]][[as.character(content_area)]][[paste("GRADE_", grade, sep="")]] %% tmp.modulo
+          if (year %in% unlist(strsplit(names(stateData[[state]][["Achievement"]][["Cutscores"]])[grep(content_area, names(stateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"))) {
+               tmp.old.cuts <- c(tmp.loss.hoss[1], stateData[[state]][["Achievement"]][["Cutscores"]][[paste(content_area, year, sep=".")]][[paste("GRADE_", grade, sep="")]],
+                       tmp.loss.hoss[2]) %% tmp.modulo
+          } else {
+               tmp.old.cuts <- c(tmp.loss.hoss[1], stateData[[state]][["Achievement"]][["Cutscores"]][[as.character(content_area)]][[paste("GRADE_", grade, sep="")]],
+                       tmp.loss.hoss[2]) %% tmp.modulo
+          }
         }
-	if (is.null(stateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
-	  tmp.new.cuts <- tmp.old.cuts
-	} else {
-          tmp.new.cuts <- stateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]
-        }
+        tmp.new.cuts <- stateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]
         tmp.index <- findInterval(scale_score, tmp.old.cuts, rightmost.closed=TRUE)
         tmp.diff <- diff(tmp.new.cuts)/diff(tmp.old.cuts)
         round(tmp.new.cuts[tmp.index] + (scale_score - tmp.old.cuts[tmp.index]) * (diff(tmp.new.cuts)/diff(tmp.old.cuts))[tmp.index], digits=output.digits)
       } ## END piecewise.transform
+
 
 	## Function that produces a smoothed Percentile Trajectory
 
@@ -149,16 +159,27 @@
                 tmp.trajectories <- gaPlot.percentile_trajectories_Internal(tmp.df, percentile, content_area, year, state)
 		trajectories <- c(tail(as.numeric(tmp.df), (dim(tmp.df)[2]-1)/2), as.numeric(tmp.trajectories))
 		grade.sequence <- c(as.numeric(tmp.df[1,2:((dim(tmp.df)[2]+1)/2)]), sapply(strsplit(names(tmp.trajectories), "_"), function(x) tail(x, 1)))
-		return(splinefun(grade.sequence, trajectories))
+
+
+		if (!is.null(stateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
+			tmp.spline.fun <- splinefun(grade.sequence, trajectories)
+			tmp.function <- function(grades) {
+				sapply(grades, function(x) piecewise.transform(tmp.spline.fun(x), state, content_area, year, x))
+			}
+			return(splinefun(grade.sequence, tmp.function(grade.sequence)))
+		} else {
+			return(splinefun(grade.sequence, trajectories))
+		}
 	}
 
 
 	## Calculate Scale Transformations (if required) 
 
-	if (stateData[[state]][["Student_Report_Information"]][["Vertical_Scale"]]=="No") {
+	if (!is.null(stateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
 		growthAchievementPlot.data$TRANSFORMED_SCALE_SCORE <- 
-		growthAchievementPlot.data[, piecewise.transform(SCALE_SCORE, state, content_area , GRADE[1]), 
+		growthAchievementPlot.data[, piecewise.transform(SCALE_SCORE, state, content_area , year, GRADE[1]), 
 			by=list(GRADE)]$V1
+		gaPlot.show.scale.transformations <- FALSE
 	} else {
 		growthAchievementPlot.data$TRANSFORMED_SCALE_SCORE <- growthAchievementPlot.data$SCALE_SCORE
 	}
@@ -193,7 +214,7 @@
 		temp_uncond_frame <- as.data.frame(temp_uncond_frame)
 
 		for (i in gaPlot.achievement_percentiles) {
-			temp_achievement_curve <- splinefun(tmp.unique.grades, as.vector(by(growthAchievementPlot.data[YEAR==year]$SCALE_SCORE, 
+			temp_achievement_curve <- splinefun(tmp.unique.grades, as.vector(by(growthAchievementPlot.data[YEAR==year]$TRANSFORMED_SCALE_SCORE, 
 				growthAchievementPlot.data[YEAR==year]$GRADE, quantile, probs=i, na.rm=TRUE)), method="monoH.FC")
 			temp_uncond_frame[as.character(i),] <- temp_achievement_curve(tmp.smooth.grades)
 		}
@@ -223,9 +244,14 @@
 	## Create data sets to be used for plot production
 
 	if (is.null(gaPlot.students)) {
-	 	tmp1.df <- data.frame(ID=seq_along(stateData[[state]][["Achievement"]][["Cutscores"]][[content_area]][[1]]),
-			GRADE=min(stateData[[state]][["Assessment_Program_Information"]][["Grades_Tested"]]),
-			SCALE_SCORE=stateData[[state]][["Achievement"]][["Cutscores"]][[content_area]][[1]])
+		if (year %in% unlist(strsplit(names(stateData[[state]][["Achievement"]][["Cutscores"]])[grep(content_area, names(stateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"))) {
+			start.cuts <- stateData[[state]][["Achievement"]][["Cutscores"]][[paste(content_area, year, sep=".")]]
+		} else {
+			start.cuts <- stateData[[state]][["Achievement"]][["Cutscores"]][[as.character(content_area)]]
+		}
+	 	tmp1.df <- data.frame(ID=seq_along(start.cuts[[1]]),
+			GRADE=as.numeric(as.character(tail(unlist(strsplit(names(start.cuts)[1], "_")), 1))),
+			SCALE_SCORE=start.cuts[[1]])
 	} else {
 		tmp1.df <- growthAchievementPlot.data[ID %in% gaPlot.students]
 	}
