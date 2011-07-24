@@ -154,7 +154,7 @@ function(panel.data,	## REQUIRED
 	} ## End function
 
 	.sgp.targets <- function(data, cut, convert.0and100) {
-		tmp <- which.min(c(data < cut, FALSE))-1
+		tmp <- which.min(c(data < cut, FALSE))
 		tmp[tmp==101] <- 100
 		if (convert.0and100) {tmp[tmp==0] <- 1; tmp[tmp==100] <- 99}
 		return(as.integer(tmp))

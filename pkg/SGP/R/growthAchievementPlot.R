@@ -54,13 +54,14 @@
 
 	pretty_year <- function(x) sub("_", "-", x)
 
-	special.words <- c("ELA", "II", "III", "IV")
 	capwords <- function(x) {
+		special.words <- c("ELA", "EMH", "II", "III", "IV")
 		if (x %in% special.words) return(x)
-		s <- strsplit(x, split=" ")[[1]]
+		s <- sub("_", " ", x)
+		s <- strsplit(s, split=" ")[[1]]
 		s <- paste(toupper(substring(s, 1,1)), tolower(substring(s, 2)), sep="", collapse=" ")
 		s <- strsplit(s, split="-")[[1]]
-		paste(toupper(substring(s, 1,1)), substring(s, 2), sep="", collapse="-") 
+		paste(toupper(substring(s, 1,1)), substring(s, 2), sep="", collapse="-")
 	}
 
 	myround_up <- function(x) {
@@ -310,7 +311,7 @@ bottom.axis.vp <- viewport(name="bottom.axis.vp",
                     gp=gpar(fill="transparent"))
 
 title.vp <- viewport(name="title.vp",
-                    layout.pos.row=1, layout.pos.col=2,
+                    layout.pos.row=1, layout.pos.col=1:3,
                     xscale=c(0,1),
                     yscale=c(0,1),
                     gp=gpar(fill="transparent"))
@@ -468,11 +469,10 @@ popViewport() ## pop bottom.axis.vp
 
 pushViewport(title.vp)
 
-grid.text(x=0.5, y=0.25, stateData[[state]][["Assessment_Program_Information"]][["Assessment_Name"]], 
-	gp=gpar(col=format.colors.font, fontface=2, fontfamily="Helvetica-Narrow", cex=2.0), default.units="native")
-grid.text(x=0.5, y=0.50, paste(pretty_year(year), assessment.name, capwords(content_area)), 
-	gp=gpar(col=format.colors.font, fontface=2, fontfamily="Helvetica-Narrow", cex=2.0), default.units="native")
-grid.text(x=0.5, y=0.75, "Growth and Achievement Chart", gp=gpar(col=format.colors.font, fontface=2, fontfamily="Helvetica-Narrow", cex=2.0), default.units="native")
+grid.roundrect(width=unit(0.95, "npc"), height=unit(0.7, "npc"), r=unit(0.025, "snpc"), gp=gpar(col=format.colors.font, lwd=1.6))
+grid.text(x=0.5, y=0.65, paste(state.name.label, ": ", pretty_year(year), " ", capwords(content_area), sep=""), 
+	gp=gpar(col=format.colors.font, fontface=2, fontfamily="Helvetica-Narrow", cex=3.0), default.units="native")
+grid.text(x=0.5, y=0.3, "Norm & Criterion Referenced Growth & Achievement", gp=gpar(col=format.colors.font, fontface=2, fontfamily="Helvetica-Narrow", cex=2.25), default.units="native")
 
 popViewport() ## pop title.vp
 
