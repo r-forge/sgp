@@ -1,6 +1,6 @@
 Package: SGP
-Version: 0.3-5.0
-Date: 2011-7-23
+Version: 0.4-0.0
+Date: 2011-8-07
 Title: An R Package for the Calculation and Visualization of Student Growth Percentiles.
 Author@R: c(person("Damian", "Betebenner",
                    email="dbetebenner@nciea.org"),
@@ -10,10 +10,11 @@ Author: Damian W. Betebenner <dbetebenner@nciea.org> and Adam Van Iwaarden <Vani
         with contributions from Ben Domingue, Jonathan Weeks, John Stewart, Jinnie Choi, Xin Wei, and Hi Shin Shim. With special thanks to 
         State Department of Education analysts: Rebecca Gau (Arizona), Marie Huchton (Colorado), Dr. Carissa Miller (Idaho), Dr. Wes Bruce (Indiana), Robert Hochsegang (Indiana), 
 	Xuewen Sheng (Kansas), Robert Lee (Massachusetts), Ken Thompson (Mississippi), Soo Yeon Cho (Missouri), Jeff Halsell (Nevada), Selcuk Ozdemir (Nevada), Deb Wiswell (New Hampshire), 
-	Ana Karantonis (Rhode Island), Dr. Deborah Jonas (Virginia), Joseph Newton (Wisconsin), Dr. Philip Olsen (Wisconsin), Nick Stroud (Wisconsin).  
+	Katya Levitan-Reiner (New Haven Public Schools), Ana Karantonis (Rhode Island), Dr. Deborah Jonas (Virginia), Justin Meyer (Wisconsin), Joseph Newton (Wisconsin), 
+	Dr. Philip Olsen (Wisconsin), Nick Stroud (Wisconsin).  
 Maintainer: Damian W. Betebenner <dbetebenner@nciea.org>
 Depends: R (>= 2.10), data.table (>= 1.6.2), foreach, grid, methods, plyr, quantreg, splines
-Suggests: boot, colorspace, doMC, gridBase, pdf2, randomNames (>= 0.0-3), sn, snow
+Suggests: boot, colorspace, multicore, gridBase, pdf2, randomNames (>= 0.0-3), sn, snow
 Description: Functions to calculate student growth percentiles and percentile growth projections/trajectories for students using large scale, 
         longitudinal assessment data.  Functions use quantile regression to estimate the conditional density associated 
         with each student's achievement history.  Percentile growth projections/trajectories are calculated using the coefficient matrices derived from 
@@ -23,3 +24,4 @@ URL: http://cran.r-project.org/web/packages/SGP/, https://r-forge.r-project.org/
 LazyLoad: Yes
 LazyData: Yes
 License: CC BY-SA 3.0 US | CC BY-NC-SA 3.0 + file LICENSE
+Packaged: 2011-08-05 12:16:37 UTC; damian

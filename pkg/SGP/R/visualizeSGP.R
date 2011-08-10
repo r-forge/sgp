@@ -6,7 +6,8 @@
            bPlot.content_areas=NULL,
            bPlot.districts=NULL,
            bPlot.schools=NULL,
-           bPlot.styles=c(1), 
+           bPlot.styles=c(1),
+           bPlot.levels=NULL, 
            bPlot.full.academic.year=TRUE,
            bPlot.minimum.n=10,
            bPlot.anonymize=FALSE,
@@ -32,6 +33,8 @@
            gaPlot.format="print",
            gaPlot.folder="Visualizations/growthAchievementPlots") {
 
+    started.at <- proc.time()
+    message(paste("Started visualizeSGP", date()))
 
     ### Setting variables to NULL to prevent R CMD check warnings
 
@@ -74,13 +77,17 @@
 
 	if ("bubblePlot" %in% plot.types) {
 
+	started.at <- proc.time()
+	message(paste("Started bubblePlot in visualizeSGP", date()))
+
 	bubblePlot_Styles(sgp_object=sgp_object,
 		state=state,
 		bPlot.years=bPlot.years,
 		bPlot.content_areas=bPlot.content_areas,
 		bPlot.districts=bPlot.districts,
 		bPlot.schools=bPlot.schools,
-		bPlot.styles=bPlot.styles, 
+		bPlot.styles=bPlot.styles,
+		bPlot.levels=bPlot.levels, 
 		bPlot.full.academic.year=bPlot.full.academic.year,
 		bPlot.minimum.n=bPlot.minimum.n,
 		bPlot.anonymize=bPlot.anonymize,
@@ -89,6 +96,7 @@
 		bPlot.format=bPlot.format,
 		bPlot.folder=bPlot.folder)
 
+	message(paste("Finished bubblePlot in visualizeSGP", date(), "in", timetaken(started.at), "\n"))
 	} ## END bubblePlot %in% plot.types	
 
 ####################################################################################################################
@@ -96,6 +104,9 @@
 ####################################################################################################################
 
     if ("studentGrowthPlot" %in% plot.types) {
+
+	started.at <- proc.time()
+	message(paste("Started studentGrowthPlot in visualizeSGP", date()))
 
        #### Define groups for whom studentGrowthPlots are produced
 
@@ -189,36 +200,40 @@
       }
 
       piecewise.transform <- function(scale_score, state, content_area, year, grade, output.digits=1) {
-        if (is.null(stateData[[state]][["Student_Report_Information"]][["Modulo_Score_Transformation"]])) {
-          tmp.loss.hoss <- stateData[[state]][["Achievement"]][["Knots_Boundaries"]][[as.character(content_area)]][[paste("loss.hoss_", grade, sep="")]]
-          if (year %in% unlist(strsplit(names(stateData[[state]][["Achievement"]][["Cutscores"]])[grep(content_area, names(stateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"))) {
-               tmp.old.cuts <- c(tmp.loss.hoss[1], stateData[[state]][["Achievement"]][["Cutscores"]][[paste(content_area, year, ".")]][[paste("GRADE_", grade, sep="")]],
-                      tmp.loss.hoss[2])
-          } else {
-               tmp.old.cuts <- c(tmp.loss.hoss[1], stateData[[state]][["Achievement"]][["Cutscores"]][[as.character(content_area)]][[paste("GRADE_", grade, sep="")]],
-                      tmp.loss.hoss[2])
-          }
+        if (content_area %in% names(stateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
+           if (is.null(stateData[[state]][["Student_Report_Information"]][["Modulo_Score_Transformation"]])) {
+             tmp.loss.hoss <- stateData[[state]][["Achievement"]][["Knots_Boundaries"]][[as.character(content_area)]][[paste("loss.hoss_", grade, sep="")]]
+             if (year %in% unlist(strsplit(names(stateData[[state]][["Achievement"]][["Cutscores"]])[grep(content_area, names(stateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"))) {
+                  tmp.old.cuts <- c(tmp.loss.hoss[1], stateData[[state]][["Achievement"]][["Cutscores"]][[paste(content_area, year, sep=".")]][[paste("GRADE_", grade, sep="")]],
+                         tmp.loss.hoss[2])
+             } else {
+                  tmp.old.cuts <- c(tmp.loss.hoss[1], stateData[[state]][["Achievement"]][["Cutscores"]][[as.character(content_area)]][[paste("GRADE_", grade, sep="")]],
+                         tmp.loss.hoss[2])
+             }
+           } else {
+             tmp.modulo <- stateData[[state]][["Student_Report_Information"]][["Modulo_Score_Transformation"]]
+             tmp.loss.hoss <- stateData[[state]][["Achievement"]][["Knots_Boundaries"]][[as.character(content_area)]][[paste("loss.hoss_", grade, sep="")]]
+             scale_score <- scale_score %% tmp.modulo
+             if (year %in% unlist(strsplit(names(stateData[[state]][["Achievement"]][["Cutscores"]])[grep(content_area, names(stateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"))) {
+                  tmp.old.cuts <- c(tmp.loss.hoss[1], stateData[[state]][["Achievement"]][["Cutscores"]][[paste(content_area, year, sep=".")]][[paste("GRADE_", grade, sep="")]],
+                          tmp.loss.hoss[2]) %% tmp.modulo
+             } else {
+                  tmp.old.cuts <- c(tmp.loss.hoss[1], stateData[[state]][["Achievement"]][["Cutscores"]][[as.character(content_area)]][[paste("GRADE_", grade, sep="")]],
+                          tmp.loss.hoss[2]) %% tmp.modulo
+             }
+           }
+           tmp.new.cuts <- stateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[as.character(content_area)]]
+           tmp.index <- findInterval(scale_score, tmp.old.cuts, rightmost.closed=TRUE)
+           tmp.diff <- diff(tmp.new.cuts)/diff(tmp.old.cuts)
+           round(tmp.new.cuts[tmp.index] + (scale_score - tmp.old.cuts[tmp.index]) * (diff(tmp.new.cuts)/diff(tmp.old.cuts))[tmp.index], digits=output.digits)
         } else {
-          tmp.modulo <- stateData[[state]][["Student_Report_Information"]][["Modulo_Score_Transformation"]]
-          tmp.loss.hoss <- stateData[[state]][["Achievement"]][["Knots_Boundaries"]][[as.character(content_area)]][[paste("loss.hoss_", grade, sep="")]]
-          scale_score <- scale_score %% tmp.modulo
-          if (year %in% unlist(strsplit(names(stateData[[state]][["Achievement"]][["Cutscores"]])[grep(content_area, names(stateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"))) {
-               tmp.old.cuts <- c(tmp.loss.hoss[1], stateData[[state]][["Achievement"]][["Cutscores"]][[paste(content_area, year, ".")]][[paste("GRADE_", grade, sep="")]],
-                       tmp.loss.hoss[2]) %% tmp.modulo
-          } else {
-               tmp.old.cuts <- c(tmp.loss.hoss[1], stateData[[state]][["Achievement"]][["Cutscores"]][[as.character(content_area)]][[paste("GRADE_", grade, sep="")]],
-                       tmp.loss.hoss[2]) %% tmp.modulo
-          }
+           as.numeric(scale_score)
         }
-        tmp.new.cuts <- stateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]
-        tmp.index <- findInterval(scale_score, tmp.old.cuts, rightmost.closed=TRUE)
-        tmp.diff <- diff(tmp.new.cuts)/diff(tmp.old.cuts)
-        round(tmp.new.cuts[tmp.index] + (scale_score - tmp.old.cuts[tmp.index]) * (diff(tmp.new.cuts)/diff(tmp.old.cuts))[tmp.index], digits=output.digits)
       } ## END piecewise.transform
 
       create.long.cutscores <- function(state, content_area) {
         number.achievement.level.regions <- length(stateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
-        if (is.null(stateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
+        if (!content_area %in% names(stateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
           tmp.grades <- as.numeric(matrix(unlist(strsplit(names(stateData[[state]][["Achievement"]][["Cutscores"]][[content_area]]), "_")),
                                           ncol=2, byrow=TRUE)[,2])
           tmp.cutscores <- matrix(unlist(stateData[[state]][["Achievement"]][["Cutscores"]][[content_area]]),
@@ -237,7 +252,7 @@
           for (i in seq(number.achievement.level.regions-1)) {
             tmp.list[[i]] <- data.frame(GRADE=c(min(tmp.grades,na.rm=TRUE)-1, tmp.grades, max(tmp.grades,na.rm=TRUE)+1),
                                         CUTLEVEL=rep(i, length(tmp.grades)+2),
-                                        CUTSCORES=rep(stateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][i+1],
+                                        CUTSCORES=rep(stateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]][i+1],
                                           length(tmp.grades)+2))
           }
           do.call(rbind, tmp.list)
@@ -245,33 +260,28 @@
       } ## END create.long.cutscores
 
 
-      ### Define quantities/variables
+      ### Define quantities/variables related to state
 
-      test.abbreviation <- stateData[[state]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
-      Cutscores <- list()
-      for (i in tmp.content_areas) {
-        Cutscores[[i]] <- create.long.cutscores(state, i)
-      }
-
-      # State stuff
-
-      if (state %in% c(state.abb, "DEMO")) {
-        tmp.state <- paste(state.name[state==state.abb], stateData[[state]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]])
+      if (state %in% names(stateData)) {
+        tmp.abbreviation <- stateData[[state]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
+        tmp.state <- paste(state.name[state==state.abb], tmp.abbreviation)
         tmp.organization <- stateData[[state]][["Assessment_Program_Information"]][["Organization"]]
+        Cutscores <- list()
+        for (i in tmp.content_areas) {
+          Cutscores[[i]] <- create.long.cutscores(state, i)
+        }
+        number.achievement.level.regions <- length(stateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
+
       } else {
         tmp.state <- state
         tmp.organization <- list(name=paste(state, "Department of Education"), URL=paste("http://www", state, "gov", sep="."), Phone_Number="123-456-7890")
       }	
 
 
-      ### Transformed scale score stuff (Necessary before Subset)
+      ### Create transformed scale scores (Necessary before Subset)
 
-      if (is.null(stateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
-        sgp_object@Data$TRANSFORMED_SCALE_SCORE <- sgp_object@Data$SCALE_SCORE
-      } else {
         key(sgp_object@Data) <- c("CONTENT_AREA", "YEAR", "GRADE")
         sgp_object@Data$TRANSFORMED_SCALE_SCORE <- sgp_object@Data[,piecewise.transform(SCALE_SCORE, state, CONTENT_AREA[1], YEAR[1], GRADE[1]), by=list(CONTENT_AREA, YEAR, GRADE)]$V1
-      }
 
 
       ### Subset data
@@ -345,7 +355,7 @@
                              paste("SCHOOL_NAME", tmp.last.year, sep="."), paste("SCHOOL_NUMBER", tmp.last.year, sep="."), 
                              paste("DISTRICT_NAME", tmp.last.year, sep="."), paste("DISTRICT_NUMBER", tmp.last.year, sep="."))  
 
-      isr_data <<- isr_data[, variables.to.keep, with=FALSE]
+      isr_data <- isr_data[, variables.to.keep, with=FALSE]
       
       ### Merge in 1 year projections (if requested & available)
 
@@ -380,7 +390,7 @@
 
       for (i in tmp.districts) {
 
-          tmp_district_name <- as.character(isr_data[J(i)]$DISTRICT_NAME[1])
+          tmp_district_name <- as.character(isr_data[J(i)][[paste("DISTRICT_NAME", tmp.last.year, sep=".")]][1])
           if (sgPlot.folder.names=="name") {
             district_folder <- gsub(" ", "_", paste(tmp_district_name, " (", i, ")", sep=""))
           } else {
@@ -403,7 +413,7 @@
 
         for (j in schools) {
 
-            tmp_school_name <- as.character(tmp_district_data[J(j)]$SCHOOL_NAME[1])
+            tmp_school_name <- as.character(tmp_district_data[J(j)][[paste("SCHOOL_NAME", tmp.last.year, sep=".")]][1])
             if (sgPlot.folder.names=="name") {
               school_folder <- gsub(" ", "_", paste(tmp_school_name, " (", j, ")", sep=""))
             } else {
@@ -536,25 +546,25 @@
               ########################################################################################################
 
               if (length(tmp.content_areas)==2) {
-                report.vp <- viewport(layout = grid.layout(4, 2, widths = unit(c(2.5, 8.5), rep("inches", 2)), 
-                                        heights = unit(c(0.35, rep(3.8, 2), 0.55), rep("inches", 4))))
+                report.vp <- viewport(layout = grid.layout(7, 4, widths = unit(c(2.5, 0.1, 8.3, 0.1), rep("inches", 4)), 
+                                        heights = unit(c(0.35, 0.2, 3.55, 0.25, 3.55, 0.2, 0.4), rep("inches", 7))))
 
-                content_area_1.vp <- viewport(layout.pos.row=2, layout.pos.col=2)
-                content_area_2.vp <- viewport(layout.pos.row=3, layout.pos.col=2)
-                top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:2, xscale=c(0,1), yscale=c(0,1))
-                bottom.border.vp <- viewport(layout.pos.row=4, layout.pos.col=1:2, xscale=c(0,1), yscale=c(0,1))
-                left.legend.vp <- viewport(layout.pos.row=2:3, layout.pos.col=1, xscale=c(0,1), yscale=c(0,1))
+                content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=3)
+                content_area_2.vp <- viewport(layout.pos.row=5, layout.pos.col=3)
+                top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:4)
+                bottom.border.vp <- viewport(layout.pos.row=7, layout.pos.col=1:4)
+                left.legend.vp <- viewport(layout.pos.row=2:6, layout.pos.col=1)
               }
 
               if (length(tmp.content_areas)==3) {
-                report.vp <- viewport(layout = grid.layout(6, 3, widths = unit(c(0.125, 8.3, 0.075), rep("inches", 3)), 
-                                        heights = unit(c(0.27, 0.03, rep(3.54, 3), 0.08), rep("inches", 6))))
+                report.vp <- viewport(layout = grid.layout(9, 3, widths = unit(c(0.125, 8.3, 0.075), rep("inches", 3)), 
+                                        heights = unit(c(0.35, 0.1, 3.256, 0.14, 3.256, 0.14, 3.256, 0.1, 0.4), rep("inches", 9))))
 
                 content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=2)
-                content_area_2.vp <- viewport(layout.pos.row=4, layout.pos.col=2)
-                content_area_3.vp <- viewport(layout.pos.row=5, layout.pos.col=2)
-                top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:3, xscale=c(0,3), yscale=c(0,1))
-                bottom.border.vp <- viewport(layout.pos.row=6, layout.pos.col=1:3, xscale=c(0,3), yscale=c(0,1))
+                content_area_2.vp <- viewport(layout.pos.row=5, layout.pos.col=2)
+                content_area_3.vp <- viewport(layout.pos.row=7, layout.pos.col=2)
+                top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:3)
+                bottom.border.vp <- viewport(layout.pos.row=9, layout.pos.col=1:3)
               }
 
               pushViewport(report.vp)
@@ -593,15 +603,15 @@
 
               pushViewport(bottom.border.vp)
               grid.rect(gp=gpar(fill=sgPlot.header.footer.color, col=sgPlot.header.footer.color))
-              grid.text(x=0.02, y=0.75, paste("For more information please visit", tmp.organization$Name, "at", tmp.organization$URL, "or call", tmp.organization$Phone_Number), 
-                        gp=gpar(cex=0.95, col="white"), default.units="native", just="left")
-              grid.text(x=0.02, y=0.40, paste("Produced and distributed by the ", tmp.organization$Name, "/Center for Assessment, Inc.", sep=""), 
-                        gp=gpar(cex=0.95, col="white"), default.units="native", just="left")
+              grid.text(x=0.02, y=0.70, paste("For more information please visit", tmp.organization$Name, "at", tmp.organization$URL, "or call", tmp.organization$Phone_Number), 
+                        gp=gpar(cex=0.8, col="white"), default.units="native", just="left")
+              grid.text(x=0.02, y=0.30, paste("Produced and distributed by the ", tmp.organization$Name, "/Center for Assessment, Inc.", sep=""), 
+                        gp=gpar(cex=0.8, col="white"), default.units="native", just="left")
 
-              copyright.text <- paste("Copyright 2011, ", tmp.organization$Name, "/Center for Assessment, Inc.", sep="")
-              grid.text(x=0.975, y=0.18, paste("Copyright 2011, ", tmp.organization$Name, "/Center for Assessment, Inc.", sep=""), 
-                        gp=gpar(col="white", cex=0.6), default.units="native", just="right")
-              grid.text(x=unit(1.115, "native")-stringWidth(copyright.text), y=0.185, "\\co", gp=gpar(col="white", cex=0.7, fontfamily="HersheySymbol"), default.units="native")
+              copyright.text <- paste("Cooperatively developed by the ", tmp.organization$Name, " & the Center for Assessment, Inc.", sep="")
+              grid.text(x=0.995, y=0.18, copyright.text, gp=gpar(col="white", cex=0.45), default.units="native", just="right")
+#              grid.text(x=unit(0.992, "native")-convertWidth(grobWidth(textGrob(copyright.text, gp=gpar(cex=0.45))), "native"), y=0.19, "\\co", 
+#                        gp=gpar(col="white", cex=0.55, fontfamily="HersheySymbol"), default.units="native", just="right")
               popViewport()
 
 
@@ -614,18 +624,34 @@
 		# Interpretation
 
                 interpretation.y <- 0.93
+                achievement.level.region.colors <- paste("grey", round(seq(62, 91, length=number.achievement.level.regions)), sep="")
 
                 grid.roundrect(x=unit(0.5, "native"), y=unit(interpretation.y, "native"), width=unit(0.9, "native"), height=unit(0.06, "native"), 
                                gp=gpar(fill=sgPlot.header.footer.color, col="black"))
-                grid.text(x=0.5, y=interpretation.y+0.01, "How to interpret this growth", gp=gpar(fontface="bold", cex=0.95, col="white"))
-                grid.text(x=0.5, y=interpretation.y-0.01, "and achievement report", gp=gpar(fontface="bold", cex=0.95, col="white"))
+                grid.text(x=0.5, y=interpretation.y+0.011, paste("How to interpret this", tmp.abbreviation), gp=gpar(fontface="bold", cex=0.95, col="white"))
+                grid.text(x=0.5, y=interpretation.y-0.011, "growth & achievement report", gp=gpar(fontface="bold", cex=0.95, col="white"))
 
-                grid.circle(x=0.2, y=interpretation.y-0.07, r=0.02, default.units="native")
-                grid.text(x=0.275, y=interpretation.y-0.07, paste(test.abbreviation, "Test Score"), gp=gpar(cex=0.9), default.units="native", just="left")
+                grid.roundrect(x=unit(0.2, "native"), y=unit(interpretation.y-0.08, "native"), width=unit(0.1, "native"), height=unit(0.04, "native"), r=unit(0.02, "inches"), 
+                               gp=gpar(fill=achievement.level.region.colors[1], lwd=1))
+                grid.circle(x=0.2, y=interpretation.y-0.08, r=0.02, default.units="native", gp=gpar(fill="white"))
+                grid.text(x=0.325, y=interpretation.y-0.08, paste(tmp.abbreviation, "Scale Score"), gp=gpar(cex=0.9), default.units="native", just="left")
 
-                grid.polygon(x=c(0.1875, 0.1875, 0.17, 0.2, 0.23, 0.2125, 0.2125), y=interpretation.y-c(0.18, 0.13, 0.14, 0.10, 0.14, 0.13, 0.18), default.units="native",
+                tmp.rect.height <- 0.125/number.achievement.level.regions
+                for (i in seq(number.achievement.level.regions)) {
+                    grid.rect(x=unit(0.2, "native"), y=unit(interpretation.y-0.125-(i-1)*tmp.rect.height, "native"), width=unit(0.1, "native"), height=unit(tmp.rect.height, "native"),
+                               gp=gpar(fill=rev(achievement.level.region.colors)[i], col="white", lwd=1), just=c("center", "top"))
+                } 
+                grid.roundrect(x=unit(0.2, "native"), y=interpretation.y-0.125, width=unit(0.1, "native"), height=unit(0.125, "native"), r=unit(0.02, "inches"),
+                               gp=gpar(col="black", lwd=1.5), just=c("center", "top"))
+                grid.text(x=0.325, y=interpretation.y-0.1625, tmp.abbreviation, default.units="native", just="left")
+                grid.text(x=0.325, y=interpretation.y-0.1875, "Achievement", default.units="native", just="left")
+                grid.text(x=0.325, y=interpretation.y-0.2125, "Levels", default.units="native", just="left")
+
+                grid.polygon(x=c(0.1875, 0.1875, 0.17, 0.2, 0.23, 0.2125, 0.2125), y=interpretation.y-c(0.35, 0.30, 0.31, 0.27, 0.31, 0.30, 0.35), default.units="native",
                              gp=gpar(fill="grey50"))
-                grid.text(x=0.275, y=interpretation.y-0.14, "Student's rate of growth", gp=gpar(cex=0.9), default.units="native", just="left")
+                grid.text(x=0.325, y=interpretation.y-0.285, "Student", gp=gpar(cex=0.9), default.units="native", just="left")
+                grid.text(x=0.325, y=interpretation.y-0.31, "Growth", gp=gpar(cex=0.9), default.units="native", just="left")
+                grid.text(x=0.325, y=interpretation.y-0.335, "Percentile", gp=gpar(cex=0.9), default.units="native", just="left")
 
 		# Suggested uses
 
@@ -636,21 +662,24 @@
                 grid.text(x=0.5, y=suggested.y, "Suggested Uses", gp=gpar(fontface="bold", cex=0.95, col="white"))
 
                 grid.circle(x=0.075, y=suggested.y-0.07, r=0.01, gp=gpar(fill="black"), default.units="native")
-                grid.text(x=0.12, y=suggested.y-0.07, "Identify the rate of progress", gp=gpar(cex=0.8), default.units="native", just="left")
-                grid.text(x=0.12, y=suggested.y-0.09, "needed in order to reach or", gp=gpar(cex=0.8), default.units="native", just="left")
-                grid.text(x=0.12, y=suggested.y-0.11, "maintain proficient status", gp=gpar(cex=0.8), default.units="native", just="left")
-                grid.text(x=0.12, y=suggested.y-0.13, paste("on the", test.abbreviation, "next year."), gp=gpar(cex=0.8), default.units="native", just="left")
+                grid.text(x=0.12, y=suggested.y-0.07, "Review past growth to assess", gp=gpar(cex=0.8), default.units="native", just="left")
+                grid.text(x=0.12, y=suggested.y-0.09, paste("student progress toward", tmp.abbreviation), gp=gpar(cex=0.8), default.units="native", just="left")
+                grid.text(x=0.12, y=suggested.y-0.11, "achievement goals", gp=gpar(cex=0.8), default.units="native", just="left")
 
-                grid.circle(x=0.075, y=suggested.y-0.16, r=0.01, gp=gpar(fill="black"), default.units="native")
-                grid.text(x=0.12, y=suggested.y-0.16, "Review past growth to assess", gp=gpar(cex=0.8), default.units="native", just="left")
-                grid.text(x=0.12, y=suggested.y-0.18, paste("student progress toward", test.abbreviation), gp=gpar(cex=0.8), default.units="native", just="left")
-                grid.text(x=0.12, y=suggested.y-0.20, "achievement goals", gp=gpar(cex=0.8), default.units="native", just="left")
+                grid.circle(x=0.075, y=suggested.y-0.14, r=0.01, gp=gpar(fill="black"), default.units="native")
+                grid.text(x=0.12, y=suggested.y-0.14, "Develop remediation or enrich-", gp=gpar(cex=0.8), default.units="native", just="left")
+                grid.text(x=0.12, y=suggested.y-0.16, "ment plans based on rate of", gp=gpar(cex=0.8), default.units="native", just="left")
+                grid.text(x=0.12, y=suggested.y-0.18, "growth needed to reach higher", gp=gpar(cex=0.8), default.units="native", just="left")
+                grid.text(x=0.12, y=suggested.y-0.20, paste(tmp.abbreviation, "achievement levels"), gp=gpar(cex=0.8), default.units="native", just="left")
 
-                grid.circle(x=0.075, y=suggested.y-0.23, r=0.01, gp=gpar(fill="black"), default.units="native")
-                grid.text(x=0.12, y=suggested.y-0.23, "Development of remediation or", gp=gpar(cex=0.8), default.units="native", just="left")
-                grid.text(x=0.12, y=suggested.y-0.25, "enrichment plans based on rate of", gp=gpar(cex=0.8), default.units="native", just="left")
-                grid.text(x=0.12, y=suggested.y-0.27, "growth needed to reach higher", gp=gpar(cex=0.8), default.units="native", just="left")
-                grid.text(x=0.12, y=suggested.y-0.29, paste(test.abbreviation, "achievement levels"), gp=gpar(cex=0.8), default.units="native", just="left")
+                if (sgPlot.fan) {
+                   grid.circle(x=0.075, y=suggested.y-0.23, r=0.01, gp=gpar(fill="black"), default.units="native")
+                   grid.text(x=0.12, y=suggested.y-0.23, "Identify the rate of progress", gp=gpar(cex=0.8), default.units="native", just="left")
+                   grid.text(x=0.12, y=suggested.y-0.25, "needed in order to reach or", gp=gpar(cex=0.8), default.units="native", just="left")
+                   grid.text(x=0.12, y=suggested.y-0.27, "maintain proficient status", gp=gpar(cex=0.8), default.units="native", just="left")
+                   grid.text(x=0.12, y=suggested.y-0.29, paste("on the", tmp.abbreviation, "next year."), gp=gpar(cex=0.8), default.units="native", just="left")
+                }
+
 
 		# Extra stuff
 
@@ -694,6 +723,7 @@
         lapply(files.to.remove, file.remove)
       }
 
+    message(paste("Finished studentGrowthPlot in visualizeSGP", date(), "in", timetaken(started.at), "\n"))
     } ## END "if ("studentGrowthPlot" %in% plot.types)"
 
 
@@ -702,6 +732,9 @@
 ####################################################################################################################
 
     if ("growthAchievementPlot" %in% plot.types) {
+
+	started.at <- proc.time()
+	message(paste("Started growthAchievementPlot in visualizeSGP", date()))
 
        #### Define/Calculate relevant quantities for growthAchievementPlot
 
@@ -745,6 +778,8 @@
 
         } ## END for loop content_area.iter
      } ## END for loop year.iter
+    message(paste("Finished growthAchievementPlot in visualizeSGP", date(), "in", timetaken(started.at), "\n"))
    } ## END if (growthAchievementPlot %in% plot.types)
 
+   message(paste("Finished visualizeSGP", date(), "in", timetaken(started.at), "\n"))
 } ## END visualizeSGP Function

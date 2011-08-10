@@ -1,12 +1,14 @@
+###########################################
+###		SGP class
+
 setClassUnion("list.null", c("list","NULL"))
 
 setOldClass(c('data.frame')) 
 setOldClass(c('data.table', 'data.frame')) 
-setClass("SGP", representation(Data="data.table", Variable_Name_Lookup="list.null", SGP="list.null", Summary="list.null"))
+setClass("SGP", representation(Data="data.table", Names="list.null", SGP="list.null", Summary="list.null"))
 
 .Valid.SGP <- function(object) {
 	out <- NULL
-	
 	
 	## RUN A SET OF CHECKS ON THE SPECIFIED VARIABLES TO ENSURE THAT THE
 	## SCORES ARE WITHIN ACCEPTABLE LIMITS AND THE VARIABLES HAVE THE 

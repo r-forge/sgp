@@ -17,6 +17,7 @@ abcSGP(sgp_object,
 	sgp.percentiles=TRUE,
 	sgp.projections=TRUE,
 	sgp.projections.lagged=TRUE,
+         sgp.percentiles.baseline=FALSE,
 	simulate.sgps=TRUE,
 	save.intermediate.results=FALSE,
 	sgp.summaries=list(MEDIAN_SGP="median_na(SGP)",
@@ -66,6 +67,8 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{sgp.projections}{Boolean variable indicating whether to calculate student growth projections. Defaults to TRUE.
   }
   \item{sgp.projections.lagged}{Boolean variable indicating whether to calculate lagged student growth projections often used for growth to standard analyses. Defaults to TRUE.
+  }
+  \item{sgp.percentiles.baseline}{Boolean variable indicating whether to calculate baseline student growth percentiles and/or coefficient matrices. Defaults to FALSE.
   }
   \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM).  Test CSEM data must be available for simulation.  Must be set to TRUE for confidence interval construction. Defaults to TRUE in \code{abcSGP} only.
   }
