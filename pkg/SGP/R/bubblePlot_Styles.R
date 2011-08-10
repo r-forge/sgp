@@ -149,7 +149,7 @@
 		# y.variable (include/not include prior achievement)
 
 		if (bPlot.prior.achievement & length(grep("PRIOR", names(tmp.data))) > 0) {
-			if (bubblePlot_LEVEL=="Summary") my.iters$tmp.y.variable <- names(tmp.data)[grep("PERCENT", names(tmp.data))][2:3]
+			if (bubblePlot_LEVEL=="Summary") my.iters$tmp.y.variable <- c("PERCENT_AT_ABOVE_PROFICIENT", "PERCENT_AT_ABOVE_PROFICIENT_PRIOR")
 			if (bubblePlot_LEVEL=="Individual") my.iters$tmp.y.variable <- c("SCALE_SCORE", "SCALE_SCORE_PRIOR")
 		} else {
 			if (bubblePlot_LEVEL=="Summary") my.iters$tmp.y.variable <- names(tmp.data)[grep("PERCENT", names(tmp.data))][2]
@@ -204,7 +204,7 @@ if (1 %in% bPlot.styles) {
 
 		# Subset data
 
-		bPlot.data <- tmp.bPlot.data[YEAR==year.iter & CONTENT_AREA==content_area.iter & MEDIAN_SGP_COUNT >= bPlot.minimum.n]
+		bPlot.data <<- tmp.bPlot.data[YEAR==year.iter & CONTENT_AREA==content_area.iter & MEDIAN_SGP_COUNT >= bPlot.minimum.n]
 
 		# Create labels
 
