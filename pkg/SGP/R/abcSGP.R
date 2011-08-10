@@ -10,6 +10,7 @@ function(sgp_object,
 	sgp.projections.lagged=TRUE,
 	sgp.percentiles.baseline=FALSE,
 	simulate.sgps=TRUE,
+	parallel.config,
 	save.intermediate.results=FALSE,
 	sgp.summaries=list(MEDIAN_SGP="median_na(SGP)",
 		MEDIAN_SGP_TARGET="median_na(SGP_TARGET)",
@@ -88,7 +89,8 @@ function(sgp_object,
 			sgp.projections=sgp.projections,
 			sgp.projections.lagged=sgp.projections.lagged,
 			sgp.percentiles.baseline=sgp.percentiles.baseline,
-			simulate.sgps=simulate.sgps)
+			simulate.sgps=simulate.sgps,
+			parallel.config = parallel.config)
 
                 if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 	}
