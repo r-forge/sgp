@@ -22,8 +22,12 @@
 
         # State stuff
 
-        if (state %in% state.abb)  state.name.label <- state.name[state.abb==state]
-        if (state=="DEMO") state.name.label <- "Demonstration"
+        if (state %in% c(state.abb, "DEMO")) {
+		state.name.label <- c(state.name, "DEMONSTRATION")[state==c(state.abb, "DEMO")]
+		test.abbreviation.label <- stateData[[state]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
+	} else {
+		state.name.label <- test.abbreviation.label <- NULL
+	}
 
         # draft message
 
@@ -204,7 +208,7 @@ if (1 %in% bPlot.styles) {
 
 		# Subset data
 
-		bPlot.data <<- tmp.bPlot.data[YEAR==year.iter & CONTENT_AREA==content_area.iter & MEDIAN_SGP_COUNT >= bPlot.minimum.n]
+		bPlot.data <- tmp.bPlot.data[YEAR==year.iter & CONTENT_AREA==content_area.iter & MEDIAN_SGP_COUNT >= bPlot.minimum.n]
 
 		# Create labels
 
@@ -232,7 +236,7 @@ if (1 %in% bPlot.styles) {
 			bubble_plot_labels.BUBBLE_TITLES=bPlot.data[["SCHOOL_NAME"]],
 			bubble_plot_titles.MAIN=bPlot.labels$main.title,
 			bubble_plot_titles.SUB1=paste(state.name.label, "School Performance"),
-			bubble_plot_titles.SUB2=paste(bPlot.labels$x.year.label, capwords(content_area.iter)),
+			bubble_plot_titles.SUB2=paste(bPlot.labels$x.year.label, test.abbreviation.label, capwords(content_area.iter)),
 			bubble_plot_titles.LEGEND1="School Size",
 			bubble_plot_titles.LEGEND2_P1=NULL,
 			bubble_plot_titles.LEGEND2_P2=NULL,
@@ -275,7 +279,7 @@ if (2 %in% bPlot.styles) {
 		### Data sets and relevant quantities used for bubblePlots
 
 		if (!is.null(bPlot.levels)) {
-			tmp.bPlot.levels.txt <- parse(text=paste("quote(100*length(grep('Yes',", bPlot.levels, "))/length(grep('Yes|No',", bPlot.levels, ")))", sep=""))
+			tmp.bPlot.levels.txt <- parse(text=paste("100*length(grep('Yes',", bPlot.levels, "))/length(grep('Yes|No',", bPlot.levels, "))", sep=""))
 		}
 
 		if (bPlot.full.academic.year) {
@@ -283,7 +287,7 @@ if (2 %in% bPlot.styles) {
 				SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes"]
 			if (!is.null(bPlot.levels)) {
 				tmp.bPlot.levels.data <- sgp_object@Data[SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes", 
-					eval(eval(tmp.bPlot.levels.txt)), by=list(SCHOOL_NUMBER, CONTENT_AREA, YEAR)]
+					eval(tmp.bPlot.levels.txt), by=list(SCHOOL_NUMBER, CONTENT_AREA, YEAR)]
 				key(tmp.bPlot.data) <- key(tmp.bPlot.levels.data) <- c("SCHOOL_NUMBER", "CONTENT_AREA", "YEAR")
 				tmp.bPlot.data <- tmp.bPlot.levels.data[tmp.bPlot.data]
 				my.level.labels <- c("Less than 20 percent", "20 to 40 percent", "40 to 60 percent", "60 to 80 percent", "More than 80 percent")
@@ -292,7 +296,7 @@ if (2 %in% bPlot.styles) {
 		} else {
 			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__YEAR"]]
 			if (!is.null(bPlot.levels)) {
-				tmp.bPlot.levels.data <- sgp_object@Data[, eval(eval(tmp.bPlot.levels.txt)), by=list(SCHOOL_NUMBER, CONTENT_AREA, YEAR)]
+				tmp.bPlot.levels.data <- sgp_object@Data[, eval(tmp.bPlot.levels.txt), by=list(SCHOOL_NUMBER, CONTENT_AREA, YEAR)]
 				key(tmp.bPlot.data) <- key(tmp.bPlot.levels.data) <- c("SCHOOL_NUMBER", "CONTENT_AREA", "YEAR")
 				tmp.bPlot.data <- tmp.bPlot.levels.data[tmp.bPlot.data]
 				my.level.labels <- c("Less than 20 percent", "20 to 40 percent", "40 to 60 percent", "60 to 80 percent", "More than 80 percent")
@@ -348,7 +352,7 @@ if (2 %in% bPlot.styles) {
 			bubble_plot_labels.BUBBLE_TITLES=bPlot.data[["SCHOOL_NAME"]],
 			bubble_plot_titles.MAIN=bPlot.labels$main.title,
 			bubble_plot_titles.SUB1=paste(district.name.label, "School Performance"),
-			bubble_plot_titles.SUB2=paste(bPlot.labels$x.year.label, capwords(content_area.iter)),
+			bubble_plot_titles.SUB2=paste(bPlot.labels$x.year.label, test.abbreviation.label, capwords(content_area.iter)),
 			bubble_plot_titles.LEGEND1="School Size",
 			bubble_plot_titles.LEGEND2_P1="Percentage Students",
 			bubble_plot_titles.LEGEND2_P2=paste(head(unlist(strsplit(capwords(bPlot.levels), " ")), -1), collapse=" "),
@@ -446,7 +450,7 @@ if (10 %in% bPlot.styles) {
                         bubble_plot_labels.BUBBLE_TITLES=bPlot.data[["SCHOOL_NAME"]],
                         bubble_plot_titles.MAIN=bPlot.labels$main.title,
                         bubble_plot_titles.SUB1=paste(district.name.label, "School Performance"),
-                        bubble_plot_titles.SUB2=paste(bPlot.labels$x.year.label, capwords(content_area.iter)),
+                        bubble_plot_titles.SUB2=paste(bPlot.labels$x.year.label, test.abbreviation.label, capwords(content_area.iter)),
                         bubble_plot_titles.LEGEND1="School Size",
                         bubble_plot_titles.LEGEND2_P1=NULL,
                         bubble_plot_titles.LEGEND2_P2=NULL,
@@ -490,7 +494,7 @@ if (11 %in% bPlot.styles) {
 		### Data sets and relevant quantities used for bubblePlots
 
 		if (!is.null(bPlot.levels)) {
-			tmp.bPlot.levels.txt <- parse(text=paste("quote(100*length(grep('Yes',", bPlot.levels, "))/length(grep('Yes|No',", bPlot.levels, ")))", sep=""))
+			tmp.bPlot.levels.txt <- parse(text=paste("100*length(grep('Yes',", bPlot.levels, "))/length(grep('Yes|No',", bPlot.levels, "))", sep=""))
 		}
 
 		if (bPlot.full.academic.year) {
@@ -498,7 +502,7 @@ if (11 %in% bPlot.styles) {
 				SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes"]
 			if (!is.null(bPlot.levels)) {
 				tmp.bPlot.levels.data <- sgp_object@Data[SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes", 
-					eval(eval(tmp.bPlot.levels.txt)), by=list(SCHOOL_NUMBER, CONTENT_AREA, YEAR)]
+					eval(tmp.bPlot.levels.txt), by=list(SCHOOL_NUMBER, CONTENT_AREA, YEAR)]
 				key(tmp.bPlot.data) <- key(tmp.bPlot.levels.data) <- c("SCHOOL_NUMBER", "CONTENT_AREA", "YEAR")
 				tmp.bPlot.data <- tmp.bPlot.levels.data[tmp.bPlot.data]
 				my.level.labels <- c("Less than 20 percent", "20 to 40 percent", "40 to 60 percent", "60 to 80 percent", "More than 80 percent")
@@ -507,7 +511,7 @@ if (11 %in% bPlot.styles) {
 		} else {
 			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__YEAR"]]
 			if (!is.null(bPlot.levels)) {
-				tmp.bPlot.levels.data <- sgp_object@Data[, eval(eval(tmp.bPlot.levels.txt)), by=list(SCHOOL_NUMBER, CONTENT_AREA, YEAR)]
+				tmp.bPlot.levels.data <- sgp_object@Data[, eval(tmp.bPlot.levels.txt), by=list(SCHOOL_NUMBER, CONTENT_AREA, YEAR)]
 				key(tmp.bPlot.data) <- key(tmp.bPlot.levels.data) <- c("SCHOOL_NUMBER", "CONTENT_AREA", "YEAR")
 				tmp.bPlot.data <- tmp.bPlot.levels.data[tmp.bPlot.data]
 				my.level.labels <- c("Less than 20 percent", "20 to 40 percent", "40 to 60 percent", "60 to 80 percent", "More than 80 percent")
@@ -567,7 +571,7 @@ if (11 %in% bPlot.styles) {
 			bubble_plot_labels.BUBBLE_TITLES=bPlot.data[["SCHOOL_NAME"]],
 			bubble_plot_titles.MAIN=bPlot.labels$main.title,
 			bubble_plot_titles.SUB1=paste(district.name.label, "School Performance"),
-			bubble_plot_titles.SUB2=paste(bPlot.labels$x.year.label, capwords(content_area.iter)),
+			bubble_plot_titles.SUB2=paste(bPlot.labels$x.year.label, test.abbreviation.label, capwords(content_area.iter)),
 			bubble_plot_titles.LEGEND1="School Size",
 			bubble_plot_titles.LEGEND2_P1="Percentage Students",
 			bubble_plot_titles.LEGEND2_P2=paste(head(unlist(strsplit(capwords(bPlot.levels), " ")), -1), collapse=" "),
@@ -708,7 +712,7 @@ if (100 %in% bPlot.styles) {
 			bubble_plot_labels.BUBBLE_TITLES=paste(bPlot.data$FIRST_NAME, bPlot.data$LAST_NAME),
 			bubble_plot_titles.MAIN=bPlot.labels$main.title,
 			bubble_plot_titles.SUB1=paste(bPlot.data$SCHOOL_NAME[1], "Student Performance"),
-			bubble_plot_titles.SUB2=paste(bPlot.labels$x.year.label, "Grade", grade.iter, capwords(content_area.iter)),
+			bubble_plot_titles.SUB2=paste(bPlot.labels$x.year.label, test.abbreviation.label, "Grade", grade.iter, capwords(content_area.iter)),
 			bubble_plot_titles.LEGEND1="",
 			bubble_plot_titles.LEGEND2_P1=NULL,
 			bubble_plot_titles.LEGEND2_P2=NULL,

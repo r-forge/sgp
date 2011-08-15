@@ -388,7 +388,7 @@ function(panel.data,         ## REQUIRED
 			}
 		}
 		if (is.character(use.my.knots.boundaries)) {
-			if (!use.my.knots.boundaries %in% names(stateData)) {
+			if (is.null(stateData[[use.my.knots.boundaries]][["Achievement"]][["Knots_Boundaries"]])) { #avi 8/14/11 - not enough to be %in% names(stateData) !
 				message(paste("Knots and Boundaries are currently not implemented for the state indicated (", use.my.knots.boundaries, "). Knots and boundaries will be calculated from the data. Please contact the SGP package administrator to have your Knots and Boundaries included in the package", sep=""))
 			}
      		tmp.path.knots.boundaries <- tmp.path    

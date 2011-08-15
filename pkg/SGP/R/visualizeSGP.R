@@ -60,6 +60,10 @@
 
     pretty_year <- function(x) sub("_", "-", x)
 
+    .year.increment <- function(year, increment) {
+         paste(as.numeric(unlist(strsplit(as.character(year), "_")))+increment, collapse="_")
+    }
+
     capwords <- function(x) {
       special.words <- c("ELA", "EMH", "II", "III", "IV")
       if (x %in% special.words) return(x)
@@ -200,7 +204,9 @@
       }
 
       piecewise.transform <- function(scale_score, state, content_area, year, grade, output.digits=1) {
-        if (content_area %in% names(stateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
+        if (content_area %in% names(stateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]) &
+            grade %in% as.numeric(matrix(unlist(strsplit(names(stateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]]), "_")), ncol=2, byrow=TRUE)[,2])) {
+
            if (is.null(stateData[[state]][["Student_Report_Information"]][["Modulo_Score_Transformation"]])) {
              tmp.loss.hoss <- stateData[[state]][["Achievement"]][["Knots_Boundaries"]][[as.character(content_area)]][[paste("loss.hoss_", grade, sep="")]]
              if (year %in% unlist(strsplit(names(stateData[[state]][["Achievement"]][["Cutscores"]])[grep(content_area, names(stateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"))) {
@@ -298,8 +304,8 @@
 	key(tmp.table) <- key(sgp_object@Data) <- names(tmp.table) <- c("ID", "CONTENT_AREA", "YEAR")
 	tmp.table <- sgp_object@Data[tmp.table]
 	if (sgPlot.demo.report) {
-		tmp.table$SCHOOL_NUMBER <- tmp.schools <- -99
-		tmp.table$DISTRICT_NUMBER <- tmp.districts <- -999
+		tmp.table$SCHOOL_NUMBER <- tmp.schools <- -99L
+		tmp.table$DISTRICT_NUMBER <- tmp.districts <- -999L
 	}
 
       ### Anonymize (if requested)
@@ -322,17 +328,17 @@
 		tmp.table$DISTRICT_NAME <- as.factor("Sample District")
 		tmp.table$SCHOOL_NAME <- as.factor("Sample School")
 	} else {
-	key(tmp.table) <- "DISTRICT_NUMBER"
-	tmp.district.number <- J(DISTRICT_NUMBER=unique(tmp.table$DISTRICT_NUMBER) %w/o% NA, seq_along(unique(tmp.table$DISTRICT_NUMBER) %w/o% NA), key="DISTRICT_NUMBER")[tmp.table]$V2
-	tmp.table$DISTRICT_NAME <- as.character(tmp.table$DISTRICT_NAME)
-	tmp.table$DISTRICT_NAME[!is.na(tmp.table$DISTRICT_NUMBER)] <- paste("Sample District", tmp.district.number[!is.na(tmp.table$DISTRICT_NUMBER)])
-	tmp.table$DISTRICT_NAME <- as.factor(tmp.table$DISTRICT_NAME)
+		key(tmp.table) <- "DISTRICT_NUMBER"
+		tmp.district.number <- J(DISTRICT_NUMBER=unique(tmp.table$DISTRICT_NUMBER) %w/o% NA, seq_along(unique(tmp.table$DISTRICT_NUMBER) %w/o% NA), key="DISTRICT_NUMBER")[tmp.table]$V2
+		tmp.table$DISTRICT_NAME <- as.character(tmp.table$DISTRICT_NAME)
+		tmp.table$DISTRICT_NAME[!is.na(tmp.table$DISTRICT_NUMBER)] <- paste("Sample District", tmp.district.number[!is.na(tmp.table$DISTRICT_NUMBER)])
+		tmp.table$DISTRICT_NAME <- as.factor(tmp.table$DISTRICT_NAME)
 	
-	key(tmp.table) <- "SCHOOL_NUMBER"
-	tmp.school.number <- J(SCHOOL_NUMBER=unique(tmp.table$SCHOOL_NUMBER) %w/o% NA, seq_along(unique(tmp.table$SCHOOL_NUMBER) %w/o% NA), key="SCHOOL_NUMBER")[tmp.table]$V2
-	tmp.table$SCHOOL_NAME <- as.character(tmp.table$SCHOOL_NAME)
-	tmp.table$SCHOOL_NAME[!is.na(tmp.table$SCHOOL_NUMBER)] <- paste("Sample School", tmp.school.number[!is.na(tmp.table$SCHOOL_NUMBER)])
-	tmp.table$SCHOOL_NAME <- as.factor(tmp.table$SCHOOL_NAME)
+		key(tmp.table) <- "SCHOOL_NUMBER"
+		tmp.school.number <- J(SCHOOL_NUMBER=unique(tmp.table$SCHOOL_NUMBER) %w/o% NA, seq_along(unique(tmp.table$SCHOOL_NUMBER) %w/o% NA), key="SCHOOL_NUMBER")[tmp.table]$V2
+		tmp.table$SCHOOL_NAME <- as.character(tmp.table$SCHOOL_NAME)
+		tmp.table$SCHOOL_NAME[!is.na(tmp.table$SCHOOL_NUMBER)] <- paste("Sample School", tmp.school.number[!is.na(tmp.table$SCHOOL_NUMBER)])
+		tmp.table$SCHOOL_NAME <- as.factor(tmp.table$SCHOOL_NAME)
 	}
 
       } ## END create.random.names
@@ -357,7 +363,7 @@
 
       isr_data <- isr_data[, variables.to.keep, with=FALSE]
       
-      ### Merge in 1 year projections (if requested & available)
+      ### Merge in 1 year projections (if requested & available) and transform using piecewise.tranform (if required)
 
       tmp.proj.names <- paste(tmp.content_areas, tmp.last.year, sep=".")
       if (sgPlot.fan & all(tmp.proj.names %in% names(sgp_object@SGP[["SGProjections"]]))) {
@@ -368,6 +374,14 @@
                                       sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep("PROJ_YEAR_1", names(sgp_object@SGP[["SGProjections"]][[i]])))])
         }
         isr_data <- data.table(rbind.all(tmp.list), key=paste(key(isr_data), collapse=","))[isr_data]
+	tmp.grade.name <- paste("GRADE", tmp.last.year, sep=".")
+	tmp.year.name <- .year.increment(tmp.last.year, 1)
+	key(isr_data) <- c("CONTENT_AREA", tmp.grade.name)
+	for (proj.iter in grep("PROJ_YEAR_1", names(isr_data))) {
+		tmp.scale_score.name <- names(isr_data)[proj.iter]
+		isr_data[[proj.iter]] <- isr_data[,piecewise.transform(get(tmp.scale_score.name), state, CONTENT_AREA[1], tmp.year.name, get(tmp.grade.name)[1]+1), 
+			by=list(CONTENT_AREA, isr_data[[tmp.grade.name]])]$V1 
+	}
       }
 
 
@@ -390,18 +404,20 @@
 
       for (i in tmp.districts) {
 
-          tmp_district_name <- as.character(isr_data[J(i)][[paste("DISTRICT_NAME", tmp.last.year, sep=".")]][1])
-          if (sgPlot.folder.names=="name") {
-            district_folder <- gsub(" ", "_", paste(tmp_district_name, " (", i, ")", sep=""))
-          } else {
-            district_folder <- as.character(i)
-          }
           if (sgPlot.demo.report) {
+            tmp_district_name <- "Sample District"
             district_folder <- "Sample_District"
+          } else {
+            if (sgPlot.folder.names=="name") {
+              tmp_district_name <- as.character(isr_data[J(i)][[paste("DISTRICT_NAME", tmp.last.year, sep=".")]][1])
+              district_folder <- gsub(" ", "_", paste(tmp_district_name, " (", i, ")", sep=""))
+            } else {
+              district_folder <- as.character(i)
+            }
           }
 
-        tmp_district_ids <- unique(isr_data[J(i)]$ID)
-        tmp_district_data <- subset(isr_data, ID %in% tmp_district_ids)
+          tmp_district_ids <- unique(isr_data[J(i)]$ID)
+          tmp_district_data <- subset(isr_data, ID %in% tmp_district_ids)
 
         ## Schools
 
@@ -413,20 +429,20 @@
 
         for (j in schools) {
 
-            tmp_school_name <- as.character(tmp_district_data[J(j)][[paste("SCHOOL_NAME", tmp.last.year, sep=".")]][1])
-            if (sgPlot.folder.names=="name") {
-              school_folder <- gsub(" ", "_", paste(tmp_school_name, " (", j, ")", sep=""))
-            } else {
-              school_folder <- as.character(j)
-            }
             if (sgPlot.demo.report) {
+              tmp_school_name <- "Sample School"
               school_folder <- "Sample_School"
+            } else {
+              if (sgPlot.folder.names=="name") {
+                tmp_school_name <- as.character(tmp_district_data[J(j)][[paste("SCHOOL_NAME", tmp.last.year, sep=".")]][1])
+                school_folder <- gsub(" ", "_", paste(tmp_school_name, " (", j, ")", sep=""))
+              } else {
+                school_folder <- as.character(j)
+              }
             }
 
-
-
-          tmp_school_ids <- unique(tmp_district_data[J(j)]$ID)
-          tmp_school_data <- subset(tmp_district_data, ID %in% tmp_school_ids)
+            tmp_school_ids <- unique(tmp_district_data[J(j)]$ID)
+            tmp_school_data <- subset(tmp_district_data, ID %in% tmp_school_ids)
 
 
           ######################## SCHOOL Report Catalog LaTeX Header ##############################################
@@ -605,11 +621,11 @@
               grid.rect(gp=gpar(fill=sgPlot.header.footer.color, col=sgPlot.header.footer.color))
               grid.text(x=0.02, y=0.70, paste("For more information please visit", tmp.organization$Name, "at", tmp.organization$URL, "or call", tmp.organization$Phone_Number), 
                         gp=gpar(cex=0.8, col="white"), default.units="native", just="left")
-              grid.text(x=0.02, y=0.30, paste("Produced and distributed by the ", tmp.organization$Name, "/Center for Assessment, Inc.", sep=""), 
+              copyright.text <- paste("Cooperatively developed by the ", tmp.organization$Name, " & the Center for Assessment, Inc.", sep="")
+              grid.text(x=0.02, y=0.30, paste(copyright.text, ". Distributed by the ", tmp.organization$Name, sep=""), 
                         gp=gpar(cex=0.8, col="white"), default.units="native", just="left")
 
-              copyright.text <- paste("Cooperatively developed by the ", tmp.organization$Name, " & the Center for Assessment, Inc.", sep="")
-              grid.text(x=0.995, y=0.18, copyright.text, gp=gpar(col="white", cex=0.45), default.units="native", just="right")
+#              grid.text(x=0.995, y=0.18, copyright.text, gp=gpar(col="white", cex=0.45), default.units="native", just="right")
 #              grid.text(x=unit(0.992, "native")-convertWidth(grobWidth(textGrob(copyright.text, gp=gpar(cex=0.45))), "native"), y=0.19, "\\co", 
 #                        gp=gpar(col="white", cex=0.55, fontfamily="HersheySymbol"), default.units="native", just="right")
               popViewport()

@@ -109,7 +109,9 @@
       } ## END create.long.cutscores
 
       piecewise.transform <- function(scale_score, state, content_area, year, grade, output.digits=1) {
-        if (content_area %in% names(stateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
+        if (content_area %in% names(stateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]) &
+            grade %in% as.numeric(matrix(unlist(strsplit(names(stateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]]), "_")), ncol=2, byrow=TRUE)[,2])) {
+
            if (is.null(stateData[[state]][["Student_Report_Information"]][["Modulo_Score_Transformation"]])) {
              tmp.loss.hoss <- stateData[[state]][["Achievement"]][["Knots_Boundaries"]][[as.character(content_area)]][[paste("loss.hoss_", grade, sep="")]]
              if (year %in% unlist(strsplit(names(stateData[[state]][["Achievement"]][["Cutscores"]])[grep(content_area, names(stateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"))) {
@@ -457,7 +459,7 @@ pushViewport(title.vp)
 grid.roundrect(width=unit(0.95, "npc"), r=unit(0.025, "snpc"), gp=gpar(col=format.colors.font, lwd=1.6))
 grid.text(x=0.5, y=0.675, paste(state.name.label, ": ", pretty_year(year), " ", capwords(content_area), sep=""), 
 	gp=gpar(col=format.colors.font, fontface=2, fontfamily="Helvetica-Narrow", cex=3.0), default.units="native")
-grid.text(x=0.5, y=0.3, "Norm & Criterion Referenced Growth & Achievement", gp=gpar(col=format.colors.font, fontface=2, fontfamily="Helvetica-Narrow", cex=2.25), default.units="native")
+grid.text(x=0.5, y=0.275, "Norm & Criterion Referenced Growth & Achievement", gp=gpar(col=format.colors.font, fontface=2, fontfamily="Helvetica-Narrow", cex=2.25), default.units="native")
 
 popViewport() ## pop title.vp
 
