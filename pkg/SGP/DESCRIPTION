@@ -1,8 +1,8 @@
 Package: SGP
 Type: Package
 Title: An R Package for the Calculation and Visualization of Student Growth Percentiles.
-Version: 0.4-0.0
-Date: 2011-8-15
+Version: 0.5-0.0
+Date: 2011-8-21
 Authors@R: c(person("Damian", "Betebenner", email="dbetebenner@nciea.org",
 		role=c("aut", "cre")),
             person("Adam", "Van Iwaarden", email="Vaniwaarden@colorado.edu",
@@ -11,11 +11,11 @@ Author: Damian W. Betebenner <dbetebenner@nciea.org> and Adam Van Iwaarden <Vani
         with contributions from Ben Domingue, Jonathan Weeks, John Stewart, Jinnie Choi, Xin Wei, and Hi Shin Shim. With special thanks to 
         State Department of Education analysts: Rebecca Gau (Arizona), Marie Huchton (Colorado), Dr. Carissa Miller (Idaho), Dr. Wes Bruce (Indiana), Robert Hochsegang (Indiana), 
 	Xuewen Sheng (Kansas), Robert Lee (Massachusetts), Ken Thompson (Mississippi), Soo Yeon Cho (Missouri), Jeff Halsell (Nevada), Selcuk Ozdemir (Nevada), Deb Wiswell (New Hampshire), 
-	Katya Levitan-Reiner (New Haven Public Schools), Ana Karantonis (Rhode Island), Dr. Deborah Jonas (Virginia), Justin Meyer (Wisconsin), Joseph Newton (Wisconsin), 
-	Dr. Philip Olsen (Wisconsin), Nick Stroud (Wisconsin).  
+	Katya Levitan-Reiner (New Haven Public Schools), Ana Karantonis (Rhode Island), Dr. Deborah Jonas (Virginia), Juan D'Brot (West Virginia), Nate Hixson (West Virginia), 
+	Justin Meyer (Wisconsin), Joseph Newton (Wisconsin), Dr. Philip Olsen (Wisconsin), Nick Stroud (Wisconsin).  
 Maintainer: Damian W. Betebenner <dbetebenner@nciea.org>
-Depends: R (>= 2.10), data.table (>= 1.6.4), foreach, grid, methods, plyr, quantreg, splines
-Suggests: boot, colorspace, multicore, gridBase, pdf2, randomNames (>= 0.0-3), sn, snow
+Depends: R (>= 2.12), boot, colorspace, data.table (>= 1.6.4), foreach, grid, gridBase, methods, plyr, randomNames (>= 0.0-3), quantreg, splines
+Suggests: multicore, pdf2, sn, snow
 Description: Functions to calculate student growth percentiles and percentile growth projections/trajectories for students using large scale, 
         longitudinal assessment data.  Functions use quantile regression to estimate the conditional density associated 
         with each student's achievement history.  Percentile growth projections/trajectories are calculated using the coefficient matrices derived from 
@@ -26,4 +26,4 @@ LazyLoad: Yes
 LazyData: Yes
 License: CC BY-SA 3.0 US | CC BY-NC-SA 3.0 + file LICENSE
 Repository: CRAN
-Packaged: 2011-08-15 02:15:37 UTC; adamvaniwaarden
+Packaged: 2011-08-10 17:14:56 UTC; damian
