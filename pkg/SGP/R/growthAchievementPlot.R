@@ -233,11 +233,8 @@
 	## Create data sets to be used for plot production
 
 	if (is.null(gaPlot.students)) {
-		if (year %in% unlist(strsplit(names(stateData[[state]][["Achievement"]][["Cutscores"]])[grep(content_area, names(stateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"))) {
-			start.cuts <- stateData[[state]][["Achievement"]][["Cutscores"]][[paste(content_area, year, sep=".")]]
-		} else {
-			start.cuts <- stateData[[state]][["Achievement"]][["Cutscores"]][[as.character(content_area)]]
-		}
+		my.content_area <- get.my.cutscore.year(state, content_area, year)
+		start.cuts <- stateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]]
 	 	tmp1.df <- data.frame(ID=seq_along(start.cuts[[1]]),
 			GRADE=as.numeric(as.character(tail(unlist(strsplit(names(start.cuts)[1], "_")), 1))),
 			SCALE_SCORE=start.cuts[[1]])
@@ -270,8 +267,13 @@
 ## Create viewports
 ##
 
-growth.achievement.vp <- viewport(layout = grid.layout(6, 3, widths = unit(c(1.5, 6.5, 0.5), rep("inches", 3)), 
-                                              heights = unit(c(0.25, 1.15, 0.35, 8.25, 0.5, 0.35), rep("inches", 6))))
+if (is.null(stateData[[state]][["Achievement"]][["College_Readiness_Cutscores"]])) {
+	growth.achievement.vp <- viewport(layout = grid.layout(6, 3, widths = unit(c(1.5, 6.5, 0.5), rep("inches", 3)), 
+		heights = unit(c(0.25, 1.15, 0.35, 8.25, 0.5, 0.35), rep("inches", 6))))
+} else {
+	growth.achievement.vp <- viewport(layout = grid.layout(6, 3, widths = unit(c(1.4, 6.5, 0.6), rep("inches", 3)), 
+		heights = unit(c(0.25, 1.15, 0.35, 8.25, 0.5, 0.35), rep("inches", 6))))
+}
 
 chart.vp <- viewport(name="chart.vp",
                     layout.pos.row=4, layout.pos.col=2,
@@ -423,17 +425,41 @@ popViewport() ## pop left.axis.vp
 
 pushViewport(right.axis.vp)
 
-grid.lines(0.1, gp.axis.range, gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
+if (is.null(stateData[[state]][["Achievement"]][["College_Readiness_Cutscores"]])) {
+	grid.lines(0.1, gp.axis.range, gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
 
-for (i in gaPlot.percentile_trajectories){
-grid.lines(c(-0.1, 0.1), smoothPercentileTrajectory(tmp.df, i, content_area, year, state)(gaPlot.grade_range[2]), gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
-grid.text(x=unit(-0.55, "native"), y=smoothPercentileTrajectory(tmp.df, i, content_area, year, state)(gaPlot.grade_range[2]), i, 
-gp=gpar(col=format.colors.font, cex=0.8), just="left", default.units="native")
+	for (i in gaPlot.percentile_trajectories){
+		grid.lines(c(-0.1, 0.1), smoothPercentileTrajectory(tmp.df, i, content_area, year, state)(gaPlot.grade_range[2]), 
+			gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
+		grid.text(x=unit(-0.55, "native"), y=smoothPercentileTrajectory(tmp.df, i, content_area, year, state)(gaPlot.grade_range[2]), i, 
+			gp=gpar(col=format.colors.font, cex=0.8), just="left", default.units="native")
+	}
+
+#	grid.text(x=0.5, y=smoothPercentileTrajectory(tmp.df, 50, content_area, year, state)(gaPlot.grade_range[2]), "Percentile Growth Trajectory", 
+#		gp=gpar(col=format.colors.font, cex=1.0), rot=90, default.units="native")
+	grid.text(x=0.5, y=(gp.axis.range[1]+gp.axis.range[2])/2, "Percentile Growth Trajectory", 
+		gp=gpar(col=format.colors.font, cex=1.0), rot=90, default.units="native")
+} else {
+	tmp.cut <- as.numeric(stateData[[state]][["Achievement"]][["College_Readiness_Cutscores"]][[content_area]])
+	grid.polygon(x=c(0.05, 0.05, 0.35, 0.35), y=c(gp.axis.range[1], tmp.cut, tmp.cut, gp.axis.range[1]), default.units="native", 
+		gp=gpar(col=format.colors.font, fill="red", lwd=1.5))
+	grid.text(x=0.2, y=(gp.axis.range[1]+tmp.cut)/2, "Not College Ready", gp=gpar(col=format.colors.font, cex=0.5), rot=90, default.units="native")
+	grid.polygon(x=c(0.05, 0.05, 0.35, 0.35), y=c(gp.axis.range[2], tmp.cut, tmp.cut, gp.axis.range[2]), default.units="native", 
+		gp=gpar(col=format.colors.font, fill="green3", lwd=1.5))
+	grid.text(x=0.2, y=(gp.axis.range[2]+tmp.cut)/2, "College Ready", gp=gpar(col=format.colors.font, cex=0.5), rot=90, default.units="native")
+
+	for (i in gaPlot.percentile_trajectories){
+		grid.lines(c(-0.15, 0.05), smoothPercentileTrajectory(tmp.df, i, content_area, year, state)(gaPlot.grade_range[2]), 
+			gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
+		grid.text(x=unit(-0.5, "native"), y=smoothPercentileTrajectory(tmp.df, i, content_area, year, state)(gaPlot.grade_range[2]), i, 
+			gp=gpar(col=format.colors.font, cex=0.8), just="left", default.units="native")
+	}
+
+#	grid.text(x=0.65, y=smoothPercentileTrajectory(tmp.df, 50, content_area, year, state)(gaPlot.grade_range[2]), "Percentile Growth Trajectory to College Readiness", 
+#		gp=gpar(col=format.colors.font, cex=1.0), rot=90, default.units="native")
+	grid.text(x=0.65, y=(gp.axis.range[1]+gp.axis.range[2])/2, "Percentile Growth Trajectory to College Readiness", 
+		gp=gpar(col=format.colors.font, cex=1.0), rot=90, default.units="native")
 }
-
-grid.text(x=0.5, y=smoothPercentileTrajectory(tmp.df, 50, content_area, year, state)(gaPlot.grade_range[2]), "Percentile Growth Trajectory", 
-gp=gpar(col=format.colors.font, cex=1.0), rot=90, default.units="native")
-
 popViewport() ## pop right.axis.vp
 
 ##
@@ -445,7 +471,7 @@ pushViewport(bottom.axis.vp)
 grid.lines(gaPlot.grade_range, 0.8, gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
 for (i in gaPlot.grade_range[1]:gaPlot.grade_range[2]){
 grid.lines(i, c(0.5, 0.8), gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
-grid.text(x=i, y=0.25, paste("Grade", i), gp=gpar(col=format.colors.font, cex=1.1), default.units="native")
+grid.text(x=i, y=0.25, paste("Grade", i), gp=gpar(col=format.colors.font, cex=1.0), default.units="native")
 }
 
 popViewport() ## pop bottom.axis.vp
@@ -460,7 +486,13 @@ pushViewport(title.vp)
 grid.roundrect(width=unit(0.95, "npc"), r=unit(0.025, "snpc"), gp=gpar(col=format.colors.font, lwd=1.6))
 grid.text(x=0.5, y=0.675, paste(state.name.label, ": ", pretty_year(year), " ", capwords(content_area), sep=""), 
 	gp=gpar(col=format.colors.font, fontface=2, fontfamily="Helvetica-Narrow", cex=3.0), default.units="native")
-grid.text(x=0.5, y=0.275, "Norm & Criterion Referenced Growth & Achievement", gp=gpar(col=format.colors.font, fontface=2, fontfamily="Helvetica-Narrow", cex=2.25), default.units="native")
+if (is.null(stateData[[state]][["Achievement"]][["College_Readiness_Cutscores"]])) {
+	grid.text(x=0.5, y=0.275, "Norm & Criterion Referenced Growth & Achievement", 
+		gp=gpar(col=format.colors.font, fontface=2, fontfamily="Helvetica-Narrow", cex=2.25), default.units="native")
+} else {
+	grid.text(x=0.5, y=0.275, "Norm & Criterion Referenced Growth to College Readiness", 
+		gp=gpar(col=format.colors.font, fontface=2, fontfamily="Helvetica-Narrow", cex=2.0), default.units="native")
+}
 
 popViewport() ## pop title.vp
 
