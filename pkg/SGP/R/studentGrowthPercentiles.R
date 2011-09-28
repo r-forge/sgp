@@ -307,7 +307,7 @@ function(panel.data,         ## REQUIRED
 			tmp.scale <- CSEM_Function(scale_scores)
 		} 
 		if (!is.null(variable)) {
-			tmp.scale <- panel.data[[variable]]
+			tmp.scale <- variable
 		}
 			if(distribution=="Skew-Normal") {
 				require(sn) 
@@ -511,8 +511,8 @@ function(panel.data,         ## REQUIRED
 	}
 	if (identical(class(panel.data), "list")) {
 		Panel_Data <- panel.data[["Panel_Data"]]
-	} 
-
+	}
+	
 	### Create ss.data from Panel_Data
 
 	if (!missing(panel.data.vnames)) {
@@ -630,6 +630,17 @@ function(panel.data,         ## REQUIRED
 			tmp.quantiles[[j]] <- data.table(ID=tmp.data[["ID"]], ORDER=j, SGP=.get.quantiles(tmp.predictions, tmp.data[[tail(SS,1)]]))
 			if (csem.tf) {
 				if (is.null(calculate.confidence.intervals$simulation.iterations)) calculate.confidence.intervals$simulation.iterations <- 100
+				if (!is.null(calculate.confidence.intervals$variable)) {
+					if (missing(panel.data.vnames)) {
+						tmp.csem.variable <- Panel_Data[Panel_Data[,1] %in% 
+							ss.data[tmp.data[["ID"]]][["ORIGINAL.ID"]],calculate.confidence.intervals$variable] 
+					} else {
+						tmp.csem.variable <- Panel_Data[Panel_Data[,panel.data.vnames[1]] %in% 
+							ss.data[tmp.data[["ID"]]][["ORIGINAL.ID"]],calculate.confidence.intervals$variable] 
+					}
+				} else {
+					tmp.csem.variable <- NULL
+				}
 				for (k in seq(calculate.confidence.intervals$simulation.iterations)) { 
 					set.seed(k)
 					if (k==1) {
@@ -640,7 +651,7 @@ function(panel.data,         ## REQUIRED
 							content_area=sgp.labels$my.subject,
 							year=sgp.labels$my.year,
 							state=calculate.confidence.intervals$state,
-							variable=calculate.confidence.intervals$variable,
+							variable=tmp.csem.variable,
 							distribution=calculate.confidence.intervals$distribution,
 							round=calculate.confidence.intervals$round)))
 					} else {
@@ -651,7 +662,7 @@ function(panel.data,         ## REQUIRED
 								content_area=sgp.labels$my.subject,
 								year=sgp.labels$my.year,
 								state=calculate.confidence.intervals$state,
-								variable=calculate.confidence.intervals$variable,
+								variable=tmp.csem.variable,
 								distribution=calculate.confidence.intervals$distribution,
 								round=calculate.confidence.intervals$round)))
 								names(tmp.csem.quantiles[[j]])[k+1] <- paste("SGP_SIM", k, sep="_")

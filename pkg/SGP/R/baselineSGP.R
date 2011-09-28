@@ -5,7 +5,7 @@
 			 content_areas,
 			 grade.sequences,
 			 baseline.max.order,
-			 calculate.sgps=FALSE,
+			 return.matrices.only=FALSE,
 			 ...) {
 
     started.at <- proc.time()
@@ -62,9 +62,9 @@
 	if (missing(grade.sequences)) {
 		valid.grades <- sort(unique(sgp_object@Data[J("VALID_CASE", content_areas)][["GRADE"]]))
 		grade.sequences <- lapply(valid.grades[-1], function(x) tail(valid.grades[valid.grades <= x], (baseline.max.order+1)))    #deals with 'holes'
-		for (g in seq_along(grade.sequences)) {
-			grade.sequences[[g]] <- grade.sequences[[g]][tail(grade.sequences[[g]],1)-grade.sequences[[g]] <= baseline.max.order] #deals with 'holes'
-		}
+	}
+	for (g in seq_along(grade.sequences)) {
+		grade.sequences[[g]] <- grade.sequences[[g]][tail(grade.sequences[[g]],1)-grade.sequences[[g]] <= baseline.max.order] #deals with 'holes'
 	}
 		
 	acceptable.grade.sequences <- list()
@@ -109,18 +109,23 @@
 			}
 			tmp_sgp_object[["Panel_Data"]] <- data.frame(sgp.uber.data) #function doesn't take data.tables ???  thought we fixed that...
 
-			tmp_sgp_object <- studentGrowthPercentiles(panel.data = tmp_sgp_object,
-													sgp.labels = list(my.year="BASELINE", my.subject=h), 
-													use.my.knots.boundaries = state,
-													calculate.sgps = calculate.sgps,
-													drop.nonsequential.grade.progression.variables = FALSE, #always taken care of in data reshape above.
-													grade.progression = grade.sequences[[i]],
-													...)	
+			tmp_sgp_object <- studentGrowthPercentiles(
+						panel.data = tmp_sgp_object,
+						sgp.labels = list(my.year="BASELINE", my.subject=h), 
+						use.my.knots.boundaries = state,
+						calculate.sgps = FALSE,
+						drop.nonsequential.grade.progression.variables = FALSE, #always taken care of in data reshape above.
+						grade.progression = grade.sequences[[i]],
+						...)	
 		} ## END loop over grade.sequences
 	} ## END loop over content
 	
+    message(paste("Finished baselineSGP", date(), "in", timetaken(started.at), "\n"))
+	if (return.matrices.only) {
+		return(tmp_sgp_object)
+	} else {
 	sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp_sgp_object)
 	key(sgp_object@Data) <- c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID")
-    message(paste("Finished baselineSGP", date(), "in", timetaken(started.at), "\n"))
-    return(sgp_object)
+	return(sgp_object)
+	}
   } ## END baselineSGP Function
